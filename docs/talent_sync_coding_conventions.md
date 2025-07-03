@@ -1,0 +1,164 @@
+# TalentSync - Coding Conventions
+
+This document defines the coding conventions and best practices for the **TalentSync** codebase. Adhering to these guidelines will ensure consistency, maintainability, performance, and scalability for both backend microservices (Python/FastAPI) and the frontend (React/Vite with inline CSS).
+
+---
+
+## 1. General Principles
+
+1. **Consistency**: Follow these rules across all services and modules.
+2. **Readability**: Prioritize clear, self‑documenting code over clever shortcuts.
+3. **Performance**: Aim for efficient algorithms and lean dependencies to support 100+ concurrent users and 1,000+ RPS.
+4. **Security**: Sanitize inputs, validate schemas, and rotate secrets regularly.
+
+---
+
+## 2. Repository & Project Structure
+
+- **Monorepo Layout** (optional) or separate Git repos per service.
+- Top‑level directories (monorepo):
+  ```
+  /services
+    /user-service
+    /interview-service
+    /resume-service
+    ...
+  /frontend
+  /infra       # deployment manifests, Docker Compose, Kubernetes
+  /docs        # architecture, specs, this conventions file
+  /scripts     # automation (lint, format, deploy)
+  ```
+- Each service is a standalone FastAPI app with its own `requirements.txt` / `pyproject.toml` and tests.
+
+---
+
+## 3. Python Backend Conventions
+
+### 3.1 Formatting & Linting
+
+- **PEP8** style; use **Black** for autoformatting.
+- Enforce with **pre-commit** (black, isort, flake8).
+- Maximum line length: 88 characters (Black default).
+
+### 3.2 Naming
+
+- **Modules**: `snake_case`, e.g. `transcription_service.py`.
+- **Classes**: `PascalCase`, e.g. `ResumeParser`.
+- **Functions & variables**: `snake_case`.
+- **Constants**: `UPPER_SNAKE_CASE`, e.g. `MAX_CONCURRENT_SESSIONS`.
+- **Enum members**: `UPPER_SNAKE_CASE`.
+
+### 3.3 Type Hints & Docstrings
+
+- Use **Python type hints** for all function signatures and public methods.
+- **Docstrings**: Google style or NumPy style with `"""Summary. Args: ... Returns: ..."""`.
+- Private/helper functions may omit docstrings if trivial.
+
+### 3.4 FastAPI Patterns
+
+- **Routers**: Split endpoints into logical routers under `app/routers/`.
+- **Dependencies**: Use FastAPI’s `Depends()` for DB sessions, auth, common services.
+- **Pydantic models**: Define request/response schemas under `app/schemas/`. Reuse models for validation.
+- **Error handling**: Raise `HTTPException(status_code, detail)`; catch and log unexpected exceptions globally via middleware.
+
+### 3.5 Concurrency & Performance
+
+- Use **Uvicorn** with multiple workers (`--workers`) behind an API gateway.
+- Avoid blocking I/O: use `async def` and `asyncpg` for PostgreSQL, `aioredis` for Redis.
+- Offload heavy tasks (transcription, embedding, scoring) to **Celery** workers.
+- Implement **rate limiting** (e.g. 1,000 RPS) via Redis-based token bucket.
+
+---
+
+## 4. Frontend (React + Vite + JavaScript + Inline CSS)
+
+### 4.1 Formatting & Linting
+
+- Use **ESLint** with Airbnb or equivalent config.
+- **Prettier** for code formatting; integrate as a pre-commit hook.
+- All styles must be **inline** (no Tailwind); e.g.:
+  ```jsx
+  <div style={{ display: 'flex', flexDirection: 'column', padding: '1rem' }}>…</div>
+  ```
+- Avoid overly verbose inline objects—extract repeated style objects into JS constants.
+
+### 4.2 File & Component Structure
+
+- **Flat structure** under `src/`:
+  ```
+  /components
+  /pages
+  /services     // API calls
+  /utils
+  /assets
+  ```
+- **Component names**: `PascalCase.js(x)`, e.g. `ModuleCard.jsx`.
+- **Hooks**: `useSomething.js`, e.g. `useAuth.js`.
+- **Service modules**: one default export function per file, e.g. `apiSessions.js`.
+
+### 4.3 JSX & State
+
+- Use **Function Components** and **React Hooks** exclusively.
+- Destructure props in parameter list:
+  ```jsx
+  function ModuleCard({ title, duration }) { … }
+  ```
+- **State Management**: start with React Context; consider Redux or Zustand if complexity grows.
+
+### 4.4 Accessibility & ARIA
+
+- All interactive elements (`<button>`, `<input>`) must have accessible labels (`aria-label`).
+- Use semantic HTML where possible.
+
+---
+
+## 5. Data & Configuration
+
+- **Environment Variables**: store secrets in `.env`, loaded via `python-dotenv` (backend) and Vite's `.env.local`.
+- **Configuration files**: `/infra/docker-compose.yml`, `/infra/k8s/*.yaml`.
+- **Database migrations**: use **Alembic** (Python) and maintain version-controlled migration scripts under `app/migrations/`.
+
+---
+
+## 6. Testing Strategy
+
+- **Backend**: PyTest for unit and integration tests.
+  - Organize tests under `tests/`: `test_routers/`, `test_services/`, `test_models/`.
+  - **Coverage**: aim for ≥80%; use `pytest-cov`.
+- **Frontend**: Jest + React Testing Library.
+  - Test components in `__tests__` folders alongside components.
+  - Mock API calls using MSW (Mock Service Worker).
+
+---
+
+## 7. Documentation & API Contracts
+
+- **OpenAPI**: auto-generated by FastAPI; serve at `/docs` and `/redoc`.
+- **README.md** in each service: setup, run, test instructions.
+- **CHANGELOG.md**: follow “Keep a Changelog” format.
+
+---
+
+## 8. CI/CD & Deployment
+
+- **GitHub Actions** pipeline per service: lint → test → build → push Docker image → deploy to staging.
+- **Release tags**: `vMAJOR.MINOR.PATCH`.
+- **Health checks**: each service exposes `/health` endpoint returning 200.
+
+---
+
+## 9. Commit & Branching Guidelines
+
+- **Branching**: `main` (protected), `develop`, feature branches `feature/<desc>`.
+- **Commit messages**: follow Conventional Commits:
+  ```
+  feat(interview): add resume parsing endpoint
+  fix(auth): handle token expiration properly
+  chore(ci): upgrade Python version
+  ```
+- Prefix PR titles with scope and ticket number, e.g. `[TAL-123] feat: ...`.
+
+---
+
+*End of TalentSync Coding Conventions*
+

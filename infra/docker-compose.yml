@@ -1,0 +1,195 @@
+version: '3.9'
+
+services:
+  # Database Services
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: talentsync
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: talentsync
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U talentsync"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  pinecone-emulator:
+    image: ghcr.io/pinecone-io/local:latest
+    environment:
+      PINECONE_API_KEY: local
+    ports:
+      - "8080:8080"
+
+  # Application Services
+  user-service:
+    build: ../services/user-service
+    env_file: ../services/user-service/.env.example
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      - DATABASE_URL=postgresql+asyncpg://talentsync:secret@postgres:5432/talentsync
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  interview-service:
+    build: ../services/interview-service
+    env_file: ../services/interview-service/.env.example
+    depends_on:
+      - postgres
+      - redis
+      - pinecone-emulator
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002
+      - DATABASE_URL=postgresql+asyncpg://talentsync:secret@postgres:5432/talentsync
+      - REDIS_URL=redis://redis:6379/1
+      - PINECONE_API_KEY=local
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  resume-service:
+    build: ../services/resume-service
+    env_file: ../services/resume-service/.env.example
+    depends_on:
+      - postgres
+    ports:
+      - "8003:8003"
+    environment:
+      - PORT=8003
+      - DATABASE_URL=postgresql+asyncpg://talentsync:secret@postgres:5432/talentsync
+    volumes:
+      - resume_uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  media-service:
+    build: ../services/media-service
+    env_file: ../services/media-service/.env.example
+    depends_on:
+      - postgres
+    ports:
+      - "8004:8004"
+    environment:
+      - PORT=8004
+      - DATABASE_URL=postgresql+asyncpg://talentsync:secret@postgres:5432/talentsync
+    volumes:
+      - media_uploads:/app/media
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  transcription-service:
+    build: ../services/transcription-service
+    env_file: ../services/transcription-service/.env.example
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8005:8005"
+    environment:
+      - PORT=8005
+      - DATABASE_URL=postgresql+asyncpg://talentsync:secret@postgres:5432/talentsync
+      - REDIS_URL=redis://redis:6379/2
+    volumes:
+      - audio_uploads:/app/audio
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  feedback-service:
+    build: ../services/feedback-service
+    env_file: ../services/feedback-service/.env.example
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8006:8006"
+    environment:
+      - PORT=8006
+      - DATABASE_URL=postgresql+asyncpg://talentsync:secret@postgres:5432/talentsync
+      - REDIS_URL=redis://redis:6379/3
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  admin-service:
+    build: ../services/admin-service
+    env_file: ../services/admin-service/.env.example
+    depends_on:
+      - postgres
+    ports:
+      - "8007:8007"
+    environment:
+      - PORT=8007
+      - DATABASE_URL=postgresql+asyncpg://talentsync:secret@postgres:5432/talentsync
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8007/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - user-service
+      - interview-service
+      - resume-service
+      - media-service
+      - transcription-service
+      - feedback-service
+      - admin-service
+
+volumes:
+  pgdata:
+  redisdata:
+  resume_uploads:
+  media_uploads:
+  audio_uploads:
+
+networks:
+  default:
+    name: talentsync-network
