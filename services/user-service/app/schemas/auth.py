@@ -1,4 +1,5 @@
 """Authentication schema definitions."""
+from typing import List, Optional
 from pydantic import BaseModel, EmailStr
 
 
@@ -11,6 +12,7 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     """Token payload data schema."""
     email: str
+    user_id: Optional[int] = None
 
 
 class UserCreate(BaseModel):
@@ -21,7 +23,23 @@ class UserCreate(BaseModel):
     last_name: str
 
 
-class UserResponse(BaseModel):
+class UserLogin(BaseModel):
+    """User login schema."""
+    email: EmailStr
+    password: str
+
+
+class RoleRead(BaseModel):
+    """Role read schema."""
+    id: int
+    name: str
+    description: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
+
+class UserRead(BaseModel):
     """User response schema."""
     id: int
     email: str
@@ -29,6 +47,7 @@ class UserResponse(BaseModel):
     last_name: str
     is_active: bool
     is_admin: bool
+    roles: List[RoleRead] = []
     
     class Config:
         from_attributes = True

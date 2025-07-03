@@ -37,6 +37,6 @@ async def get_db() -> AsyncSession:
 
 
 async def create_tables():
-    """Create database tables for User, Role, and UserRole models."""
+    """Create database tables for all interview models."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

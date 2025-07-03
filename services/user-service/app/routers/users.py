@@ -5,29 +5,34 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.core.security import get_current_user
 from app.models.user import User
-from app.schemas.user import UserResponse, UserUpdate
+from app.schemas.user import UserRead, UserUpdate
 from app.services.user_service import UserService
+from app.services.auth_service import AuthService
 
 router = APIRouter()
 
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me", response_model=UserRead)
 async def get_current_user_profile(
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
 ):
     """
-    Get current user's profile information.
+    Get current user's profile information with roles.
     
     Args:
         current_user: Authenticated user
+        db: Database session
         
     Returns:
-        UserResponse: Current user's profile
+        UserRead: Current user's profile with roles
     """
-    return UserResponse.from_orm(current_user)
+    auth_service = AuthService(db)
+    user_with_roles = await auth_service.get_user_with_roles(current_user.id)
+    return UserRead.from_orm(user_with_roles)
 
 
-@router.put("/me", response_model=UserResponse)
+@router.put("/me", response_model=UserRead)
 async def update_current_user_profile(
     user_update: UserUpdate,
     current_user: User = Depends(get_current_user),
@@ -35,6 +40,7 @@ async def update_current_user_profile(
 ):
     """
     Update current user's profile information.
+    Re-validates updated fields.
     
     Args:
         user_update: Updated user data
@@ -42,14 +48,20 @@ async def update_current_user_profile(
         db: Database session
         
     Returns:
-        UserResponse: Updated user profile
+        UserRead: Updated user profile with roles
     """
     user_service = UserService(db)
+    auth_service = AuthService(db)
+    
+    # Update user
     updated_user = await user_service.update_user(current_user.id, user_update)
-    return UserResponse.from_orm(updated_user)
+    
+    # Return user with roles
+    user_with_roles = await auth_service.get_user_with_roles(updated_user.id)
+    return UserRead.from_orm(user_with_roles)
 
 
-@router.get("/{user_id}", response_model=UserResponse)
+@router.get("/{user_id}", response_model=UserRead)
 async def get_user_by_id(
     user_id: int,
     db: AsyncSession = Depends(get_db),
@@ -64,13 +76,11 @@ async def get_user_by_id(
         current_user: Authenticated user
         
     Returns:
-        UserResponse: User profile
+        UserRead: User profile with roles
         
     Raises:
         HTTPException: If user not found or unauthorized
     """
-    user_service = UserService(db)
-    
     # Check if user is requesting their own profile or is admin
     if current_user.id != user_id and not current_user.is_admin:
         raise HTTPException(
@@ -78,11 +88,12 @@ async def get_user_by_id(
             detail="Not authorized to access this user's profile"
         )
     
-    user = await user_service.get_user_by_id(user_id)
-    if not user:
+    auth_service = AuthService(db)
+    user_with_roles = await auth_service.get_user_with_roles(user_id)
+    if not user_with_roles:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found"
         )
     
-    return UserResponse.from_orm(user)
+    return UserRead.from_orm(user_with_roles)

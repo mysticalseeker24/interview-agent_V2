@@ -1,9 +1,11 @@
-"""Database configuration and session management."""
+"""Database configuration for Transcription Service."""
+import logging
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
-
+from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.pool import StaticPool
 from app.core.config import get_settings
-from app.models import Base
+
+logger = logging.getLogger(__name__)
 
 settings = get_settings()
 
@@ -11,24 +13,21 @@ settings = get_settings()
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=settings.DEBUG,
-    future=True
+    poolclass=StaticPool,
+    pool_pre_ping=True,
 )
 
 # Create async session factory
 async_session = sessionmaker(
-    bind=engine,
-    class_=AsyncSession,
-    expire_on_commit=False
+    engine, class_=AsyncSession, expire_on_commit=False
 )
+
+# Base class for models
+Base = declarative_base()
 
 
 async def get_db() -> AsyncSession:
-    """
-    Dependency to get database session.
-    
-    Yields:
-        AsyncSession: Database session
-    """
+    """Dependency to get database session."""
     async with async_session() as session:
         try:
             yield session
@@ -37,6 +36,7 @@ async def get_db() -> AsyncSession:
 
 
 async def create_tables():
-    """Create database tables for User, Role, and UserRole models."""
+    """Create database tables."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    logger.info("Database tables created successfully")

@@ -12,6 +12,7 @@ router = APIRouter()
 async def health_check(db: AsyncSession = Depends(get_db)):
     """
     Health check endpoint to verify service and database connectivity.
+    Returns {"status": "ok"} format as specified.
     
     Returns:
         HealthResponse: Service health status
@@ -21,7 +22,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
         await db.execute("SELECT 1")
         
         return HealthResponse(
-            status="healthy",
+            status="ok",
             service="user-service",
             version="0.1.0",
             database="connected"

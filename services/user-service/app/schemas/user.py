@@ -1,5 +1,5 @@
 """User schema definitions."""
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel, EmailStr
 
 
@@ -22,11 +22,22 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
 
 
-class UserResponse(UserBase):
+class RoleRead(BaseModel):
+    """Role read schema."""
+    id: int
+    name: str
+    description: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
+
+class UserRead(UserBase):
     """User response schema."""
     id: int
     is_active: bool
     is_admin: bool
+    roles: List[RoleRead] = []
     
     class Config:
         from_attributes = True
