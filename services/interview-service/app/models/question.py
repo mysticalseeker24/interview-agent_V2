@@ -16,12 +16,15 @@ class Question(Base):
     text = Column(Text, nullable=False)
     difficulty = Column(String(20), nullable=False)  # easy, medium, hard
     question_type = Column(String(50), default="open_ended")  # open_ended, coding, scenario
+    type = Column(String(50), default="general")  # For vector search (technical, behavioral, etc)
     expected_duration_seconds = Column(Integer, default=300)  # 5 minutes default
     tags = Column(JSON, default=list)  # List of skill tags
     ideal_answer = Column(Text, nullable=True)
     scoring_criteria = Column(JSON, default=dict)  # Scoring rubric
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    last_synced = Column(DateTime, nullable=True)  # Timestamp when last synced to Pinecone
+    domain = Column(String(100), default="general")  # Question domain for vector search
     
     # Relationships
     module = relationship("Module", back_populates="questions")

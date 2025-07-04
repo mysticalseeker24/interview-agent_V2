@@ -174,7 +174,7 @@ class EmbeddingService:
     async def continuous_sync_worker(self, batch_size: int = 100) -> None:
         """
         Background worker for continuous synchronization of questions.
-        This would typically run as a Celery task.
+        This is executed via REST API endpoint.
         
         Args:
             batch_size: Number of questions to process in each batch
@@ -183,7 +183,11 @@ class EmbeddingService:
             logger.info(f"Starting continuous sync worker with batch size {batch_size}")
             
             # Get questions that need sync
-            async with self.db_session() as session:
+            from sqlalchemy import text
+            from app.core.database import get_db
+            
+            db = await get_db()
+            async with db as session:
                 # Get questions that need sync - either new or updated
                 # We're assuming there's a last_synced column in the questions table
                 query = """
@@ -205,13 +209,12 @@ class EmbeddingService:
                     question_id, text, domain, q_type, difficulty = question
                     
                     # Sync to Pinecone
-                    await self.sync_question_to_vector_db(
+                    await self.pinecone_service.sync_question_to_pinecone(
                         question_id=question_id,
                         question_text=text,
                         domain=domain,
                         question_type=q_type,
-                        difficulty=difficulty,
-                        session=session
+                        difficulty=difficulty
                     )
                     
                     # Update sync status
@@ -231,9 +234,6 @@ class EmbeddingService:
                 await session.commit()
                 
             logger.info(f"Continuous sync worker completed. Synced {processed} questions.")
-            
-            # Wait before next sync
-            await asyncio.sleep(60)  # Wait 1 minute between syncs
             
         except Exception as e:
             logger.error(f"Error in continuous sync worker: {str(e)}")

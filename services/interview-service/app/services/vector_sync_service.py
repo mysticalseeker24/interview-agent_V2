@@ -1,174 +1,239 @@
 """
 Vector Sync Service for continuous synchronization of question embeddings.
-Listens to PostgreSQL triggers via RabbitMQ and updates Pinecone vectors.
+Provides efficient sync operations via REST APIs.
 """
 import os
 import json
 import logging
 import asyncio
-from typing import Dict, Any, Optional
-import aio_pika
+import httpx
+from typing import Dict, Any, Optional, List
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.services.embedding_service import EmbeddingService
+from app.core.database import get_db
 
 logger = logging.getLogger(__name__)
 
 class VectorSyncService:
-    """Service for continuous synchronization between PostgreSQL and Pinecone."""
+    """Service for continuous synchronization between PostgreSQL and Pinecone via REST APIs."""
     
     def __init__(self):
         """Initialize the vector sync service."""
         self.embedding_service = EmbeddingService()
-        self.rabbitmq_url = os.getenv('RABBITMQ_URL', 'amqp://guest:guest@localhost/')
-        self.exchange_name = 'questions_events'
-        self.queue_name = 'vector_sync_queue'
-        self.connection = None
-        self.channel = None
-        self.exchange = None
-        self.queue = None
+        self.service_url = os.getenv('INTERVIEW_SERVICE_URL', 'http://localhost:8002')
+        self.sync_endpoint = f"{self.service_url}/api/v1/vectors/sync/question"
+        self.batch_sync_endpoint = f"{self.service_url}/api/v1/vectors/sync/questions/batch"
         logger.info("Vector sync service initialized")
     
-    async def connect(self):
-        """Establish connection to RabbitMQ."""
+    async def schedule_sync(self, db: AsyncSession = None):
+        """Schedule synchronization for all questions that need updating."""
         try:
-            self.connection = await aio_pika.connect_robust(self.rabbitmq_url)
-            self.channel = await self.connection.channel()
+            if db is None:
+                db = await get_db().__anext__()
             
-            # Declare exchange
-            self.exchange = await self.channel.declare_exchange(
-                self.exchange_name,
-                aio_pika.ExchangeType.TOPIC,
-                durable=True
-            )
+            # Query for questions needing sync
+            from sqlalchemy import text
+            query = """
+                SELECT id, text, domain, question_type as type, difficulty 
+                FROM questions
+                WHERE last_synced IS NULL OR updated_at > last_synced
+                ORDER BY updated_at DESC
+                LIMIT 100
+            """
             
-            # Declare queue
-            self.queue = await self.channel.declare_queue(
-                self.queue_name,
-                durable=True
-            )
+            result = await db.execute(text(query))
+            questions = result.fetchall()
             
-            # Bind queue to exchange with routing keys
-            await self.queue.bind(self.exchange, routing_key='questions.created')
-            await self.queue.bind(self.exchange, routing_key='questions.updated')
+            logger.info(f"Found {len(questions)} questions that need synchronization")
             
-            logger.info("Connected to RabbitMQ successfully")
-            return True
+            # Process in batches
+            if questions:
+                # Group questions into batches of 10
+                batch_size = 10
+                for i in range(0, len(questions), batch_size):
+                    batch = questions[i:i+batch_size]
+                    batch_data = []
+                    
+                    for question in batch:
+                        q_id, text, domain, q_type, difficulty = question
+                        batch_data.append({
+                            "id": q_id,
+                            "text": text,
+                            "domain": domain,
+                            "type": q_type,
+                            "difficulty": difficulty
+                        })
+                    
+                    # Call batch sync endpoint
+                    await self.sync_batch(batch_data)
+                    
+                    # Update sync status in database
+                    for question in batch:
+                        q_id = question[0]
+                        update_query = """
+                            UPDATE questions
+                            SET last_synced = NOW()
+                            WHERE id = :question_id
+                        """
+                        await db.execute(text(update_query), {"question_id": q_id})
+                    
+                    await db.commit()
+                    logger.info(f"Synced batch of {len(batch)} questions")
+                    
+                logger.info(f"Completed synchronization of {len(questions)} questions")
+                return True
+            else:
+                logger.info("No questions need synchronization")
+                return False
+                
         except Exception as e:
-            logger.error(f"Failed to connect to RabbitMQ: {str(e)}")
+            logger.error(f"Error scheduling sync: {str(e)}")
             return False
     
-    async def process_message(self, message: aio_pika.IncomingMessage):
+    async def sync_question(self, question_data: Dict[str, Any]):
         """
-        Process incoming message from RabbitMQ.
+        Sync a single question via REST API.
         
         Args:
-            message: IncomingMessage object from RabbitMQ
+            question_data: Question data including id, text, domain, type
         """
-        async with message.process():
-            try:
-                # Decode message body
-                body = json.loads(message.body.decode())
-                routing_key = message.routing_key
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    self.sync_endpoint,
+                    json=question_data,
+                    timeout=10.0
+                )
                 
-                logger.info(f"Received message with routing key: {routing_key}")
-                
-                if routing_key == 'questions.created':
-                    await self.handle_question_created(body)
-                elif routing_key == 'questions.updated':
-                    await self.handle_question_updated(body)
+                if response.status_code == 200:
+                    logger.info(f"Successfully synced question {question_data['id']} via API")
+                    return True
                 else:
-                    logger.warning(f"Unknown routing key: {routing_key}")
+                    logger.error(f"Error syncing question {question_data['id']}: {response.text}")
+                    return False
                     
-            except Exception as e:
-                logger.error(f"Error processing message: {str(e)}")
+        except Exception as e:
+            logger.error(f"Error calling question sync API: {str(e)}")
+            return False
     
-    async def handle_question_created(self, data: Dict[str, Any]):
+    async def sync_batch(self, questions: List[Dict[str, Any]]):
         """
-        Handle question created event.
+        Sync a batch of questions via REST API.
         
         Args:
-            data: Question data from event
+            questions: List of question data dictionaries
         """
         try:
-            question_id = data.get('id')
-            logger.info(f"Processing question created event for question {question_id}")
-            
-            # Sync to Pinecone
-            await self.embedding_service.sync_question_on_create(data)
-            
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    self.batch_sync_endpoint,
+                    json={"questions": questions},
+                    timeout=30.0  # Longer timeout for batch operations
+                )
+                
+                if response.status_code == 200:
+                    logger.info(f"Successfully synced batch of {len(questions)} questions via API")
+                    return True
+                else:
+                    logger.error(f"Error syncing batch: {response.text}")
+                    return False
+                    
         except Exception as e:
-            logger.error(f"Error handling question created event: {str(e)}")
+            logger.error(f"Error calling batch sync API: {str(e)}")
+            return False
     
-    async def handle_question_updated(self, data: Dict[str, Any]):
+    async def direct_sync_question(self, question_id: int, question_text: str, 
+                                 domain: str, question_type: str, 
+                                 difficulty: Optional[str] = None):
         """
-        Handle question updated event.
+        Directly sync a question to Pinecone without going through the API.
+        Useful for in-process synchronization.
         
         Args:
-            data: Question data from event
+            question_id: Unique question identifier
+            question_text: The question text
+            domain: Question domain
+            question_type: Type of question
+            difficulty: Optional difficulty level
         """
         try:
-            question_id = data.get('id')
-            logger.info(f"Processing question updated event for question {question_id}")
+            # Directly use embedding service
+            await self.embedding_service.sync_question_on_create({
+                'id': question_id,
+                'text': question_text,
+                'domain': domain,
+                'type': question_type,
+                'difficulty': difficulty
+            })
             
-            # Sync to Pinecone
-            await self.embedding_service.sync_question_on_update(data)
+            logger.info(f"Directly synced question {question_id} to Pinecone")
+            return True
             
         except Exception as e:
-            logger.error(f"Error handling question updated event: {str(e)}")
+            logger.error(f"Error directly syncing question {question_id}: {str(e)}")
+            return False
     
-    async def start_listening(self):
-        """Start listening for messages from RabbitMQ."""
+    async def schedule_periodic_sync(self, interval_seconds: int = 300):
+        """
+        Schedule periodic synchronization of questions.
+        
+        Args:
+            interval_seconds: Interval between sync operations in seconds
+        """
         try:
-            if not self.connection or self.connection.is_closed:
-                await self.connect()
-            
-            async def on_message(message: aio_pika.IncomingMessage):
-                await self.process_message(message)
-            
-            # Start consuming messages
-            await self.queue.consume(on_message)
-            
-            logger.info(f"Started listening on queue: {self.queue_name}")
-            
-            # Keep service running
             while True:
-                await asyncio.sleep(3600)  # Sleep for 1 hour
+                logger.info(f"Running scheduled sync (interval: {interval_seconds}s)")
+                await self.schedule_sync()
+                await asyncio.sleep(interval_seconds)
                 
         except Exception as e:
-            logger.error(f"Error in message listener: {str(e)}")
-            if self.connection and not self.connection.is_closed:
-                await self.connection.close()
-    
-    async def publish_event(self, routing_key: str, data: Dict[str, Any]):
+            logger.error(f"Error in periodic sync: {str(e)}")
+            
+    async def health_check(self) -> Dict[str, Any]:
         """
-        Publish event to RabbitMQ.
+        Check health of vector sync service.
         
-        Args:
-            routing_key: Routing key for the message
-            data: Event data to publish
+        Returns:
+            Health status dictionary
         """
         try:
-            if not self.connection or self.connection.is_closed:
-                await self.connect()
+            # Check Pinecone health via embedding service
+            embedding_health = await self.embedding_service.health_check()
             
-            message = aio_pika.Message(
-                body=json.dumps(data).encode(),
-                delivery_mode=aio_pika.DeliveryMode.PERSISTENT
-            )
+            # Check API endpoints
+            api_health = "healthy"
+            api_details = {}
             
-            await self.exchange.publish(
-                message, 
-                routing_key=routing_key
-            )
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(
+                        f"{self.service_url}/api/v1/vectors/health",
+                        timeout=5.0
+                    )
+                    if response.status_code != 200:
+                        api_health = "unhealthy"
+                        api_details["error"] = f"Status code: {response.status_code}"
+            except Exception as e:
+                api_health = "unhealthy"
+                api_details["error"] = str(e)
             
-            logger.info(f"Published event with routing key: {routing_key}")
+            return {
+                "vector_sync_service": "healthy",
+                "embedding_service": embedding_health,
+                "api_endpoints": {
+                    "status": api_health,
+                    "details": api_details
+                },
+                "overall_status": "healthy" if api_health == "healthy" and 
+                                            embedding_health.get("overall_status") == "healthy" 
+                                        else "unhealthy"
+            }
             
         except Exception as e:
-            logger.error(f"Error publishing event: {str(e)}")
-    
-    async def close(self):
-        """Close connection to RabbitMQ."""
-        if self.connection and not self.connection.is_closed:
-            await self.connection.close()
-            logger.info("Closed connection to RabbitMQ")
+            logger.error(f"Vector sync service health check failed: {str(e)}")
+            return {
+                "vector_sync_service": "unhealthy",
+                "error": str(e),
+                "overall_status": "unhealthy"
+            }
