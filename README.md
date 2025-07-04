@@ -1,182 +1,392 @@
 # TalentSync - AI-Powered Interview Platform
 
-TalentSync is an end-to-end AI-powered interview platform designed to simulate real-world technical interviews through domain-specific modules, adaptive questioning, and real-time audio/video capabilities.
+TalentSync is an intelligent, AI-powered interview platform that delivers personalized technical interviews through domain-specific modules, adaptive questioning, and real-time audio capabilities with comprehensive performance analytics.
 
 ## 🚀 Features
 
-- **Dynamic Interview Modules**: 8 core domains (Software Engineering, DevOps, Kubernetes, DSA, ML, AI Engineering, LLMs, Resume-Driven)
-- **Adaptive AI Interviewer**: Personalized Q&A based on candidate profiles and responses
-- **Real-time Audio/Video**: Professional browser-based interview experience
-- **Performance Analytics**: Comprehensive scoring with AI-generated feedback
+### Core Interview Capabilities
+- **Domain-Specific Modules**: Software Engineering, Machine Learning, Data Structures & Algorithms, Resume-Driven Questions
+- **Intelligent Question Generation**: RAG-powered follow-up questions based on candidate responses
+- **Semantic Search**: Vector-based question retrieval using Pinecone and OpenAI embeddings
+- **Resume-Driven Interviews**: Dynamic question generation based on candidate background
+- **Real-time Transcription**: Hybrid STT using OpenAI Whisper and AssemblyAI
+
+### AI & Machine Learning
+- **Vector Database Integration**: Pinecone for semantic question similarity and retrieval
+- **Embedding Generation**: OpenAI text-embedding-ada-002 for question vectorization
+- **Intelligent Follow-ups**: Context-aware question progression
+- **Resume Analysis**: NLP-powered skill extraction and experience parsing
+- **Performance Analytics**: AI-driven interview assessment and feedback
+
+### Platform Features
 - **Microservices Architecture**: Scalable, maintainable service-oriented design
+- **Background Processing**: Async import and sync operations for large datasets
+- **Comprehensive APIs**: RESTful endpoints with OpenAPI documentation
+- **Database Flexibility**: Hybrid PostgreSQL + vector database architecture
+- **Production-Ready**: Docker containerization with health checks and monitoring
 
 ## 🏗️ Architecture
 
-TalentSync uses a microservices architecture with the following components:
+TalentSync employs a clean microservices architecture optimized for scalability and maintainability:
 
-### Core Services
-- **User Service** (Port 8001): Authentication and profile management
-- **Interview Service** (Port 8002): Module management and session orchestration
-- **Resume Service** (Port 8003): Resume parsing and analysis
-- **Media Service** (Port 8004): Audio/video handling and WebRTC signaling
-- **Transcription Service** (Port 8005): Speech-to-text with Whisper & AssemblyAI
-- **Feedback Service** (Port 8006): Performance scoring and AI feedback
-- **Admin Service** (Port 8007): Administrative management and analytics
+### Active Services
 
-### Infrastructure
-- **PostgreSQL**: Primary database for structured data
-- **Redis**: Caching, session state, and task queues
-- **Pinecone**: Vector database for RAG-based question generation
-- **Nginx**: API Gateway and reverse proxy
+#### **User Service** (Port 8001)
+- User authentication and profile management
+- JWT token-based security with role-based access control
+- OAuth2 with Password flow
+- Password reset and user management APIs
 
-## 🛠️ Tech Stack
+#### **Interview Service** (Port 8002) - *Core Service*
+- Interview module and question management
+- RAG pipeline for semantic question retrieval
+- Vector database synchronization with Pinecone
+- Session orchestration and progress tracking
+- Dataset import and management (SWE, ML, DSA, Resume datasets)
+- Background task processing for bulk operations
 
-- **Backend**: Python 3.11, FastAPI, SQLAlchemy, Pydantic
-- **Frontend**: React + Vite + JavaScript (inline CSS)
-- **Database**: PostgreSQL, Redis, Pinecone
-- **AI/ML**: OpenAI GPT-4, Whisper, spaCy, Transformers
-- **Infrastructure**: Docker, Docker Compose, Nginx
-- **Testing**: PyTest, Jest, React Testing Library
+#### **Resume Service** (Port 8003)
+- Resume file upload and parsing (PDF, DOCX, TXT)
+- NLP-powered skill extraction and experience analysis
+- Resume embedding generation for semantic search
+- Job matching and compatibility scoring
+- Integration with interview question generation
+
+#### **Transcription Service** (Port 8004)
+- Hybrid speech-to-text using OpenAI Whisper + AssemblyAI
+- Real-time audio transcription with WebSocket support
+- Audio device enumeration and management
+- Multiple format support (WAV, MP3, MP4, FLAC)
+- Speaker diarization and confidence scoring
+
+### Infrastructure Components
+- **PostgreSQL**: Primary database with hybrid relational/vector capabilities
+- **Redis**: Caching, session management, and background task queues
+- **Pinecone**: Vector database for semantic search and RAG operations
+- **Nginx**: API Gateway, reverse proxy, and load balancing
+
+## 🛠️ Technology Stack
+
+### Backend Services
+- **Framework**: FastAPI with async/await support
+- **Database**: PostgreSQL 13+ with SQLAlchemy ORM
+- **Vector DB**: Pinecone for embeddings and semantic search
+- **Caching**: Redis for performance optimization
+- **AI/ML**: OpenAI GPT-4, Whisper, text-embedding-ada-002
+- **Background Tasks**: FastAPI background tasks with async processing
+
+### Development & Operations
+- **Containerization**: Docker with multi-stage builds
+- **Orchestration**: Docker Compose for local development
+- **API Documentation**: OpenAPI/Swagger with automatic generation
+- **Testing**: pytest with async support and comprehensive fixtures
+- **Monitoring**: Prometheus metrics and health check endpoints
+- **Code Quality**: Black, isort, mypy for code formatting and type checking
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Docker and Docker Compose
 - Python 3.11+
-- Node.js 18+
+- PostgreSQL 14+
+- Redis 6+
 
-### Development Setup
+### Environment Setup
 
-1. **Clone the repository**
+1. **Clone and navigate to the project**
    ```bash
    git clone <repository-url>
    cd talentsync
    ```
 
-2. **Configure environment variables**
+2. **Set up environment variables**
    ```bash
-   # Copy environment examples for each service
-   cp services/user-service/.env.example services/user-service/.env
-   cp services/interview-service/.env.example services/interview-service/.env
-   # ... repeat for all services
+   # Copy the central environment template
+   cp .env.example .env
+   
+   # Update API keys and configuration in .env file
+   # Required: OPENAI_API_KEY, PINECONE_API_KEY, ASSEMBLYAI_API_KEY
    ```
 
-3. **Start the services**
+3. **Launch with Docker Compose**
    ```bash
-   docker-compose -f infra/docker-compose.yml up -d
+   docker-compose up -d
    ```
 
-4. **Verify services are running**
+4. **Initialize databases**
    ```bash
-   # Check service health
-   curl http://localhost:8001/health  # User Service
-   curl http://localhost:8002/health  # Interview Service
-   # ... check other services
+   # Run migrations for each service
+   docker-compose exec user-service alembic upgrade head
+   docker-compose exec interview-service alembic upgrade head
+   docker-compose exec resume-service alembic upgrade head
+   docker-compose exec transcription-service alembic upgrade head
    ```
 
-## 📁 Project Structure
+### Service Endpoints
 
+Once running, services are available at:
+
+- **User Service**: http://localhost:8001
+  - API Docs: http://localhost:8001/docs
+  - Health: http://localhost:8001/health
+
+- **Interview Service**: http://localhost:8002
+  - API Docs: http://localhost:8002/docs
+  - Health: http://localhost:8002/health
+
+- **Resume Service**: http://localhost:8003
+  - API Docs: http://localhost:8003/docs
+  - Health: http://localhost:8003/health
+
+- **Transcription Service**: http://localhost:8004
+  - API Docs: http://localhost:8004/docs
+  - Health: http://localhost:8004/health
+
+- **API Gateway (nginx)**: http://localhost
+
+### Development Mode
+
+For development, you can run services individually using the central requirements.txt:
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Terminal 1: Interview Service (Core)
+cd services/interview-service
+uvicorn app.main:app --reload --port 8002
+
+# Terminal 2: User Service
+cd services/user-service  
+uvicorn app.main:app --reload --port 8001
+
+# Terminal 3: Resume Service
+cd services/resume-service
+uvicorn app.main:app --reload --port 8003
+
+# Terminal 4: Transcription Service
+cd services/transcription-service
+uvicorn app.main:app --reload --port 8004
 ```
-talentsync/
-├── services/                 # Microservices
-│   ├── user-service/        # Authentication & profiles
-│   ├── interview-service/   # Interview orchestration
-│   ├── resume-service/      # Resume parsing
-│   ├── media-service/       # Audio/video handling
-│   ├── transcription-service/ # Speech-to-text
-│   ├── feedback-service/    # Performance analytics
-│   └── admin-service/       # Administrative functions
-├── frontend/                # React frontend application
-├── infra/                   # Infrastructure configurations
-│   ├── docker-compose.yml   # Development environment
-│   └── nginx.conf          # API Gateway configuration
-└── docs/                    # Project documentation
+
+### Optional Setup Steps
+
+```bash
+# Import question datasets (Optional)
+curl -X POST http://localhost:8002/api/v1/datasets/import/all
+
+# Install spaCy English model for resume parsing
+python -m spacy download en_core_web_sm
 ```
 
-## 🔧 Service Details
+## 📊 Datasets
 
-### User Service
-- JWT-based authentication
-- User profile management
-- Role-based access control
+The platform includes comprehensive question datasets for different domains:
 
-### Interview Service
-- Module and question management
-- Session lifecycle orchestration
-- RAG-based question generation
+### Available Datasets
+- **SWE_dataset.json**: 80+ Software Engineering questions covering system design, algorithms, and best practices
+- **ML_dataset.json**: 80+ Machine Learning questions covering algorithms, models, and techniques  
+- **DSA_dataset.json**: 80+ Data Structures and Algorithms problems with complexity analysis
+- **Resume_dataset.json**: Template questions for resume-driven interviews
+- **Resumes_dataset.json**: Sample resumes for testing and development
 
-### Resume Service
-- PDF/document parsing
-- NLP-based skill extraction
-- Resume-driven question generation
+### Dataset Features
+- **Structured Format**: Consistent JSON schema with metadata
+- **Difficulty Levels**: Easy, Medium, Hard classifications
+- **Follow-up Templates**: Predefined follow-up question patterns
+- **Ideal Answers**: Reference answers for assessment
+- **Domain Tagging**: Categorized for vector search optimization
 
-### Media Service
-- WebRTC signaling
-- Audio/video capture
-- Real-time streaming
+### Import Process
+```bash
+# Import all datasets
+curl -X POST http://localhost:8002/api/v1/datasets/import/all
 
-### Transcription Service
-- Hybrid STT (Whisper + AssemblyAI)
-- Speaker diarization
-- Timestamped transcripts
+# Import specific dataset
+curl -X POST "http://localhost:8002/api/v1/datasets/import/path?file_path=/path/to/SWE_dataset.json"
 
-### Feedback Service
-- Multi-dimensional scoring
-- Semantic similarity analysis
-- AI-generated feedback reports
+# Check import status
+curl http://localhost:8002/api/v1/health
+```
 
-### Admin Service
-- System analytics
-- User management
-- Content moderation
+## 🔧 Configuration
+
+### Central Configuration
+
+All configuration is managed through a single `.env` file in the root directory. Copy `.env.example` to `.env` and update the values:
+
+#### Required API Keys
+```bash
+# AI Services
+OPENAI_API_KEY=your-openai-api-key-here
+PINECONE_API_KEY=your-pinecone-api-key-here
+ASSEMBLYAI_API_KEY=your-assemblyai-api-key-here
+
+# Security
+SECRET_KEY=your-secret-key-here-change-in-production-make-it-very-long-and-random
+
+# Database
+DATABASE_URL=postgresql+asyncpg://talentsync:secret@localhost:5432/talentsync
+```
+
+#### Optional Configuration
+```bash
+# CORS for frontend (if different from defaults)
+ALLOWED_ORIGINS=["http://localhost:3000", "http://localhost:8010"]
+
+# Logging
+LOG_LEVEL=INFO
+DEBUG=false
+
+# File Upload Limits
+MAX_FILE_SIZE=10485760  # 10MB for resumes
+TRANSCRIPTION_MAX_FILE_SIZE=52428800  # 50MB for audio
+```
+
+#### Resume Service
+```bash
+DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/talentsync_resumes
+OPENAI_API_KEY=your-openai-api-key
+UPLOAD_DIR=./uploads
+MAX_FILE_SIZE=10485760
+```
+
+#### Transcription Service
+```bash
+DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/talentsync_transcription
+OPENAI_API_KEY=your-openai-api-key
+ASSEMBLYAI_API_KEY=your-assemblyai-api-key
+UPLOAD_DIR=./uploads
+```
 
 ## 🧪 Testing
 
-Run tests for all services:
-```bash
-# Backend tests
-cd services/user-service && python -m pytest
-cd services/interview-service && python -m pytest
-# ... repeat for all services
+### Running Tests
 
-# Frontend tests
-cd frontend && npm test
+Each service includes comprehensive test suites:
+
+```bash
+# Test individual services
+cd services/interview-service && pytest tests/ -v
+cd services/user-service && pytest tests/ -v
+cd services/resume-service && pytest tests/ -v
+cd services/transcription-service && pytest tests/ -v
+
+# Run with coverage
+pytest --cov=app tests/ --cov-report=html
 ```
 
-## 📊 Monitoring
+### API Testing
 
-- **Health Checks**: Each service exposes `/health` endpoint
-- **Metrics**: Prometheus metrics at `/metrics`
-- **Logs**: Centralized logging with structured format
+Test API endpoints using the interactive documentation:
 
-## 🔒 Security
+- Interview Service: http://localhost:8002/docs
+- User Service: http://localhost:8001/docs  
+- Resume Service: http://localhost:8003/docs
+- Transcription Service: http://localhost:8004/docs
 
-- JWT-based authentication
-- Input validation with Pydantic
-- Rate limiting
-- CORS configuration
-- Secret management via environment variables
+## 📚 API Documentation
 
-## 📈 Scalability
+Each service provides comprehensive API documentation:
 
-- Microservices architecture
-- Async/await patterns
-- Database connection pooling
-- Redis caching
-- Horizontal scaling ready
+### OpenAPI/Swagger Documentation
+- **Interview Service**: http://localhost:8002/docs
+- **User Service**: http://localhost:8001/docs
+- **Resume Service**: http://localhost:8003/docs
+- **Transcription Service**: http://localhost:8004/docs
 
-## 🤝 Contributing
+### Service-Specific Documentation
+- [Interview Service README](services/interview-service/README.md) - Core orchestration and RAG pipeline
+- [User Service README](services/user-service/README.md) - Authentication and user management
+- [Resume Service README](services/resume-service/README.md) - Resume parsing and analysis
+- [Transcription Service README](services/transcription-service/README.md) - Audio transcription and device management
 
-1. Fork the repository
-2. Create a feature branch
-3. Follow coding conventions in `/docs/talent_sync_coding_conventions.md`
-4. Add tests for new features
-5. Submit a pull request
+## 🔍 Monitoring & Health Checks
+
+### Health Endpoints
+Each service provides health check endpoints for monitoring:
+
+```bash
+# Service health
+curl http://localhost:8001/api/v1/health  # User Service
+curl http://localhost:8002/api/v1/health  # Interview Service
+curl http://localhost:8003/api/v1/health  # Resume Service  
+curl http://localhost:8004/api/v1/health  # Transcription Service
+
+# Database connectivity
+curl http://localhost:8002/api/v1/health/database
+
+# Vector database health
+curl http://localhost:8002/api/v1/health/vector
+```
+
+### Metrics
+Prometheus metrics are available at `/metrics` endpoint for each service:
+
+```bash
+curl http://localhost:8002/metrics  # Interview Service metrics
+```
+
+## 🚀 Production Deployment
+
+### Docker Compose Production
+```bash
+# Production deployment with optimized settings
+docker-compose up -d
+```
+
+### Environment-Specific Configuration
+- **Development**: Local PostgreSQL, Redis, and Pinecone emulator
+- **Staging**: Cloud databases with test API keys  
+- **Production**: Production databases, monitoring, and security configurations
+
+### Security Considerations
+- JWT token authentication with configurable expiration
+- CORS configuration for frontend integration
+- Rate limiting on authentication endpoints
+- Input validation and sanitization
+- Secure file upload handling
+
+## 🛠️ Development
+
+### Code Quality Standards
+- **Type Hints**: Full typing support with mypy
+- **Linting**: Black, isort, and flake8 for consistent formatting
+- **Testing**: pytest with async support and comprehensive fixtures
+- **Documentation**: Comprehensive docstrings and API documentation
+
+### Project Structure
+```
+talentsync/
+├── services/
+│   ├── interview-service/     # Core orchestration service
+│   ├── user-service/         # Authentication and user management
+│   ├── resume-service/       # Resume parsing and analysis
+│   └── transcription-service/ # Audio transcription
+├── docs/                     # Technical documentation
+├── frontend/                 # Frontend application (when added)
+├── scripts/                  # Development and deployment scripts
+├── ssl/                      # SSL certificates directory
+├── docker-compose.yml        # Central Docker configuration
+├── nginx.conf               # Reverse proxy configuration
+├── .env.example             # Central environment template
+├── requirements.txt         # Central Python dependencies
+└── README.md               # This file
+```
+
+### Contributing Guidelines
+1. Follow the coding conventions in `docs/talent_sync_coding_conventions.md`
+2. Add comprehensive tests for new features
+3. Update documentation for API changes
+4. Use meaningful commit messages and PR descriptions
+5. Ensure all health checks pass before deployment
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Copyright © 2025 TalentSync. All rights reserved.
 
-## 🆘 Support
+## 🔗 Additional Resources
 
-For support, please contact the TalentSync team or create an issue in the repository.
+- [Technical Architecture](docs/talent_sync_tech_architecture.md)
+- [Project Specifications](docs/talent_sync_project_spec.md)
+- [Coding Conventions](docs/talent_sync_coding_conventions.md)

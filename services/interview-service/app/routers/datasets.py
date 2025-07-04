@@ -4,6 +4,7 @@ Handles importing question datasets from JSON files.
 """
 import json
 import logging
+import os
 from typing import Dict, List, Any
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, BackgroundTasks, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -150,6 +151,142 @@ async def import_questions_from_json(
             detail=f"Error importing questions: {str(e)}"
         )
 
+@router.post("/import/path", status_code=status.HTTP_202_ACCEPTED)
+async def import_questions_from_path(
+    background_tasks: BackgroundTasks,
+    file_path: str,
+    module_id: int = None,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Import questions from a JSON file path.
+    
+    Args:
+        file_path: Path to the JSON file
+        module_id: Optional module ID to assign questions to
+        db: Database session
+    
+    Returns:
+        Import summary with count of imported questions
+    """
+    if not os.path.exists(file_path) or not file_path.endswith('.json'):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid file path or not a JSON file."
+        )
+    
+    try:
+        # Read and parse the file
+        with open(file_path, 'r', encoding='utf-8') as f:
+            questions_data = json.loads(f.read())
+        
+        # Validate questions data
+        if not isinstance(questions_data, list):
+            raise HTTPException(
+                status_code=400,
+                detail="The JSON file should contain an array of question objects."
+            )
+        
+        # Convert to QuestionImport schema
+        question_imports = []
+        for item in questions_data:
+            # Ensure required fields are present
+            if 'text' not in item:
+                continue
+                
+            # Handle different dataset formats
+            question = {
+                'text': item['text'],
+                'difficulty': item.get('difficulty', 'medium'),
+                'domain': item.get('domain', os.path.basename(file_path).split('_')[0]),
+                'type': item.get('type', 'general'),
+                'question_type': item.get('question_type', 'open_ended'),
+                'tags': item.get('tags', item.get('follow_up_templates', [])),
+                'module_id': module_id,
+                'ideal_answer': item.get('ideal_answer', item.get('ideal_answer_summary', None)),
+                'expected_duration_seconds': item.get('expected_duration_seconds', 300),
+                'scoring_criteria': item.get('scoring_criteria', {})
+            }
+            question_imports.append(question)
+        
+        # Process import in background
+        background_tasks.add_task(
+            process_questions_import,
+            questions=question_imports,
+            module_id=module_id,
+            db=db
+        )
+        
+        return {
+            "status": "accepted",
+            "message": f"Import of {len(question_imports)} questions started in background from {os.path.basename(file_path)}",
+            "question_count": len(question_imports)
+        }
+    
+    except json.JSONDecodeError:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid JSON format. Please provide a valid JSON file."
+        )
+    except Exception as e:
+        logger.error(f"Error importing questions from path: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error importing questions: {str(e)}"
+        )
+
+@router.post("/import/all", status_code=status.HTTP_202_ACCEPTED)
+async def import_all_datasets(
+    background_tasks: BackgroundTasks,
+    data_dir: str = None,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Import all datasets from the data directory.
+    
+    Args:
+        data_dir: Path to the data directory (optional, uses default if not provided)
+        db: Database session
+    
+    Returns:
+        Import status
+    """
+    try:
+        # Use default data directory if not provided
+        if not data_dir:
+            # Try to find data directory
+            current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+            data_dir = os.path.join(current_dir, "data")
+            
+        if not os.path.exists(data_dir):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Data directory not found: {data_dir}"
+            )
+        
+        # Import script path
+        script_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts")
+        script_path = os.path.join(script_dir, "import_datasets.py")
+        
+        # Run the import script in the background
+        background_tasks.add_task(
+            run_import_script,
+            script_path=script_path
+        )
+        
+        return {
+            "status": "accepted",
+            "message": "Dataset import process started in background",
+            "data_dir": data_dir
+        }
+        
+    except Exception as e:
+        logger.error(f"Error starting dataset import: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error starting dataset import: {str(e)}"
+        )
+
 async def process_questions_import(questions: List[Dict[str, Any]], module_id: int, db: AsyncSession):
     """
     Process the question import in the background.
@@ -207,3 +344,17 @@ async def process_questions_import(questions: List[Dict[str, Any]], module_id: i
             
     except Exception as e:
         logger.error(f"Error in question import process: {str(e)}")
+
+async def run_import_script(script_path: str):
+    """Run the import script as a subprocess."""
+    import subprocess
+    import sys
+    
+    try:
+        logger.info(f"Running import script: {script_path}")
+        subprocess.run([sys.executable, script_path], check=True)
+        logger.info("Import script completed successfully")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Import script failed with exit code {e.returncode}")
+    except Exception as e:
+        logger.error(f"Error running import script: {str(e)}")

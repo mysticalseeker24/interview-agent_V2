@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = "your-openai-api-key-here"
     
     # CORS settings
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
+    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8010"]
     ALLOWED_HOSTS: List[str] = ["localhost", "127.0.0.1"]
     
     # Application settings

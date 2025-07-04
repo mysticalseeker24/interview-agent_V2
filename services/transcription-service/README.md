@@ -1,53 +1,153 @@
 # TalentSync Transcription Service
 
-This service provides hybrid Speech-to-Text (STT) transcription capabilities using OpenAI Whisper and AssemblyAI, along with media device enumeration for the TalentSync interview platform.
+The Transcription Service provides hybrid audio transcription capabilities using OpenAI Whisper and AssemblyAI, along with media device management for the TalentSync platform.
 
 ## Features
 
-### Task 2.4: Transcription & Media Integration
-
-This service implements the following endpoints:
-
-- **POST `/media/devices`**: Returns a list of available audio/video device labels for the frontend
-- **POST `/transcribe`**: Accepts audio blob form-data and provides hybrid STT transcription
-
-### Hybrid STT Implementation
-
-The transcription service uses a sophisticated hybrid approach:
-
-1. **Primary**: OpenAI Whisper (`whisper-1` model)
-2. **Fallback**: AssemblyAI (when confidence < 0.85)
-3. **Response**: Normalized JSON format with transcript and segments
+- **Hybrid STT (Speech-to-Text)**: Combines OpenAI Whisper and AssemblyAI for optimal accuracy
+- **Real-time Transcription**: Live audio stream processing
+- **Batch Transcription**: File-based audio processing
+- **Media Device Enumeration**: Lists available audio input/output devices
+- **Multiple Audio Formats**: Support for WAV, MP3, MP4, M4A, FLAC
+- **Speaker Diarization**: Identifies different speakers in conversations
+- **Confidence Scoring**: Provides transcription accuracy metrics
 
 ## API Endpoints
 
+### Transcription
+- `POST /api/v1/transcription/upload` - Upload audio file for transcription
+- `POST /api/v1/transcription/stream` - Start real-time transcription session
+- `GET /api/v1/transcription/{transcription_id}` - Get transcription result
+- `PUT /api/v1/transcription/{transcription_id}` - Update transcription
+- `DELETE /api/v1/transcription/{transcription_id}` - Delete transcription
+
+### Hybrid Processing
+- `POST /api/v1/transcription/hybrid` - Process audio with both Whisper and AssemblyAI
+- `POST /api/v1/transcription/whisper` - Process with OpenAI Whisper only
+- `POST /api/v1/transcription/assemblyai` - Process with AssemblyAI only
+
 ### Media Devices
+- `GET /api/v1/media/devices/input` - List audio input devices
+- `GET /api/v1/media/devices/output` - List audio output devices
+- `GET /api/v1/media/devices/all` - List all audio devices
+- `POST /api/v1/media/test` - Test audio device functionality
 
-```http
-POST /media/devices
-Authorization: Bearer <token>
-Content-Type: application/json
+### Health Check
+- `GET /api/v1/health` - Service health status
 
-Response:
-{
-  "devices": [
-    {
-      "id": "default_microphone",
-      "label": "Default Microphone",
-      "device_type": "audio",
-      "capabilities": {
-        "sample_rates": [44100, 48000],
-        "formats": ["PCM", "MP3"],
-        "channels": [1, 2]
-      },
-      "is_default": true
-    }
-  ],
-  "total": 1
-}
+## Supported Audio Formats
+
+- **WAV**: Uncompressed audio (best quality)
+- **MP3**: Compressed audio format
+- **MP4/M4A**: Video/audio containers
+- **FLAC**: Lossless compression
+- **OGG**: Open-source audio format
+
+## Environment Variables
+
+```
+DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/talentsync_transcription
+UPLOAD_DIR=./uploads
+MAX_FILE_SIZE=104857600  # 100MB
+OPENAI_API_KEY=your-openai-api-key
+ASSEMBLYAI_API_KEY=your-assemblyai-api-key
+HYBRID_MODE=true
+DEFAULT_STT_PROVIDER=hybrid
+ALLOWED_ORIGINS=["http://localhost:3000"]
+ALLOWED_HOSTS=["localhost", "127.0.0.1"]
 ```
 
-### Transcription
+## Hybrid STT Architecture
+
+The service implements a hybrid approach for maximum accuracy:
+
+1. **Primary Processing**: Uses OpenAI Whisper for initial transcription
+2. **Secondary Validation**: Uses AssemblyAI for confidence scoring
+3. **Result Fusion**: Combines results based on confidence metrics
+4. **Fallback Logic**: Switches providers if one fails
+5. **Quality Assessment**: Compares outputs and selects best result
+
+## Database Schema
+
+The service uses the following main tables:
+- `transcriptions` - Transcription metadata and results
+- `audio_files` - Uploaded audio file information
+- `transcription_segments` - Time-stamped transcript segments
+- `speaker_segments` - Speaker diarization results
+- `device_profiles` - Audio device configurations
+
+## Real-time Processing
+
+For live transcription:
+- WebSocket connections for real-time audio streaming
+- Chunked audio processing for low latency
+- Incremental transcription updates
+- Buffer management for continuous streams
+
+## Audio Processing Pipeline
+
+1. **File Upload/Stream**: Accept audio input
+2. **Format Validation**: Verify supported audio formats
+3. **Preprocessing**: Normalize audio levels and format
+4. **STT Processing**: Run through Whisper and/or AssemblyAI
+5. **Post-processing**: Clean and format transcription text
+6. **Storage**: Save results with metadata and timestamps
+
+## Quality Features
+
+- **Confidence Scoring**: Per-word and segment confidence levels
+- **Speaker Identification**: Distinguish between different speakers
+- **Timestamp Accuracy**: Precise word-level timing
+- **Language Detection**: Automatic language identification
+- **Noise Filtering**: Background noise reduction
+
+## Integration with Interview System
+
+The Transcription Service integrates with:
+- **Interview Service**: For recording and transcribing interview sessions
+- **Frontend**: Real-time transcription display during interviews
+- **Analytics**: Conversation analysis and keyword extraction
+
+## Device Management
+
+- Enumerates available audio input/output devices
+- Provides device capabilities and specifications
+- Supports device testing and configuration
+- Cross-platform compatibility (Windows, macOS, Linux)
+
+## Getting Started
+
+1. Install system dependencies for audio processing
+2. Set environment variables with API keys
+3. Create upload directory: `mkdir uploads`
+4. Install Python dependencies: `pip install -e .`
+5. Run migrations: `alembic upgrade head`
+6. Start service: `uvicorn app.main:app --reload --port 8004`
+
+## Development
+
+Key architectural components:
+- Async audio processing for scalability
+- Modular STT provider interface
+- Comprehensive error handling
+- Audio format conversion utilities
+- Device detection and management
+
+## Performance Considerations
+
+- **Chunked Processing**: Handles large audio files efficiently
+- **Concurrent Transcription**: Multiple providers in parallel
+- **Caching**: Results caching for repeated requests
+- **Streaming**: Real-time processing with minimal latency
+
+## Testing
+
+Run tests with:
+```bash
+pytest tests/
+```
+
+Test audio files should be placed in `/uploads/test/` directory.
 
 ```http
 POST /transcribe

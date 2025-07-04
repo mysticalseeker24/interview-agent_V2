@@ -115,7 +115,7 @@ This document defines the coding conventions and best practices for the **Talent
 ## 5. Data & Configuration
 
 - **Environment Variables**: store secrets in `.env`, loaded via `python-dotenv` (backend) and Vite's `.env.local`.
-- **Configuration files**: `/infra/docker-compose.yml`, `/infra/k8s/*.yaml`.
+- **Configuration files**: `/docker-compose.yml`, `/nginx.conf`, `/.env.example`.
 - **Database migrations**: use **Alembic** (Python) and maintain version-controlled migration scripts under `app/migrations/`.
 
 ---

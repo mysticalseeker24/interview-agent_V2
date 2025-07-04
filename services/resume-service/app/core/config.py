@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     PROJECT_PATTERNS_FILE: str = "patterns/projects.json"
     
     # CORS settings
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
+    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8010"]
     ALLOWED_HOSTS: List[str] = ["localhost", "127.0.0.1"]
     
     # Application settings
