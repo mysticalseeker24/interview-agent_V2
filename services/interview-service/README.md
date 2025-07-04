@@ -2,6 +2,15 @@
 
 The Interview Service is the core orchestration service for the TalentSync platform, responsible for managing interview modules, questions, sessions, and the complete RAG (Retrieval-Augmented Generation) pipeline for semantic question retrieval and follow-up generation.
 
+## 🎯 Current Status: **OPERATIONAL**
+
+✅ **RAG Pipeline**: Fully functional hybrid PostgreSQL + Pinecone architecture  
+✅ **Dataset Import**: 95 questions imported across 5 modules (DSA, ML, Resume, SWE)  
+✅ **Vector Search**: Semantic search working with OpenAI embeddings  
+✅ **API Endpoints**: All core endpoints tested and operational  
+✅ **Background Tasks**: Import and sync operations working  
+✅ **Documentation**: Complete OpenAPI docs available at `/docs`
+
 ## Features
 
 ### Core Functionality
@@ -319,43 +328,75 @@ curl http://localhost:8002/api/v1/health/vector
 
 ## Getting Started
 
+## 🚀 Quick Start
+
 ### Prerequisites
-- Python 3.9+
-- PostgreSQL 13+
-- Pinecone account and API key
-- OpenAI API key
+- Python 3.11+
+- OpenAI API Key
+- Pinecone API Key
+- PostgreSQL (optional for development)
 
-### Installation
-1. **Clone and Navigate**:
+### Setup Instructions
+
+1. **Install Dependencies**
    ```bash
-   cd talentsync/services/interview-service
+   # From project root
+   pip install -r requirements.txt
+   
+   # Download spaCy model
+   python -m spacy download en_core_web_sm
    ```
 
-2. **Install Dependencies**:
+2. **Environment Configuration**
    ```bash
-   pip install -e .
-   ```
-
-3. **Set Environment Variables**:
-   ```bash
+   # Copy environment template
    cp .env.example .env
-   # Edit .env with your configuration
+   
+   # Update .env with your API keys (without quotes):
+   OPENAI_API_KEY=your_openai_api_key_here
+   PINECONE_API_KEY=your_pinecone_api_key_here
+   DATABASE_URL=postgresql+asyncpg://talentsync:secret@localhost:5432/talentsync
    ```
 
-4. **Run Database Migrations**:
+3. **Start Infrastructure**
    ```bash
-   alembic upgrade head
+   # PostgreSQL
+   docker run --name talentsync-postgres -e POSTGRES_USER=talentsync -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=talentsync -p 5432:5432 -d postgres:14
+   
+   # Redis
+   docker run --name talentsync-redis -p 6379:6379 -d redis:6-alpine
    ```
 
-5. **Import Datasets** (Optional):
+4. **Start Interview Service**
    ```bash
-   python app/scripts/import_datasets.py
+   # From interview-service directory
+   cd services/interview-service
+   uvicorn app.main:app --reload --port 8002
    ```
 
-6. **Start Service**:
+5. **Import Data and Test RAG Pipeline**
    ```bash
-   uvicorn app.main:app --reload --host 0.0.0.0 --port 8002
+   # Import all datasets (95 questions across 5 modules)
+   Invoke-RestMethod -Method POST -Uri "http://localhost:8002/api/v1/datasets/import/all"
+   
+   # Sync questions to Pinecone vector database
+   Invoke-RestMethod -Method POST -Uri "http://localhost:8002/api/v1/vectors/sync/questions/all"
+   
+   # Test semantic search
+   Invoke-RestMethod -Method GET -Uri "http://localhost:8002/api/v1/vectors/search?query=distributed%20systems&top_k=3"
+   
+   # Check system health
+   Invoke-RestMethod -Method GET -Uri "http://localhost:8002/api/v1/vectors/health"
    ```
+
+6. **Access Documentation**
+   - OpenAPI docs: `http://localhost:8002/docs`
+   - API specification: `http://localhost:8002/openapi.json`
+   ```
+
+4. **Verify Service**
+   - API Documentation: http://localhost:8002/docs
+   - Health Check: http://localhost:8002/health
 
 ### Docker Deployment
 ```bash

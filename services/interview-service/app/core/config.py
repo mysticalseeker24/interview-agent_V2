@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     # Application settings
     DEBUG: bool = False
     LOG_LEVEL: str = "INFO"
+    PORT: int = 8002
     
     # External service URLs
     USER_SERVICE_URL: str = "http://localhost:8001"
@@ -45,3 +46,7 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """Get cached settings instance."""
     return Settings()
+
+
+# Create global settings instance
+settings = get_settings()

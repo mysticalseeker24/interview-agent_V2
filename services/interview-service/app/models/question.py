@@ -2,9 +2,8 @@
 from datetime import datetime
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, JSON
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
+from app.models.base import Base
 
 
 class Question(Base):

@@ -184,17 +184,16 @@ class EmbeddingService:
             
             # Get questions that need sync
             from sqlalchemy import text
-            from app.core.database import get_db
+            from app.core.database import async_session
             
-            db = await get_db()
-            async with db as session:
+            async with async_session() as session:
                 # Get questions that need sync - either new or updated
                 # We're assuming there's a last_synced column in the questions table
                 query = """
                     SELECT id, text, domain, type, difficulty 
                     FROM questions
-                    WHERE last_synced IS NULL OR last_updated > last_synced
-                    ORDER BY last_updated DESC
+                    WHERE last_synced IS NULL OR updated_at > last_synced
+                    ORDER BY updated_at DESC
                     LIMIT :limit
                 """
                 

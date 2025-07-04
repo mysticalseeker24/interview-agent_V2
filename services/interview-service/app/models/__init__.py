@@ -5,8 +5,8 @@ from app.models.followup_template import FollowUpTemplate
 from app.models.session import Session, SessionStatus, SessionMode
 from app.models.response import Response
 
-# Import Base from one of the models (they should all use the same Base)
-from app.models.module import Base
+# Import Base from the shared base module
+from app.models.base import Base
 
 __all__ = [
     "Module", "Question", "FollowUpTemplate", "Session", "Response",

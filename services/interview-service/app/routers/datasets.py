@@ -254,8 +254,8 @@ async def import_all_datasets(
     try:
         # Use default data directory if not provided
         if not data_dir:
-            # Try to find data directory
-            current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+            # Try to find data directory (go up 5 levels to reach talentsync root)
+            current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
             data_dir = os.path.join(current_dir, "data")
             
         if not os.path.exists(data_dir):

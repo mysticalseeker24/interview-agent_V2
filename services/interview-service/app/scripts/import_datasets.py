@@ -9,6 +9,7 @@ import os
 import logging
 from pathlib import Path
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
 
 # Add parent directory to path to allow imports
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
@@ -54,8 +55,8 @@ async def create_module_if_not_exists(db: AsyncSession, title: str, category: Mo
         Module ID
     """
     # Check if module exists
-    stmt = f"SELECT id FROM modules WHERE title = '{title}' LIMIT 1"
-    result = await db.execute(stmt)
+    stmt = text("SELECT id FROM modules WHERE title = :title LIMIT 1")
+    result = await db.execute(stmt, {"title": title})
     module_id = result.scalar()
     
     if module_id:

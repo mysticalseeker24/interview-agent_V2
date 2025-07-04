@@ -5,10 +5,14 @@ Handles embeddings, indexing, and semantic retrieval for questions.
 import logging
 import os
 from typing import List, Dict, Any, Optional
-import pinecone
+from dotenv import load_dotenv
+from pinecone import Pinecone, ServerlessSpec
 from openai import OpenAI
 
 from app.core.config import get_settings
+
+# Load environment variables
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
@@ -20,17 +24,20 @@ class PineconeService:
     
     def __init__(self):
         """Initialize Pinecone service with API key and environment."""
-        # Initialize Pinecone
-        pinecone.init(
-            api_key=os.getenv('PINECONE_API_KEY'),
-            environment='us-west1-gcp'
-        )
+        # Get API key from settings or environment
+        api_key = settings.PINECONE_API_KEY or os.getenv('PINECONE_API_KEY')
+        
+        if not api_key:
+            raise ValueError("PINECONE_API_KEY not found in environment variables or settings")
+        
+        # Initialize Pinecone with new API
+        self.pc = Pinecone(api_key=api_key)
         
         # Ensure questions index exists
         self._ensure_index_exists()
         
         # Get questions index
-        self.questions_index = pinecone.Index('questions-embeddings')
+        self.questions_index = self.pc.Index('questions-embeddings')
         
         # Initialize OpenAI client for embeddings
         self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
@@ -43,19 +50,21 @@ class PineconeService:
         
         try:
             # Check if index exists
-            existing_indexes = pinecone.list_indexes()
+            existing_indexes = self.pc.list_indexes()
+            index_names = [idx.name for idx in existing_indexes]
             
-            if index_name not in existing_indexes:
+            if index_name not in index_names:
                 logger.info(f"Creating Pinecone index: {index_name}")
                 
                 # Create index with OpenAI embedding dimensions
-                pinecone.create_index(
+                self.pc.create_index(
                     name=index_name,
                     dimension=1536,  # OpenAI text-embedding-ada-002 dimension
                     metric="cosine",
-                    metadata_config={
-                        "indexed": ["domain", "type", "difficulty", "question_id"]
-                    }
+                    spec=ServerlessSpec(
+                        cloud='aws',
+                        region='us-east-1'
+                    )
                 )
                 
                 logger.info(f"Successfully created Pinecone index: {index_name}")
