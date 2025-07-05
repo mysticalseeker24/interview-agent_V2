@@ -9,13 +9,21 @@ logger = logging.getLogger(__name__)
 
 settings = get_settings()
 
-# Create async engine
-engine = create_async_engine(
-    settings.DATABASE_URL,
-    echo=settings.DEBUG,
-    poolclass=StaticPool,
-    pool_pre_ping=True,
-)
+# Create async engine with SQLite-specific configuration
+if settings.DATABASE_URL.startswith("sqlite"):
+    engine = create_async_engine(
+        settings.DATABASE_URL,
+        echo=settings.DEBUG,
+        poolclass=StaticPool,
+        connect_args={"check_same_thread": False},
+        pool_pre_ping=True,
+    )
+else:
+    engine = create_async_engine(
+        settings.DATABASE_URL,
+        echo=settings.DEBUG,
+        pool_pre_ping=True,
+    )
 
 # Create async session factory
 async_session = sessionmaker(
