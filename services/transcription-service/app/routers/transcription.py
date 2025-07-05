@@ -10,7 +10,7 @@ import logging
 from ..core.database import get_db
 from ..core.security import get_current_user
 from ..schemas.transcription import TranscriptionRequest, TranscriptionResponse, TranscriptionListResponse
-from ..schemas.user import User
+from ..schemas.user import UserRead
 from ..services.transcription_service import TranscriptionService
 from ..services.database_service import DatabaseService
 
@@ -28,7 +28,7 @@ async def transcribe_audio(
     file: UploadFile = File(...),
     language: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: UserRead = Depends(get_current_user),
 ):
     """
     Transcribe audio file using hybrid STT approach.
@@ -78,7 +78,7 @@ async def get_transcriptions(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: UserRead = Depends(get_current_user),
 ):
     """
     Get all transcriptions for the current user.
@@ -128,7 +128,7 @@ async def get_transcriptions(
 async def get_transcription(
     transcription_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: UserRead = Depends(get_current_user),
 ):
     """
     Get a specific transcription by ID.
