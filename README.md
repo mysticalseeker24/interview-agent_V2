@@ -49,12 +49,13 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 - Dataset import and management (SWE, ML, DSA, Resume datasets)
 - Background task processing with Celery for bulk operations and feedback generation
 
-#### **Resume Service** (Port 8003)
-- Resume file upload and parsing (PDF, DOCX, TXT)
-- NLP-powered skill extraction and experience analysis
-- Resume embedding generation for semantic search
-- Job matching and compatibility scoring
-- Integration with interview question generation
+#### **Resume Service** (Port 8003) - *JSON Storage*
+- Resume file upload and parsing (PDF, DOCX, TXT) with local JSON storage
+- NLP-powered skill extraction using spaCy en_core_web_lg model
+- Thread-safe JSON file operations with atomic writes
+- User-based directory organization for scalable file management
+- Integration with interview service via internal API endpoints
+- No database dependencies - simplified architecture for faster deployment
 
 #### **Transcription Service** (Port 8004)
 - Hybrid speech-to-text using OpenAI Whisper + AssemblyAI
@@ -64,7 +65,8 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 - Speaker diarization and confidence scoring
 
 ### Infrastructure Components
-- **PostgreSQL**: Primary database with hybrid relational/vector capabilities
+- **PostgreSQL**: Primary database for interview, user, transcription services
+- **Local JSON Storage**: Resume service uses file-based storage for simplified deployment
 - **Redis**: Caching, session management, and background task queues
 - **Pinecone**: Vector database for semantic search and RAG operations
 - **Nginx**: API Gateway, reverse proxy, and load balancing
@@ -73,7 +75,8 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 
 ### Backend Services
 - **Framework**: FastAPI with async/await support
-- **Database**: PostgreSQL 13+ with SQLAlchemy ORM
+- **Database**: PostgreSQL 13+ with SQLAlchemy ORM (interview, user, transcription services)
+- **Storage**: Local JSON files with thread-safe operations (resume service)
 - **Vector DB**: Pinecone for embeddings and semantic search
 - **Caching**: Redis for performance optimization
 - **AI/ML**: OpenAI o4-mini, GPT-4, Whisper, text-embedding-ada-002, sentence-transformers

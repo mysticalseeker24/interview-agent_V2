@@ -12,14 +12,14 @@ from filelock import FileLock
 
 from app.schemas.resume import ResumeParseResult, ResumeRead, ResumeUploadResponse
 from app.services.resume_parsing_service import ResumeParsingService
-from app.core.config import get_settings
+from app.core.json_config import get_json_settings
 
 logger = logging.getLogger(__name__)
 
-settings = get_settings()
+settings = get_json_settings()
 
 
-class ResumeService:
+class JsonResumeService:
     """Service for resume management using local JSON file storage."""
     
     def __init__(self):
@@ -63,9 +63,6 @@ class ResumeService:
     def _write_json_file(self, file_path: Path, data: Dict[str, Any]) -> bool:
         """Write JSON file with error handling and atomic operations."""
         try:
-            # Ensure parent directory exists
-            file_path.parent.mkdir(parents=True, exist_ok=True)
-            
             # Write to temporary file first, then move (atomic operation)
             temp_file = file_path.with_suffix('.tmp')
             with open(temp_file, 'w', encoding='utf-8') as f:

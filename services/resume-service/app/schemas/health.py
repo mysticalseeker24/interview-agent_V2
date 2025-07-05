@@ -6,5 +6,5 @@ class HealthResponse(BaseModel):
     """Health check response schema."""
     status: str
     service: str
-    database: str
+    storage: str
     spacy_model: str = "not_loaded"

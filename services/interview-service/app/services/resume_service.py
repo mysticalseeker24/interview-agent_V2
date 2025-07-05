@@ -97,6 +97,42 @@ class ResumeService:
             logger.error(f"Error fetching resume data: {str(e)}")
             return {}
     
+    async def fetch_resume_data(self, resume_id: int, user_id: int) -> Dict[str, Any]:
+        """
+        Fetch parsed resume data from resume service.
+        
+        Args:
+            resume_id: Resume ID
+            user_id: User ID
+            
+        Returns:
+            Parsed resume data
+            
+        Raises:
+            Exception: If resume data cannot be fetched
+        """
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"{self.settings.RESUME_SERVICE_URL}/api/v1/resume/internal/{resume_id}/data",
+                    params={"user_id": user_id},
+                    timeout=30.0
+                )
+                
+                if response.status_code == 404:
+                    logger.warning(f"Resume {resume_id} not found for user {user_id}")
+                    return {}
+                
+                response.raise_for_status()
+                return response.json()
+                
+        except httpx.RequestError as e:
+            logger.error(f"Failed to fetch resume data: {str(e)}")
+            return {}
+        except Exception as e:
+            logger.error(f"Unexpected error fetching resume data: {str(e)}")
+            return {}
+
     async def analyze_experience(self, resume_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze candidate experience from resume.

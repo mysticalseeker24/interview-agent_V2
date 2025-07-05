@@ -1,0 +1,38 @@
+[
+  {
+    "label": "PROJECT",
+    "pattern": [{"LOWER": "project"}]
+  },
+  {
+    "label": "PROJECT",
+    "pattern": [{"LOWER": "application"}]
+  },
+  {
+    "label": "PROJECT",
+    "pattern": [{"LOWER": "system"}]
+  },
+  {
+    "label": "PROJECT",
+    "pattern": [{"LOWER": "platform"}]
+  },
+  {
+    "label": "PROJECT",
+    "pattern": [{"LOWER": "website"}]
+  },
+  {
+    "label": "PROJECT",
+    "pattern": [{"LOWER": "api"}]
+  },
+  {
+    "label": "PROJECT",
+    "pattern": [{"LOWER": "dashboard"}]
+  },
+  {
+    "label": "PROJECT",
+    "pattern": [{"LOWER": "mobile"}, {"LOWER": "app"}]
+  },
+  {
+    "label": "PROJECT",
+    "pattern": [{"LOWER": "web"}, {"LOWER": "app"}]
+  }
+]

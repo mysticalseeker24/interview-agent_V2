@@ -1,4 +1,4 @@
-"""Configuration management for Resume Service."""
+"""Configuration management for Resume Service with JSON storage."""
 from functools import lru_cache
 from typing import List
 
@@ -6,13 +6,11 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """Application settings loaded from environment variables."""
-    
-    # Database settings
-    DATABASE_URL: str = "postgresql+asyncpg://user:password@localhost/talentsync_resumes"
+    """Application settings for JSON file storage."""
     
     # File storage settings
     UPLOAD_DIR: str = "uploads"
+    DATA_DIR: str = "data"
     MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
     ALLOWED_EXTENSIONS: List[str] = [".pdf", ".docx", ".doc", ".txt"]
     
@@ -28,10 +26,14 @@ class Settings(BaseSettings):
     # Application settings
     DEBUG: bool = False
     LOG_LEVEL: str = "INFO"
+    PORT: int = 8003
     
-    # External service URLs
+    # External service URLs (for integration)
     USER_SERVICE_URL: str = "http://localhost:8001"
-    INTERVIEW_SERVICE_URL: str = "http://localhost:8003"
+    INTERVIEW_SERVICE_URL: str = "http://localhost:8002"
+    
+    # File locking settings
+    LOCK_TIMEOUT: int = 30  # seconds
     
     class Config:
         env_file = ".env"

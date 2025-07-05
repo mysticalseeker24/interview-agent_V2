@@ -1,0 +1,49 @@
+{
+  "id": 1,
+  "user_id": 12345,
+  "filename": "test_resume.pdf",
+  "file_path": "uploads\\user_12345\\1_test_resume.pdf",
+  "file_size": 127333,
+  "file_type": "pdf",
+  "raw_text": "SAKSHAM MISHRA\nFull Stack ML/AI• React Native Developer• AI Researcher\nPrayagraj, India\n+91 85778 76517 • saksham.mishra2402@gmail.com • LinkedIn • GitHub\nAI Engineer & Full Stack Developer specializing in machine learning, model deployment, and scalable AI\nsystems, React Native, and Blockchain.3x Hackathon Winner, Finalists in many. Led AI projects achieving 70%\nefficiency gains. Expert in NLP, Computer Vision, MLOps, and Solidity & Rust.\nEducation\nMadan Mohan Malviya University of Technology September 2023 – Current\nBachelor of Technology with Specialization in Data Science Gorakhpur, India\nExperience\nAI Engineer Intern November 2024 – March 2025\nDonEros Remote\n• Spearheaded the development of a generative AI-powered meeting insights application using advanced LLMs (Mistral,\nLLAMA, GPT) for topic modeling, NER, translation, and meeting minutes generation, boosting user meeting efficiency\nby 70%.\n• Led MLOps & LLMOps pipelines for continuous model retraining and optimization & Optimized LLMs for natural\nlanguage queries with SQL integration using DuckDB, improving performance by 20%.\n• Enhanced Large Language Models including LLaMA, Falcon, and Mistral with Parameter Efficient Fine-Tuning and\nLoRA, improving model accuracy on educational datasets by 15% and reducing inference latency by 10ms.\nAI Engineer Intern August 2024 – January 2025\nLead Developer Remote\n• Deployed a sentiment analysis model leveraging BERT for multilingual text data, increasing the accuracy of identifying\nnegative customer feedback by 30% and flagging critical issues.\n• Orchestrated the design and automation of data pipelines and model training workflows for semi-supervised learning,\nreducing deployment time by 35% and boosting training efficiency by 25% through integrated CI/CD processes.\n• Spearheaded the migration of legacy SQL Server databases to PostgreSQL, resulting in a 25% improvement in data\naccessibility for the data science team, while also implementing Kaldi for advanced speech recognition tasks.\nProjects\nStockIO : Financial Application GITHUB\nPython, LSTM, BERT, financial APIs,React, TypeScript, Google Gemini Pro AI\n• Engineered a stock market prediction model using LSTM for forecasting and BERT for sentiment analysis, achieving a\nSharpe ratio of 3.0 indicating improved risk-adjusted returns exceeding market benchmarks.\n• Deployed BERT for sentiment analysis on financial news, enhancing the accuracy of stock predictions by 15% and leading\nto improved investment decisions in volatile market conditions.\nSmart Cataloging / ProductScan GITHUB\nReact, Tailwind CSS, Flask, PyTorch, torchvision, OpenCV, Ultralytics, YOLO, Google Gemini API\n• Created an AI-powered product recognition system using YOLOv11nano for product detection and Google Gemini for\nidentification, automating cataloging from shelf images.\n• Reduced manual cataloging time by 50%, processing 1,000+ images daily.\nTechnical Skills\nProgramming & AI: JavaScript (React.js 18.3, Node.js 18+), TypeScript 5.0, Python 3.9, MLOps, Neural Networks,\nOpenAI API SDK, LLMOps, NLP, Computer Vision, Solidity, Rust, AWS Bedrock\nWeb & Mobile Development: React Native (Expo SDK 49), Next.js 14, WebRTC, Socket.io, REST/GraphQL APIs\nDatabase & Infrastructure: MongoDB (Aggregation Pipeline), PostgreSQL 15, Redis Stack, AWS (S3, Lambda, Sage\nMaker), Prisma ORM\nDevOps & Security: Docker, Kubernetes, CI/CD (Github Actions), JWT/OAuth2, HIPAA Compliance\nDevelopment Tools: Git (Trunk-based), Vercel, Firebase Admin SDK, Cloudinary, Monorepo (Turborepo)\nUI/UX & Analytics: Tailwind CSS 3.0, Shadcn/UI, Recharts, WCAG 2.1 AA, Custom Design Systems\nCertifications & Achievements\n• Won 3 Hackathons and Finalists in Many, including having 4th position in BullnCode Hackathon at IIT Bombay Techfest\nand Code-Cubicle 2.0\n• Taught Mobile Development to over 100 students in React Native Expo CLI, building a Splitwise app clone with AI\nintegrations.",
+  "parsed_data": {
+    "skills": [
+      "Python",
+      "Flask",
+      "PostgreSQL",
+      "AWS",
+      "MongoDB",
+      "Redis",
+      "CSS",
+      "SQL Server",
+      "OpenCV",
+      "TypeScript",
+      "JavaScript",
+      "SQL",
+      "Node.js",
+      "Docker",
+      "PyTorch",
+      "Kubernetes",
+      "Rust",
+      "React"
+    ],
+    "projects": [
+      "API"
+    ],
+    "experience_years": null,
+    "education": [
+      "ms.",
+      "ma",
+      "ba",
+      "mba",
+      "ms"
+    ],
+    "certifications": [],
+    "languages": []
+  },
+  "processing_status": "completed",
+  "processing_error": null,
+  "created_at": "2025-07-05T12:56:33.475934",
+  "updated_at": "2025-07-05T12:56:33.660980",
+  "processed_at": "2025-07-05T12:56:33.660963"
+}

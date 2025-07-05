@@ -1,6 +1,6 @@
 # TalentSync Resume Service
 
-The Resume Service handles resume parsing, skill extraction, and candidate profile generation for the TalentSync platform.
+The Resume Service handles resume parsing, skill extraction, and candidate profile generation for the TalentSync platform using local JSON file storage.
 
 ## Features
 
@@ -9,13 +9,21 @@ The Resume Service handles resume parsing, skill extraction, and candidate profi
 - Experience timeline analysis
 - Education background parsing
 - Project and certification extraction
-- Resume embedding generation for semantic search
-- Resume similarity scoring
+- Local JSON file storage for parsed resume data
+- Fast file-based retrieval and search
+
+## Storage Architecture
+
+The service uses local JSON file storage instead of a database:
+- Raw resume files stored in `uploads/` directory
+- Parsed resume data stored as JSON files in `data/resumes/` 
+- Resume metadata stored in `data/metadata/`
+- Thread-safe file operations with locking
 
 ## API Endpoints
 
 ### Resume Management
-- `POST /api/v1/resume/upload` - Upload and parse resume file
+- `POST /api/v1/resume/parse` - Upload and parse resume file
 - `GET /api/v1/resume/{resume_id}` - Get parsed resume data
 - `PUT /api/v1/resume/{resume_id}` - Update resume information
 - `DELETE /api/v1/resume/{resume_id}` - Delete resume
@@ -27,9 +35,9 @@ The Resume Service handles resume parsing, skill extraction, and candidate profi
 - `GET /api/v1/resume/{resume_id}/experience` - Parse work experience
 
 ### Resume Search
-- `POST /api/v1/resume/search` - Semantic search across resumes
+- `POST /api/v1/resume/search` - Search across resumes
 - `POST /api/v1/resume/similarity` - Find similar resumes
-- `GET /api/v1/resume/stats` - Resume database statistics
+- `GET /api/v1/resume/stats` - Resume statistics
 
 ### Health Check
 - `GET /api/v1/health` - Service health status
@@ -40,13 +48,15 @@ The Resume Service handles resume parsing, skill extraction, and candidate profi
 - **DOCX**: Microsoft Word document parsing
 - **TXT**: Plain text resume files
 
-## Environment Variables
+## Configuration
 
+No environment variables required - the service uses local file storage by default.
+
+Optional configuration:
 ```
-DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/talentsync_resumes
-UPLOAD_DIR=./uploads
-MAX_FILE_SIZE=10485760  # 10MB
-OPENAI_API_KEY=your-openai-api-key
+UPLOAD_DIR=./uploads  # Directory for raw resume files
+DATA_DIR=./data       # Directory for parsed JSON data
+MAX_FILE_SIZE=10485760  # 10MB file size limit
 ALLOWED_ORIGINS=["http://localhost:3000"]
 ALLOWED_HOSTS=["localhost", "127.0.0.1"]
 ```
@@ -58,16 +68,15 @@ ALLOWED_HOSTS=["localhost", "127.0.0.1"]
 3. **Section Identification**: Identify resume sections (experience, education, skills)
 4. **Entity Extraction**: Extract structured data (dates, companies, skills)
 5. **Skill Matching**: Match extracted skills against known skill databases
-6. **Embedding Generation**: Create vector embeddings for semantic search
-7. **Storage**: Store parsed data and embeddings in PostgreSQL
+6. **JSON Storage**: Store parsed data as JSON files in local directories
 
-## Database Schema
+## Storage Structure
 
-The service uses the following main tables:
-- `resumes` - Resume metadata and file information
-- `resume_sections` - Parsed resume sections (experience, education, etc.)
-- `extracted_skills` - Skills extracted from resumes
-- `resume_embeddings` - Vector embeddings for semantic search
+The service uses local JSON file storage:
+- `uploads/` - Raw resume files organized by user ID
+- `data/resumes/` - Parsed resume data as JSON files
+- `data/metadata/` - Resume metadata and indexes
+- File locking ensures thread-safe operations
 
 ## NLP and AI Features
 

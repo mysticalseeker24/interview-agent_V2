@@ -1,12 +1,11 @@
 """Health check router for Resume Service."""
 import logging
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import text
+from pathlib import Path
+from fastapi import APIRouter, HTTPException, status
 
-from app.core.database import get_db
 from app.schemas.health import HealthResponse
 from app.services.resume_parsing_service import ResumeParsingService
+from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -14,20 +13,19 @@ router = APIRouter(tags=["health"])
 
 
 @router.get("/health", response_model=HealthResponse)
-async def health_check(db: AsyncSession = Depends(get_db)):
+async def health_check():
     """
     Health check endpoint.
     
-    Args:
-        db: Database session
-        
     Returns:
         Health status
     """
     try:
-        # Test database connection
-        await db.execute(text("SELECT 1"))
-        database_status = "connected"
+        settings = get_settings()
+        
+        # Test data directory
+        data_dir = Path("data")
+        storage_status = "available" if data_dir.exists() else "not_available"
         
         # Test spaCy model
         parser = ResumeParsingService()
@@ -36,7 +34,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
         return HealthResponse(
             status="ok",
             service="resume-service",
-            database=database_status,
+            storage=storage_status,
             spacy_model=spacy_status
         )
         

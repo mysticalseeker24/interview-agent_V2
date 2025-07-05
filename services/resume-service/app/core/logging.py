@@ -31,5 +31,4 @@ def setup_logging(level: str = "INFO") -> None:
     
     # Reduce noise from third-party libraries
     logging.getLogger("uvicorn").setLevel(logging.WARNING)
-    logging.getLogger("sqlalchemy").setLevel(logging.WARNING)
     logging.getLogger("spacy").setLevel(logging.WARNING)

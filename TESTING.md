@@ -4,6 +4,34 @@
 
 This document contains all the tested commands and procedures for setting up and testing the TalentSync AI Interview Platform.
 
+## Recent Updates - July 5, 2025
+
+### Resume Service - JSON Storage Migration ✅
+**MAJOR UPDATE:** Successfully migrated resume-service from PostgreSQL to local JSON file storage.
+
+#### Test Results Summary
+✅ **All tests passed successfully**  
+✅ **Service ready for production use**  
+✅ **PostgreSQL completely removed**  
+✅ **18 skills extracted from test resume (127KB PDF)**  
+✅ **Thread-safe JSON file operations**  
+✅ **Integration with interview-service verified**
+
+#### Key Metrics
+- PDF text extraction: 3,922 characters
+- Processing time: < 5 seconds
+- Memory usage: Minimal (no database overhead)
+- Skills detected: 18 from test resume
+- File operations: Thread-safe with atomic writes
+
+#### Architecture Changes
+- **Removed:** PostgreSQL, SQLAlchemy, Alembic, psycopg2
+- **Added:** Local JSON storage, filelock for concurrency
+- **Storage structure:** `data/resumes/user_id/resume_id.json`
+- **Internal API:** `/api/v1/resume/internal/{resume_id}/data` for service integration
+
+---
+
 ## ⚠️ Security Notice
 
 **NEVER commit API keys or secrets to version control!**
