@@ -322,435 +322,100 @@ class ResumeParsingService:
             logger.warning(f"Unsupported file type: {file_type}")
             return ""
     
-    def parse_resume(self, text: str) -> ResumeParseResult:
-        """
-        Parse resume text using advanced NLP with fallback to legacy parsing.
+    def _extract_technologies(self, text: str) -> List[str]:
+        """Extract technologies from text using fuzzy matching."""
+        technologies = []
         
-        Args:
-            text: Resume text to parse
-            
-        Returns:
-            Parsed resume data
-        """
-        logger.info("Starting resume parsing with advanced methods")
+        # Extract potential technology names
+        potential_techs = re.findall(r'\b[A-Za-z][A-Za-z0-9\+#\.\-]{1,20}\b', text)
         
-        try:
-            # Use advanced parser
-            result = self.advanced_parser.parse_resume_advanced(text)
-            
-            # Validate result - if we got meaningful data, return it
-            if (result.contact_info.name or result.contact_info.email or 
-                result.skills or result.experience or result.education):
-                logger.info("Advanced parsing successful")
-                return result
-            else:
-                logger.warning("Advanced parsing returned empty results, falling back to legacy")
-                return self._parse_resume_legacy(text)
-                
-        except Exception as e:
-            logger.error(f"Advanced parsing failed: {str(e)}, falling back to legacy")
-            return self._parse_resume_legacy(text)
-    
-    def _parse_resume_legacy(self, text: str) -> ResumeParseResult:
-        """
-        Legacy resume parsing method for fallback.
-        """
-        if not self.nlp:
-            logger.error("spaCy model not loaded")
-            return ResumeParseResult()
-        
-        try:
-            # Process text with spaCy
-            doc = self.nlp(text)
-            
-            # Extract skills and projects using legacy method
-            skills = list({ent.text for ent in doc.ents if ent.label_ == 'SKILL'})
-            projects = list({ent.text for ent in doc.ents if ent.label_ == 'PROJECT'})
-            
-            # Extract additional information
-            experience_years = self._extract_experience_years(text)
-            education = self._extract_education(text)
-            certifications = self._extract_certifications(text)
-            languages = self._extract_languages(text)
-            
-            # Convert to new schema format
-            from app.schemas.resume import SkillCategory, ContactInfo
-            
-            # Create skill categories
-            skill_categories = []
-            if skills:
-                skill_categories.append(SkillCategory(category="General", skills=skills))
-            
-            # Create basic contact info
-            contact_info = ContactInfo()
-            
-            logger.info(f"Legacy parsing completed: {len(skills)} skills, {len(projects)} projects")
-            
-            return ResumeParseResult(
-                contact_info=contact_info,
-                skills=skill_categories,
-                total_experience_years=float(experience_years) if experience_years else None,
-                raw_text_length=len(text)
-            )
-            
-        except Exception as e:
-            logger.error(f"Error in legacy resume parsing: {str(e)}")
-            return ResumeParseResult()
-    
-    def _extract_experience_years(self, text: str) -> Optional[int]:
-        """Extract years of experience from text."""
-        import re
-        
-        # Look for patterns like "5 years experience", "3+ years", etc.
-        patterns = [
-            r'(\d+)\+?\s*years?\s*(?:of\s*)?experience',
-            r'(\d+)\+?\s*years?\s*(?:of\s*)?(?:professional\s*)?experience',
-            r'experience\s*(?:of\s*)?(\d+)\+?\s*years?'
-        ]
-        
-        for pattern in patterns:
-            matches = re.findall(pattern, text.lower())
-            if matches:
-                return int(matches[0])
-        
-        return None
-    
-    def _extract_education(self, text: str) -> List[str]:
-        """Extract education information from text."""
-        import re
-        
-        education = []
-        
-        # Common degree patterns
-        degree_patterns = [
-            r'(bachelor\'?s?\s+(?:of\s+)?(?:science|arts|engineering|computer science))',
-            r'(master\'?s?\s+(?:of\s+)?(?:science|arts|engineering|computer science))',
-            r'(phd|doctorate|ph\.d\.?)',
-            r'(mba|master of business administration)',
-            r'(b\.?s\.?|b\.?a\.?|m\.?s\.?|m\.?a\.?)',
-        ]
-        
-        for pattern in degree_patterns:
-            matches = re.findall(pattern, text.lower())
-            education.extend(matches)
-        
-        return list(set(education))
-    
-    def _extract_certifications(self, text: str) -> List[str]:
-        """Extract certification information from text."""
-        import re
-        
-        certifications = []
-        
-        # Common certification patterns
-        cert_patterns = [
-            r'(aws\s+certified\s+[\w\s]+)',
-            r'(azure\s+certified\s+[\w\s]+)',
-            r'(google\s+cloud\s+certified\s+[\w\s]+)',
-            r'(certified\s+[\w\s]+engineer)',
-            r'(pmp|project management professional)',
-            r'(cissp|certified information systems security professional)',
-        ]
-        
-        for pattern in cert_patterns:
-            matches = re.findall(pattern, text.lower())
-            certifications.extend(matches)
-        
-        return list(set(certifications))
-    
-    def _extract_languages(self, text: str) -> List[str]:
-        """Extract programming languages from text."""
-        # This is already handled by the skill extraction
-        # Return empty list to avoid duplication
-        return []
-    
-    def parse_experience(self, block: str) -> List[ExperienceEntry]:
-        """Parse work experience with multiple format support."""
-        entries = []
-        
-        # Split by double newlines to separate entries
-        for chunk in re.split(r'\n{2,}', block):
-            chunk = chunk.strip()
-            if len(chunk) < 20:  # Skip very short chunks
+        for tech in potential_techs:
+            tech = tech.strip()
+            if len(tech) < 2:
                 continue
-            
-            entry = ExperienceEntry()
-            
-            # Try multiple patterns for job title and company
-            patterns = [
-                # Pattern 1: "Senior Developer @ Google (Jan 2020 – Present)"
-                r'(.+?)\s+@\s+(.+?)\s+\(([^–]+)–([^)]+)\)',
-                # Pattern 2: "Senior Developer | Google | Jan 2020 - Present"
-                r'(.+?)\s*\|\s*(.+?)\s*\|\s*([^-]+)-([^|]+)',
-                # Pattern 3: "Senior Developer, Google (Jan 2020 - Present)"
-                r'(.+?),\s*(.+?)\s+\(([^-]+)-([^)]+)\)',
-                # Pattern 4: "Google - Senior Developer (Jan 2020 - Present)"
-                r'(.+?)\s*-\s*(.+?)\s+\(([^-]+)-([^)]+)\)',
-            ]
-            
-            parsed = False
-            for pattern in patterns:
-                match = re.search(pattern, chunk)
-                if match:
-                    groups = [g.strip() for g in match.groups()]
-                    if 'google' in groups[1].lower() or 'microsoft' in groups[1].lower():
-                        # Company first pattern
-                        entry.company = groups[0]
-                        entry.position = groups[1]
-                    else:
-                        # Position first pattern
-                        entry.position = groups[0]
-                        entry.company = groups[1]
-                    
-                    entry.start_date = self._parse_date(groups[2])
-                    entry.end_date = self._parse_date(groups[3]) if groups[3].lower() not in ['present', 'current'] else None
-                    parsed = True
-                    break
-            
-            if not parsed:
-                # Fallback: try to extract company and position from first line
-                first_line = chunk.split('\n')[0]
-                if ' at ' in first_line:
-                    parts = first_line.split(' at ')
-                    entry.position = parts[0].strip()
-                    entry.company = parts[1].strip()
-                elif ' - ' in first_line:
-                    parts = first_line.split(' - ')
-                    entry.position = parts[0].strip()
-                    entry.company = parts[1].strip()
-                else:
-                    entry.position = first_line.strip()
-            
-            # Extract description (everything after first line)
-            lines = chunk.split('\n')
-            if len(lines) > 1:
-                entry.description = '\n'.join(lines[1:]).strip()
-            
-            # Extract technologies from description
-            entry.technologies = self._extract_technologies(chunk)
-            
-            # Extract achievements (lines starting with bullet points)
-            achievements = []
-            for line in lines[1:]:
-                line = line.strip()
-                if line.startswith(('•', '▪', '-', '*')):
-                    achievements.append(line[1:].strip())
-            entry.achievements = achievements
-            
-            entries.append(entry)
-        
-        return entries
-    
-    def parse_projects(self, block: str) -> List[ProjectEntry]:
-        """Parse projects with enhanced pattern recognition."""
-        projects = []
-        
-        for chunk in re.split(r'\n{2,}', block):
-            chunk = chunk.strip()
-            if len(chunk) < 15:
-                continue
-            
-            project = ProjectEntry()
-            lines = chunk.split('\n')
-            
-            # First line is usually project name
-            project.name = lines[0].strip()
-            
-            # Look for URL patterns (from Deedy template \href)
-            url_match = re.search(r'https?://[^\s\)]+', chunk)
-            if url_match:
-                project.url = url_match.group(0)
-            
-            # Extract description
-            desc_lines = []
-            for line in lines[1:]:
-                line = line.strip()
-                if line and not line.startswith(('•', '▪', '-', '*')):
-                    desc_lines.append(line)
-            project.description = ' '.join(desc_lines)
-            
-            # Extract technologies
-            project.technologies = self._extract_technologies(chunk)
-            
-            projects.append(project)
-        
-        return projects
-    
-    def parse_education(self, block: str) -> List[EducationEntry]:
-        """Parse education with degree and institution extraction."""
-        entries = []
-        
-        for chunk in re.split(r'\n{2,}', block):
-            chunk = chunk.strip()
-            if len(chunk) < 10:
-                continue
-            
-            entry = EducationEntry()
-            
-            # Try to parse degree and institution
-            patterns = [
-                # "Master of Science in Computer Science | Stanford University"
-                r'(.+?)\s*\|\s*(.+)',
-                # "Master of Science, Stanford University"
-                r'(.+?),\s*(.+)',
-                # "Stanford University — Master of Science"
-                r'(.+?)\s*—\s*(.+)',
-                # "Bachelor's Degree in Computer Science\nUC Berkeley"
-                r'(.+)\n(.+)'
-            ]
-            
-            for pattern in patterns:
-                match = re.search(pattern, chunk)
-                if match:
-                    part1, part2 = match.groups()
-                    
-                    # Determine which is degree and which is institution
-                    degree_keywords = ['bachelor', 'master', 'phd', 'doctorate', 'mba', 'degree']
-                    if any(kw in part1.lower() for kw in degree_keywords):
-                        entry.degree = part1.strip()
-                        entry.institution = part2.strip()
-                    else:
-                        entry.institution = part1.strip()
-                        entry.degree = part2.strip()
-                    break
-            
-            # Extract GPA if present
-            gpa_match = re.search(r'GPA:?\s*([\d.]+)', chunk, re.IGNORECASE)
-            if gpa_match:
-                entry.gpa = gpa_match.group(1)
-            
-            entries.append(entry)
-        
-        return entries
-    
-    def parse_skills(self, block: str) -> List[SkillCategory]:
-        """Parse skills with fuzzy matching against master list."""
-        # Split skills by common delimiters
-        raw_skills = re.split(r'[\n,•▪\-\*]', block)
-        
-        found_skills = set()
-        categorized_skills = {}
-        
-        for skill_text in raw_skills:
-            skill_text = skill_text.strip()
-            if len(skill_text) < 2:
-                continue
-            
-            # Remove common prefixes/suffixes
-            skill_text = re.sub(r'^(proficient in|experience with|skilled in|knowledge of)\s*', '', skill_text, flags=re.IGNORECASE)
-            skill_text = skill_text.strip('.,;:')
             
             # Fuzzy match against master skills
-            match, score = process.extractOne(skill_text, self.master_skills)
-            if score > 80:  # Threshold for fuzzy matching
-                found_skills.add(match)
-                
-                # Categorize skill
-                category = self._categorize_skill(match)
-                if category not in categorized_skills:
-                    categorized_skills[category] = set()
-                categorized_skills[category].add(match)
+            match, score = process.extractOne(tech, self.master_skills)
+            if score > 85:
+                technologies.append(match)
         
-        # Convert to schema format
-        skill_categories = []
-        for category, skills in categorized_skills.items():
-            if skills:
-                skill_categories.append(SkillCategory(
-                    category=category,
-                    skills=sorted(list(skills))
-                ))
-        
-        # If no categorized skills found, create a general category
-        if not skill_categories and found_skills:
-            skill_categories.append(SkillCategory(
-                category="Technical",
-                skills=sorted(list(found_skills))
-            ))
-        
-        return skill_categories
+        return list(set(technologies))  # Remove duplicates
     
-    def _categorize_skill(self, skill: str) -> str:
-        """Categorize a skill into predefined categories."""
-        skill_lower = skill.lower()
+    def _parse_date(self, date_str: str) -> Optional[str]:
+        """Parse date string using dateparser."""
+        if not date_str:
+            return None
         
-        # Programming languages
-        if skill in ["Python", "JavaScript", "Java", "C++", "C#", "Go", "Rust", "TypeScript", "PHP", "Ruby", "Swift", "Kotlin", "Scala", "R", "MATLAB"]:
-            return "Programming Languages"
-        
-        # Web technologies
-        elif skill in ["React", "Angular", "Vue.js", "Node.js", "Express", "Django", "Flask", "HTML", "CSS", "Bootstrap"]:
-            return "Web Technologies"
-        
-        # Databases
-        elif skill in ["PostgreSQL", "MySQL", "MongoDB", "Redis", "SQLite", "Oracle", "SQL Server", "Elasticsearch"]:
-            return "Databases"
-        
-        # Cloud & DevOps
-        elif skill in ["AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "Jenkins", "Terraform", "Ansible"]:
-            return "Cloud & DevOps"
-        
-        # AI/ML
-        elif skill in ["TensorFlow", "PyTorch", "Scikit-learn", "Pandas", "NumPy", "OpenCV", "MLflow"]:
-            return "AI/ML & Data Science"
-        
-        else:
-            return "Technical"
+        try:
+            parsed_date = dateparser.parse(date_str.strip())
+            return parsed_date.date().isoformat() if parsed_date else None
+        except Exception:
+            return None
     
-    def parse_certifications(self, block: str) -> List[CertificationEntry]:
-        """Parse certifications with issuer detection."""
-        certifications = []
+    def compute_total_experience(self, experiences: List[ExperienceEntry]) -> Optional[float]:
+        """Calculate total work experience in years."""
+        total_days = 0
         
-        for line in block.split('\n'):
-            line = line.strip()
-            if not line or line.startswith(('•', '▪', '-', '*')):
-                line = line[1:].strip()
-            
-            if len(line) < 5:
+        for exp in experiences:
+            if not exp.start_date:
                 continue
             
-            cert = CertificationEntry(name=line)
+            start_date = dateparser.parse(exp.start_date)
+            end_date = dateparser.parse(exp.end_date) if exp.end_date else dateparser.parse("today")
             
-            # Try to extract issuer
-            if 'aws' in line.lower():
-                cert.issuer = "Amazon Web Services"
-            elif 'google' in line.lower():
-                cert.issuer = "Google"
-            elif 'microsoft' in line.lower() or 'azure' in line.lower():
-                cert.issuer = "Microsoft"
-            elif 'oracle' in line.lower():
-                cert.issuer = "Oracle"
-            
-            certifications.append(cert)
+            if start_date and end_date:
+                days = (end_date - start_date).days
+                total_days += max(0, days)
         
-        return certifications
+        return round(total_days / 365.25, 1) if total_days > 0 else None
     
-    def parse_publications(self, block: str) -> List[str]:
-        """Parse publications with DOI and citation detection."""
-        publications = []
+    def compute_confidence_score(self, result: ResumeParseResult) -> float:
+        """Compute overall parsing confidence score."""
+        score = 0.0
         
-        for line in block.split('\n'):
-            line = line.strip()
-            if len(line) < 10:
-                continue
-            
-            # Look for academic patterns
-            if any(pattern in line.lower() for pattern in ['doi:', 'arxiv:', 'conference:', 'journal:']):
-                publications.append(line)
-            elif re.search(r'\(\d{4}\)', line):  # Year in parentheses
-                publications.append(line)
+        # Contact information (0.2 max)
+        if result.contact_info.name:
+            score += 0.05
+        if result.contact_info.email:
+            score += 0.05
+        if result.contact_info.phone:
+            score += 0.05
+        if result.contact_info.linkedin or result.contact_info.github:
+            score += 0.05
         
-        return publications
+        # Core sections (0.6 max)
+        score += min(1.0, len(result.skills)) * 0.15
+        score += min(1.0, len(result.experience)) * 0.25
+        score += min(1.0, len(result.education)) * 0.1
+        score += min(1.0, len(result.projects)) * 0.1
+        
+        # Additional sections (0.2 max)
+        score += min(1.0, len(result.certifications)) * 0.05
+        score += min(1.0, len(result.publications)) * 0.05
+        score += min(1.0, len(result.awards)) * 0.05
+        score += min(1.0, len(result.volunteer_experience)) * 0.05
+        
+        return round(min(score, 1.0), 2)
     
-    def parse_simple_list(self, block: str) -> List[str]:
-        """Parse simple lists like awards, societies, etc."""
-        items = []
+    def parse_resume(self, text: str) -> ResumeParseResult:
+        """
+        Main parsing method with comprehensive multi-template support.
+        """
+        logger.info(f"Starting advanced resume parsing for text of length {len(text)}")
         
-        for line in block.split('\n'):
-            line = line.strip()
-            if line.startswith(('•', '▪', '-', '*')):
-                line = line[1:].strip()
+        try:
+            # Split text into sections
+            sections = self.split_sections(text)
             
-            if len(line) > 3:
-                items.append(line)
-        
-        return items
+            # Extract contact information and summary
+            contact_info, summary = self.extract_contact_and_summary(text)
+            
+            # Parse each section
+            experience = self.parse_experience(sections.get("experience", ""))
+            projects = self.parse_projects(sections.get("projects", ""))
+            education = self.parse_education(sections.get("education", ""))
+            skills = self.parse_skills(sections.get("skills", ""))
+            certifications = self.parse_certifications(sections.get("certifications", ""))
+            publications = self.parse_publications(sections.get("publications", ""))
+            awards = self.parse_simple_list(sections.get("achievements", ""))
+            volunteer_experience = self.parse_simple_list(sections.get("service", ""))
