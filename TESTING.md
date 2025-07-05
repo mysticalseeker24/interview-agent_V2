@@ -2,6 +2,14 @@
 
 This document contains all the tested commands and procedures for setting up and testing the TalentSync AI Interview Platform.
 
+## ⚠️ Security Notice
+
+**NEVER commit API keys or secrets to version control!**
+- Always use environment variables for sensitive data
+- Keep your `.env` file local and never commit it
+- Use placeholder values in documentation
+- If you accidentally commit secrets, revoke them immediately and clean git history
+
 ## Prerequisites
 
 - Python 3.11+
