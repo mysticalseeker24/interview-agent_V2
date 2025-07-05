@@ -28,6 +28,7 @@ class Question(Base):
     # Relationships
     module = relationship("Module", back_populates="questions")
     responses = relationship("Response", back_populates="question")
+    scores = relationship("Score", back_populates="question", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Question(id={self.id}, module_id={self.module_id}, type={self.question_type})>"

@@ -14,9 +14,11 @@ TalentSync is an intelligent, AI-powered interview platform that delivers person
 ### AI & Machine Learning
 - **Vector Database Integration**: Pinecone for semantic question similarity and retrieval
 - **Embedding Generation**: OpenAI text-embedding-ada-002 for question vectorization
-- **Intelligent Follow-ups**: Context-aware question progression
+- **Dynamic Follow-up Generation**: o4-mini powered contextual follow-up questions with anti-hallucination
+- **Semantic Analysis**: Sentence-transformers for response similarity scoring
+- **Post-Interview Feedback**: AI-driven comprehensive analysis with percentile rankings
 - **Resume Analysis**: NLP-powered skill extraction and experience parsing
-- **Performance Analytics**: AI-driven interview assessment and feedback
+- **Performance Analytics**: Multi-dimensional scoring and historical comparisons
 
 ### Platform Features
 - **Microservices Architecture**: Scalable, maintainable service-oriented design
@@ -39,11 +41,13 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 
 #### **Interview Service** (Port 8002) - *Core Service*
 - Interview module and question management
-- RAG pipeline for semantic question retrieval
-- Vector database synchronization with Pinecone
-- Session orchestration and progress tracking
+- RAG pipeline for semantic question retrieval with Pinecone vector database
+- **Dynamic Follow-Up Generation**: o4-mini powered contextual follow-up questions with anti-hallucination
+- **Post-Interview Feedback System**: Comprehensive analysis using semantic similarity, fluency metrics, and AI narratives
+- Session orchestration with question tracking and duplicate prevention
+- Vector database synchronization with OpenAI embeddings
 - Dataset import and management (SWE, ML, DSA, Resume datasets)
-- Background task processing for bulk operations
+- Background task processing with Celery for bulk operations and feedback generation
 
 #### **Resume Service** (Port 8003)
 - Resume file upload and parsing (PDF, DOCX, TXT)
@@ -72,8 +76,8 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 - **Database**: PostgreSQL 13+ with SQLAlchemy ORM
 - **Vector DB**: Pinecone for embeddings and semantic search
 - **Caching**: Redis for performance optimization
-- **AI/ML**: OpenAI GPT-4, Whisper, text-embedding-ada-002
-- **Background Tasks**: FastAPI background tasks with async processing
+- **AI/ML**: OpenAI o4-mini, GPT-4, Whisper, text-embedding-ada-002, sentence-transformers
+- **Background Tasks**: Celery with Redis broker for async processing
 
 ### Development & Operations
 - **Containerization**: Docker with multi-stage builds
@@ -90,7 +94,6 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 - Python 3.11+
 - PostgreSQL 14+
 - Redis 6+
-- Valid API keys (OpenAI, Pinecone, AssemblyAI)
 
 ### Environment Setup
 
@@ -99,71 +102,6 @@ TalentSync employs a clean microservices architecture optimized for scalability 
    git clone <repository-url>
    cd talentsync
    ```
-
-2. **Create environment configuration**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Update `.env` with your API keys:
-   ```bash
-   # API Keys (Required)
-   OPENAI_API_KEY=your_openai_api_key_here
-   PINECONE_API_KEY=your_pinecone_api_key_here
-   ASSEMBLYAI_API_KEY=your_assemblyai_api_key_here
-   
-   # Database Configuration
-   DATABASE_URL=postgresql+asyncpg://talentsync:secret@localhost:5432/talentsync
-   REDIS_URL=redis://localhost:6379
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   python -m spacy download en_core_web_sm
-   ```
-
-4. **Start infrastructure services**
-   ```bash
-   # PostgreSQL
-   docker run --name talentsync-postgres -e POSTGRES_USER=talentsync -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=talentsync -p 5432:5432 -d postgres:14
-   
-   # Redis
-   docker run --name talentsync-redis -p 6379:6379 -d redis:6-alpine
-   ```
-
-5. **Start Interview Service**
-   ```bash
-   cd services/interview-service
-   uvicorn app.main:app --reload --port 8002
-   ```
-
-6. **Import datasets and sync vectors**
-   ```bash
-   # Import all datasets into PostgreSQL
-   Invoke-RestMethod -Method POST -Uri "http://localhost:8002/api/v1/datasets/import/all"
-   
-   # Sync questions to Pinecone vector database
-   Invoke-RestMethod -Method POST -Uri "http://localhost:8002/api/v1/vectors/sync/questions/all"
-   ```
-
-7. **Test the RAG pipeline**
-   ```bash
-   # Test semantic search
-   Invoke-RestMethod -Method GET -Uri "http://localhost:8002/api/v1/vectors/search?query=distributed%20systems&top_k=3"
-   ```
-
-8. **Access API documentation**
-   Open browser: `http://localhost:8002/docs`
-
-### ✅ Verified Working Setup
-
-The system is currently operational with:
-- **95 questions imported** across 5 modules (DSA, ML, Resume, SWE)
-- **Vector embeddings stored** in Pinecone for semantic search
-- **RAG pipeline functional** with high-quality semantic matching
-- **All API endpoints tested** and working
-- **Complete documentation** available at `/docs`
 
 2. **Set up environment variables**
    ```powershell

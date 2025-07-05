@@ -19,8 +19,11 @@ class Settings(BaseSettings):
     PINECONE_ENVIRONMENT: str = "us-west1-gcp"
     PINECONE_INDEX_NAME: str = "questions-embeddings"
     
-    # OpenAI settings
+    # OpenAI settings for o4-mini (optimized for cost-efficient reasoning)
     OPENAI_API_KEY: str = "your-openai-api-key-here"
+    OPENAI_CHAT_MODEL: str = "o4-mini"  # Latest cost-efficient reasoning model
+    OPENAI_MAX_TOKENS: int = 300  # Increased for o4-mini's improved context handling
+    OPENAI_TEMPERATURE: float = 0.1  # Lower temperature for better reasoning accuracy
     
     # CORS settings
     ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8010"]

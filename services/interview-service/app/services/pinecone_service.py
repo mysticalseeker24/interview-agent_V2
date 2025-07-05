@@ -204,6 +204,59 @@ class PineconeService:
             logger.error(f"Error searching similar questions: {str(e)}")
             return []
     
+    async def search_similar_questions_by_vector(self, query_vector: List[float], 
+                                                domain: str = None, question_type: str = None,
+                                                top_k: int = 10) -> List[Dict[str, Any]]:
+        """
+        Search for similar questions using a pre-computed vector.
+        
+        Args:
+            query_vector: Pre-computed embedding vector
+            domain: Filter by domain
+            question_type: Filter by question type
+            top_k: Number of results to return
+            
+        Returns:
+            List of similar questions with metadata
+        """
+        try:
+            if not self.questions_index:
+                raise Exception("Pinecone index not initialized")
+            
+            # Build filter
+            filter_dict = {}
+            if domain:
+                filter_dict['domain'] = domain
+            if question_type:
+                filter_dict['type'] = question_type
+            
+            # Search Pinecone
+            results = self.questions_index.query(
+                vector=query_vector,
+                top_k=top_k,
+                include_metadata=True,
+                filter=filter_dict if filter_dict else None
+            )
+            
+            # Format results
+            similar_questions = []
+            for match in results.matches:
+                similar_questions.append({
+                    'question_id': match.metadata.get('question_id'),
+                    'text': match.metadata.get('text'),
+                    'domain': match.metadata.get('domain'),
+                    'type': match.metadata.get('type'),
+                    'difficulty': match.metadata.get('difficulty'),
+                    'score': match.score
+                })
+            
+            logger.info(f"Found {len(similar_questions)} similar questions using vector")
+            return similar_questions
+            
+        except Exception as e:
+            logger.error(f"Error searching similar questions by vector: {str(e)}")
+            return []
+
     async def get_follow_up_questions(self, answer_text: str, session_context: Dict[str, Any],
                                     exclude_ids: List[int] = None) -> List[Dict[str, Any]]:
         """

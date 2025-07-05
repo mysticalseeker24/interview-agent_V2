@@ -16,7 +16,7 @@ from prometheus_client import make_asgi_app
 from app.core.config import get_settings
 from app.core.database import engine, create_tables
 from app.core.logging import setup_logging
-from app.routers import modules, sessions, health, vectors, datasets
+from app.routers import modules, sessions, health, vectors, datasets, followup, feedback
 
 # Setup logging
 setup_logging()
@@ -75,6 +75,8 @@ app.include_router(modules.router, prefix="/api/v1", tags=["modules"])
 app.include_router(sessions.router, prefix="/api/v1", tags=["sessions"])
 app.include_router(vectors.router, prefix="/api/v1/vectors", tags=["vectors"])
 app.include_router(datasets.router, prefix="/api/v1/datasets", tags=["datasets"])
+app.include_router(followup.router, tags=["followup"])
+app.include_router(feedback.router, tags=["feedback"])
 
 
 @app.get("/")
