@@ -9,7 +9,7 @@ import logging
 from datetime import datetime
 
 from ..core.database import get_db
-from ..core.config import settings
+from ..core.config import get_settings
 from ..schemas.health import HealthResponse, HealthStatus
 from ..services.transcription_service import TranscriptionService
 from ..services.media_device_service import MediaDeviceService
@@ -69,6 +69,7 @@ async def health_check(db: Session = Depends(get_db)):
             health_status = HealthStatus.DEGRADED
         
         # Check configuration
+        settings = get_settings()
         config_healthy = all([
             settings.DATABASE_URL,
             settings.OPENAI_API_KEY,

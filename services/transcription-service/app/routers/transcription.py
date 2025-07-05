@@ -172,7 +172,7 @@ async def get_transcription(
 async def delete_transcription(
     transcription_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: UserRead = Depends(get_current_user),
 ):
     """
     Delete a specific transcription.

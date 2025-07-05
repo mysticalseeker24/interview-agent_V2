@@ -10,7 +10,7 @@ import logging
 from ..core.database import get_db
 from ..core.security import get_current_user
 from ..schemas.media import MediaDeviceResponse, MediaDeviceListResponse
-from ..schemas.user import User
+from ..schemas.user import UserRead
 from ..services.media_device_service import MediaDeviceService
 from ..services.database_service import DatabaseService
 
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 async def get_media_devices(
     device_type: str = None,  # "audio" or "video"
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: UserRead = Depends(get_current_user),
 ):
     """
     Get available media devices for the current user.
@@ -76,7 +76,7 @@ async def get_media_devices(
 @router.post("/devices/refresh", response_model=MediaDeviceListResponse)
 async def refresh_media_devices(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: UserRead = Depends(get_current_user),
 ):
     """
     Force refresh of available media devices.
@@ -125,7 +125,7 @@ async def refresh_media_devices(
 async def get_media_device(
     device_id: str,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: UserRead = Depends(get_current_user),
 ):
     """
     Get details for a specific media device.
