@@ -9,7 +9,9 @@ TalentSync is an intelligent, AI-powered interview platform that delivers person
 - **Intelligent Question Generation**: RAG-powered follow-up questions based on candidate responses
 - **Semantic Search**: Vector-based question retrieval using Pinecone and OpenAI embeddings
 - **Resume-Driven Interviews**: Dynamic question generation based on candidate background
-- **Real-time Transcription**: Hybrid STT using OpenAI Whisper and AssemblyAI
+- **Real-time Transcription**: Enhanced STT using OpenAI Whisper and AssemblyAI with chunked processing
+- **Text-to-Speech**: OpenAI TTS integration with persona-driven voice synthesis
+- **Interactive Interviews**: Real-time conversational AI with audio input/output capabilities
 
 ### AI & Machine Learning
 - **Vector Database Integration**: Pinecone for semantic question similarity and retrieval
@@ -26,6 +28,15 @@ TalentSync is an intelligent, AI-powered interview platform that delivers person
 - **Comprehensive APIs**: RESTful endpoints with OpenAPI documentation
 - **Database Flexibility**: Hybrid PostgreSQL + vector database architecture
 - **Production-Ready**: Docker containerization with health checks and monitoring
+
+### Enhanced Audio Capabilities
+- **Chunked Audio Processing**: Intelligent audio segmentation with 20% overlap deduplication
+- **Multi-Model STT**: Hybrid OpenAI Whisper + AssemblyAI for optimal accuracy
+- **Advanced TTS**: OpenAI TTS-1 integration with voice caching and persona support
+- **Real-time Conversations**: Interactive interview system with live audio processing
+- **Session Aggregation**: Multi-turn conversation tracking with complete transcription history
+- **Audio Device Management**: Comprehensive microphone and speaker configuration
+- **Performance Optimization**: SQLite-based caching for TTS audio files
 
 ## 🏗️ Architecture
 
@@ -57,12 +68,17 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 - Integration with interview service via internal API endpoints
 - No database dependencies - simplified architecture for faster deployment
 
-#### **Transcription Service** (Port 8004)
-- Hybrid speech-to-text using OpenAI Whisper + AssemblyAI
-- Real-time audio transcription with WebSocket support
-- Audio device enumeration and management
-- Multiple format support (WAV, MP3, MP4, FLAC)
-- Speaker diarization and confidence scoring
+#### **Transcription Service** (Port 8004) - *Enhanced STT/TTS*
+- **Advanced Speech-to-Text**: Hybrid system using OpenAI Whisper + AssemblyAI
+- **Chunked Audio Processing**: Intelligent audio segmentation with overlap detection and deduplication
+- **Text-to-Speech Integration**: OpenAI TTS (tts-1) with voice synthesis and audio caching
+- **Persona-Driven Interviews**: Real-time conversational AI with persona-based responses
+- **Session Management**: Multi-turn conversation tracking with aggregated transcriptions
+- **Real-time Audio**: WebSocket support for live transcription and TTS playback
+- **Audio Device Management**: Comprehensive device enumeration and configuration
+- **Multiple Format Support**: WAV, MP3, MP4, FLAC with intelligent format detection
+- **Speaker Diarization**: Advanced speaker identification and confidence scoring
+- **Caching System**: SQLite-based TTS audio caching for performance optimization
 
 ### Infrastructure Components
 - **PostgreSQL**: Primary database for interview, user, transcription services
@@ -79,7 +95,7 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 - **Storage**: Local JSON files with thread-safe operations (resume service)
 - **Vector DB**: Pinecone for embeddings and semantic search
 - **Caching**: Redis for performance optimization
-- **AI/ML**: OpenAI o4-mini, GPT-4, Whisper, text-embedding-ada-002, sentence-transformers
+- **AI/ML**: OpenAI o4-mini, GPT-4, Whisper, TTS-1, text-embedding-ada-002, sentence-transformers
 - **Background Tasks**: Celery with Redis broker for async processing
 
 ### Development & Operations
@@ -312,6 +328,9 @@ DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/talentsync_transc
 OPENAI_API_KEY=your-openai-api-key
 ASSEMBLYAI_API_KEY=your-assemblyai-api-key
 UPLOAD_DIR=./uploads
+TTS_CACHE_DIR=./tts_files
+MAX_AUDIO_FILE_SIZE=52428800  # 50MB
+CHUNK_OVERLAP_THRESHOLD=0.2   # 20% overlap for deduplication
 ```
 
 ## 🧪 Testing

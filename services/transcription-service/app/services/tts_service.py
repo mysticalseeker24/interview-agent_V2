@@ -78,9 +78,7 @@ class TTSService:
                 format=request.format,
                 file_path=str(file_path),
                 file_size=file_size,
-                duration=duration,
-                session_id=request.session_id,
-                persona_name=request.persona_name
+                duration=duration
             )
             
             session.add(tts_request)
@@ -93,8 +91,8 @@ class TTSService:
                 tts_id=tts_request.id,
                 file_path=str(file_path),
                 url=f"/tts/files/{filename}",
-                voice=request.voice.value,
-                format=request.format.value,
+                voice=request.voice,
+                format=request.format,
                 duration=duration,
                 file_size=file_size,
                 created_at=tts_request.created_at

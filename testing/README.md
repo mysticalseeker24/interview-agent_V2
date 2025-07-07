@@ -11,10 +11,10 @@ Each service has its own dedicated testing guide with complete setup and validat
 ### Core Services
 - **[Interview Service Testing](interview-service-testing.md)** - Dynamic question generation, follow-up creation, RAG pipeline
 - **[Resume Service Testing](resume-service-testing.md)** - Multi-template resume parsing, text-to-JSON pipeline
+- **[Transcription Service Testing](transcription-service-testing.md)** - Enhanced STT/TTS, chunked audio, persona interviews
 
 ### Upcoming Services
 - **User Service Testing** - Authentication, user management
-- **Transcription Service Testing** - Audio processing, speech-to-text
 - **Frontend Testing** - UI/UX validation, integration testing
 
 ## 🚀 Service Status Overview
@@ -23,8 +23,8 @@ Each service has its own dedicated testing guide with complete setup and validat
 |---------|--------|---------|--------------|
 | Interview Service | ✅ Complete | ✅ Validated | RAG, Follow-ups, o4-mini |
 | Resume Service | ✅ Complete | ✅ Validated | Multi-template, LLM enhancement |
+| Transcription Service | ✅ Complete | ✅ Validated | Enhanced STT/TTS, Chunked Audio, Personas |
 | User Service | 🔄 In Progress | ⏳ Pending | Auth, profiles |
-| Transcription Service | 🔄 In Progress | ⏳ Pending | Speech-to-text |
 | Frontend | 🔄 In Progress | ⏳ Pending | React UI |
 
 ## 🛠️ Infrastructure Requirements
