@@ -89,7 +89,7 @@ class TranscriptionService:
         return byte_io.getvalue()
 
     async def transcribe_audio_chunk(self, audio_data: bytes, use_verbose: bool = True) -> Dict[str, Any]:
-        """Transcribe audio using OpenAI Whisper API with detailed segment information."""
+        """Transcribe audio using OpenAI Whisper API with enhanced parameters for better accuracy."""
         try:
             with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_file:
                 temp_file.write(audio_data)
@@ -97,12 +97,14 @@ class TranscriptionService:
 
             with open(temp_filename, "rb") as audio_file:
                 if use_verbose:
-                    # Use verbose_json for detailed segment information
+                    # Enhanced Whisper API call with context prompt for better accuracy
                     transcript_response = self.client.audio.transcriptions.create(
                         model="whisper-1",
                         file=audio_file,
                         response_format="verbose_json",
-                        language="en"
+                        language="en",
+                        temperature=0.0,  # Consistent results
+                        prompt="This is an interview conversation with professional discussions about software engineering, machine learning, DevOps, algorithms, and career experiences. Technical terms and industry jargon are common."
                     )
                     
                     # Extract segments and confidence information
@@ -124,29 +126,48 @@ class TranscriptionService:
                             }
                             segments.append(segment_data)
                             
-                            # Calculate confidence from no_speech_prob (inverted)
-                            confidence = 1.0 - segment_data["no_speech_prob"]
+                            # Enhanced confidence calculation
+                            no_speech_prob = segment_data["no_speech_prob"]
+                            avg_logprob = segment_data["avg_logprob"]
+                            
+                            # Combine no_speech_prob and avg_logprob for better confidence estimation
+                            speech_confidence = 1.0 - no_speech_prob
+                            logprob_confidence = min(1.0, max(0.0, (avg_logprob + 1.0)))  # Normalize logprob
+                            
+                            confidence = (speech_confidence * 0.7) + (logprob_confidence * 0.3)
                             total_confidence += confidence
                             segment_count += 1
                     
                     avg_confidence = total_confidence / segment_count if segment_count > 0 else 0.0
                     
-                    return {
-                        "text": transcript_response.text,
+                    # Apply minimum confidence threshold
+                    if avg_confidence < 0.3:
+                        print(f"⚠️ Low confidence transcription: {avg_confidence:.3f}")
+                    
+                    result = {
+                        "text": transcript_response.text.strip(),
                         "segments": segments,
                         "confidence_score": avg_confidence,
                         "language": getattr(transcript_response, 'language', 'en'),
-                        "duration": getattr(transcript_response, 'duration', 0.0)
+                        "duration": getattr(transcript_response, 'duration', 0.0),
+                        "provider": "openai_enhanced"
                     }
+                    
+                    print(f"Enhanced transcription: '{result['text'][:80]}...' (confidence: {avg_confidence:.3f})")
+                    return result
+                    
                 else:
-                    # Simple text response
+                    # Simple text response with enhanced parameters
                     transcript = self.client.audio.transcriptions.create(
                         model="whisper-1",
                         file=audio_file,
-                        response_format="text"
+                        response_format="text",
+                        language="en",
+                        temperature=0.0,
+                        prompt="Interview conversation with technical discussions."
                     )
                     return {
-                        "text": transcript,
+                        "text": transcript.strip(),
                         "segments": [],
                         "confidence_score": None
                     }

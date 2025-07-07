@@ -544,3 +544,18 @@ async def record_session_completion(session_id: str, total_chunks: int, total_du
         total_duration_ms,
         tags={"session_id": session_id}
     )
+
+# TTS-specific metrics
+TTS_GENERATION_TIME = "tts_generation_time"
+TTS_REQUESTS_TOTAL = "tts_requests_total"
+TTS_CACHE_HITS = "tts_cache_hits"
+TTS_CACHE_MISSES = "tts_cache_misses"
+TTS_ERRORS = "tts_errors"
+TTS_FILE_SIZE = "tts_file_size"
+TTS_AUDIO_DURATION = "tts_audio_duration"
+
+# Enhanced STT metrics
+STT_ENHANCED_CONFIDENCE = "stt_enhanced_confidence"
+STT_WORD_COUNT = "stt_word_count"
+STT_SEGMENT_COUNT = "stt_segment_count"
+STT_PROCESSING_TIME = "stt_processing_time"

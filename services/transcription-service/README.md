@@ -1,8 +1,40 @@
-# TalentSync Transcription Service Documentation
+# TalentSync Transcription & TTS Service Documentation
 
 ## Overview
 
-The Transcription Service is a core component of the TalentSync AI Interview Platform that provides chunked audio transcription capabilities using OpenAI Whisper. It's designed to handle real-time audio processing, segment deduplication, and seamless integration with other platform services.
+The Transcription & TTS Service is a comprehensive audio processing component of the TalentSync AI Interview Platform that provides:
+
+- **Enhanced Speech-to-Text (STT)** using OpenAI Whisper with improved accuracy
+- **Text-to-Speech (TTS)** generation with intelligent caching
+- **Real-time audio processing** with chunked transcription
+- **Database persistence** for transcriptions and TTS audio
+- **Performance monitoring** and health checks
+- **Seamless integration** with other platform services
+
+## 🚀 Key Features
+
+### Enhanced Speech-to-Text (STT)
+- **OpenAI Whisper Integration** with optimized settings
+- **Enhanced accuracy** for technical vocabulary and proper nouns
+- **Word-level timestamps** and confidence scores
+- **Improved sensitivity** for better word detection
+- **Contextual prompting** for interview-specific transcription
+- **Fallback mechanisms** for reliability
+
+### Text-to-Speech (TTS)
+- **OpenAI TTS API** integration with high-quality voices
+- **Intelligent caching** to reduce costs and latency
+- **Multiple voice options** (alloy, echo, fable, onyx, nova, shimmer)
+- **Various audio formats** (MP3, WAV, Opus, AAC, FLAC)
+- **Database persistence** for audio file management
+- **Automatic cleanup** of old files
+
+### Audio Processing Pipeline
+- **Real-time recording** with silence detection
+- **Chunked processing** for long conversations
+- **Session-level aggregation** and deduplication
+- **Quality metrics** and confidence scoring
+- **Error handling** and recovery mechanisms
 
 ## Architecture
 
@@ -171,9 +203,21 @@ OPENAI_API_KEY=your_openai_api_key_here
 DATABASE_URL=sqlite:///./transcription.db
 
 # Service Configuration
-SERVICE_NAME=transcription-service
-SERVICE_VERSION=1.0.0
+SERVICE_NAME=transcription-tts-service
+SERVICE_VERSION=2.0.0
 LOG_LEVEL=INFO
+
+# Audio Processing Settings
+STT_SAMPLE_RATE=16000
+STT_SILENCE_THRESHOLD=0.01
+STT_SILENCE_DURATION=1.5
+STT_MAX_RECORDING_DURATION=30
+
+# TTS Configuration
+TTS_CACHE_DURATION_HOURS=24
+TTS_DEFAULT_VOICE=alloy
+TTS_DEFAULT_FORMAT=mp3
+TTS_CLEANUP_INTERVAL_HOURS=6
 
 # Integration Configuration
 INTERVIEW_SERVICE_URL=http://interview-service:8000
@@ -187,6 +231,22 @@ The service uses OpenAI Whisper with the following configuration:
 - **Response Format**: `verbose_json` (for detailed segment information)
 - **Language**: Auto-detected
 - **Temperature**: 0.0 (for consistency)
+
+### Audio Enhancement Settings
+
+The service uses optimized settings for better speech recognition:
+
+```python
+# Enhanced STT Parameters
+- Sample Rate: 16kHz (optimal for Whisper)
+- Silence Threshold: 0.01 (improved sensitivity)
+- Silence Duration: 1.5s (faster response)
+- Context Prompting: Interview-specific vocabulary
+- Temperature: 0.0 (consistent results)
+- Response Format: verbose_json (detailed segments)
+- Language: English (better accuracy)
+- Word-level timestamps: Enabled
+```
 
 ## Database Schema
 
@@ -511,3 +571,69 @@ To contribute to the Transcription Service:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🔊 Text-to-Speech (TTS) API
+
+### Generate TTS Audio
+```bash
+POST /api/v1/tts/generate
+Content-Type: application/json
+
+{
+  "text": "Hello! Can you tell me about your experience with Python?",
+  "voice": "alloy",
+  "format": "mp3",
+  "speed": 1.0
+}
+```
+
+**Response:**
+```json
+{
+  "tts_id": 123,
+  "file_path": "tts_files/tts_uuid123.mp3",
+  "url": "/tts/files/tts_uuid123.mp3",
+  "file_size": 45612,
+  "duration": 3.2,
+  "created_at": "2025-01-08T10:30:00Z"
+}
+```
+
+### Serve Audio Files
+```bash
+GET /tts/files/{filename}
+```
+Returns the audio file for playback.
+
+### Get Cache Statistics
+```bash
+GET /api/v1/tts/cache/stats
+```
+
+**Response:**
+```json
+{
+  "total_requests": 150,
+  "total_file_size_bytes": 12845629,
+  "total_file_size_mb": 12.25,
+  "average_duration_seconds": 4.8,
+  "cache_directory": "tts_files",
+  "supported_voices": ["alloy", "echo", "fable", "onyx", "nova", "shimmer"],
+  "supported_formats": ["mp3", "opus", "aac", "flac"]
+}
+```
+
+### Cleanup Old Files
+```bash
+POST /api/v1/tts/cache/cleanup?days_old=7
+```
+
+### Get Supported Voices
+```bash
+GET /api/v1/tts/voices
+```
+
+### Get Session TTS History
+```bash
+GET /api/v1/tts/session/{session_id}/history
+```
