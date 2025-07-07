@@ -27,7 +27,7 @@ async def test_chunked_api_endpoints():
     print("🔧 Testing Chunked Transcription API Endpoints...")
     
     # Test audio file
-    test_audio_path = Path(__file__).parent.parent / "interview-pilot-ai" / "conversational-dialog" / "test-files" / "output2.mp3"
+    test_audio_path = Path(__file__).parent / "test-assets" / "audio" / "output2.mp3"
     
     if not test_audio_path.exists():
         print(f"❌ Test audio file not found at {test_audio_path}")

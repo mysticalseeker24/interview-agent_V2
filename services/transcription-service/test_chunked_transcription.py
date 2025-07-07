@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 """
-Test script for chunked transcription functionality.
+Test     # Use our local test audio file
+    test_audio_path = Path(__file__).parent / "test-assets" / "audio" / "output2.mp3"ript for chunked     # Use our local test audio file
+    test_audio_path = Path(__file__).parent / "test-assets" / "audio" / "output2.mp3"anscription functionality.
 
 This script tests:
 1. Individual chunk transcription
@@ -35,7 +37,7 @@ async def test_audio_chunking():
     
     # Create test audio data (simulate base64 encoded audio)
     # Use the same test audio file we used before
-    test_audio_path = Path(__file__).parent.parent / "interview-pilot-ai" / "conversational-dialog" / "test-files" / "output2.mp3"
+    test_audio_path = Path(__file__).parent.parent.parent.parent / "interview-pilot-ai" / "conversational-dialog" / "test-files" / "output2.mp3"
     
     if not test_audio_path.exists():
         print(f"❌ Test audio file not found at {test_audio_path}")
@@ -173,7 +175,7 @@ async def test_confidence_scoring():
     transcription_service = TranscriptionService()
     
     # Use a small test audio file
-    test_audio_path = Path(__file__).parent.parent / "interview-pilot-ai" / "conversational-dialog" / "test-files" / "output2.mp3"
+    test_audio_path = Path(__file__).parent.parent.parent.parent / "interview-pilot-ai" / "conversational-dialog" / "test-files" / "output2.mp3"
     
     if not test_audio_path.exists():
         print(f"❌ Test audio file not found at {test_audio_path}")

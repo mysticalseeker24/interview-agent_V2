@@ -19,7 +19,7 @@ class Transcription(TranscriptionBase):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TranscriptionChunkRequest(BaseModel):
     session_id: str

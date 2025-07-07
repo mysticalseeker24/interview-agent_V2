@@ -220,14 +220,17 @@ class TranscriptionService:
                 last_segment = deduplicated[-1]
                 overlap_threshold = 0.5  # 50% overlap threshold
                 
-                start_overlap = max(0, min(last_segment.get("end", 0), segment.get("end", 0)) - 
-                                  max(last_segment.get("start", 0), segment.get("start", 0)))
+                # Calculate overlap duration
+                overlap_start = max(last_segment.get("start", 0), segment.get("start", 0))
+                overlap_end = min(last_segment.get("end", 0), segment.get("end", 0))
+                overlap_duration = max(0, overlap_end - overlap_start)
                 
                 segment_duration = segment.get("end", 0) - segment.get("start", 0)
                 last_duration = last_segment.get("end", 0) - last_segment.get("start", 0)
                 
-                if (start_overlap > overlap_threshold * min(segment_duration, last_duration) and 
-                    segment.get("text", "").strip() == last_segment.get("text", "").strip()):
+                # Check if segments overlap significantly and have same text
+                if (overlap_duration > overlap_threshold * min(segment_duration, last_duration) and 
+                    segment.get("text", "").strip().lower() == last_segment.get("text", "").strip().lower()):
                     continue  # Skip duplicate
             
             deduplicated.append(segment)
