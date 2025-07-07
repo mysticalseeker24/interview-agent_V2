@@ -326,17 +326,19 @@ class ComprehensiveTestSuite:
             # Test follow-up generation trigger
             followup_result = await self.integration_service.trigger_followup_generation(
                 session_id=session_id,
-                transcript_data=webhook_payload['data']
+                transcript_text=webhook_payload['data']['full_transcript'],
+                confidence_score=webhook_payload['data']['confidence_score']
             )
             
             print(f"✅ Follow-up generation trigger test passed")
             print(f"   Session: {session_id}")
-            print(f"   Status: {followup_result.get('status', 'N/A')}")
+            print(f"   Status: {followup_result.get('status', 'N/A') if followup_result else 'No response'}")
             
             # Test feedback generation trigger
             feedback_result = await self.integration_service.trigger_feedback_generation(
                 session_id=session_id,
-                transcript_data=webhook_payload['data']
+                transcript_text=webhook_payload['data']['full_transcript'],
+                confidence_score=webhook_payload['data']['confidence_score']
             )
             
             print(f"✅ Feedback generation trigger test passed")

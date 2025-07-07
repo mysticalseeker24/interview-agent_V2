@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from typing import List
+from typing import List, Dict, Any
 import base64
+import time
 
 from app.schemas.transcription import (
     Transcription, 
@@ -15,6 +16,7 @@ from app.schemas.transcription import (
 from app.models.transcription import Transcription as TranscriptionModel
 from app.services.transcription_service import TranscriptionService
 from app.services.integration_service import IntegrationService
+from app.services.monitoring import service_monitor, record_transcription_start, record_transcription_success, record_transcription_error, record_session_completion
 from app.core.database import get_session
 from app.core.config import settings
 
@@ -22,6 +24,28 @@ router = APIRouter()
 transcription_service = TranscriptionService()
 integration_service = IntegrationService()
 
+# Health and Monitoring Endpoints
+@router.get("/health")
+async def health_check():
+    """Basic health check endpoint."""
+    return {
+        "status": "healthy",
+        "service": "transcription-service",
+        "version": settings.SERVICE_VERSION,
+        "timestamp": time.time()
+    }
+
+@router.get("/health/detailed")
+async def detailed_health_check():
+    """Detailed health check with component status."""
+    return await service_monitor.get_service_health()
+
+@router.get("/metrics")
+async def get_metrics():
+    """Get service metrics and statistics."""
+    return await service_monitor.get_service_metrics()
+
+# Transcription Endpoints
 @router.post("/", response_model=Transcription)
 async def create_transcription(
     transcription: TranscriptionCreate,
@@ -45,23 +69,42 @@ async def transcribe_chunk(
     session: AsyncSession = Depends(get_session)
 ):
     """Transcribe a single audio chunk using OpenAI Whisper."""
+    # Record transcription start
+    await record_transcription_start(request.session_id, media_chunk_id)
+    
+    start_time = time.time()
+    
     try:
-        # Decode base64 audio data
-        audio_data = base64.b64decode(request.audio_data)
+        # Use performance monitor
+        async with service_monitor.get_performance_monitor(
+            "transcribe_chunk", 
+            {"session_id": request.session_id, "chunk_id": media_chunk_id}
+        ):
+            # Decode base64 audio data
+            audio_data = base64.b64decode(request.audio_data)
+            
+            # Transcribe the audio chunk
+            transcript_result = await transcription_service.transcribe_audio_chunk(audio_data)
+            
+            # Save the transcription chunk
+            transcription = await transcription_service.save_transcription_chunk(
+                session=session,
+                session_id=request.session_id,
+                media_chunk_id=media_chunk_id,
+                sequence_index=request.sequence_index,
+                transcript_text=transcript_result["text"],
+                segments=transcript_result["segments"],
+                confidence_score=transcript_result["confidence_score"],
+                question_id=request.question_id
+            )
         
-        # Transcribe the audio chunk
-        transcript_result = await transcription_service.transcribe_audio_chunk(audio_data)
-        
-        # Save the transcription chunk
-        transcription = await transcription_service.save_transcription_chunk(
-            session=session,
-            session_id=request.session_id,
-            media_chunk_id=media_chunk_id,
-            sequence_index=request.sequence_index,
-            transcript_text=transcript_result["text"],
-            segments=transcript_result["segments"],
-            confidence_score=transcript_result["confidence_score"],
-            question_id=request.question_id
+        # Record success metrics
+        duration_ms = (time.time() - start_time) * 1000
+        await record_transcription_success(
+            request.session_id, 
+            media_chunk_id, 
+            duration_ms, 
+            transcript_result["confidence_score"]
         )
         
         # Create response
@@ -104,6 +147,10 @@ async def transcribe_chunk(
         return response
     
     except Exception as e:
+        # Record error metrics
+        error_type = type(e).__name__
+        await record_transcription_error(request.session_id, media_chunk_id, error_type)
+        
         raise HTTPException(status_code=500, detail=f"Error processing audio chunk: {str(e)}")
 
 @router.post("/session-complete/{session_id}", response_model=SessionCompleteResponse)
@@ -113,30 +160,45 @@ async def complete_session(
     session: AsyncSession = Depends(get_session)
 ):
     """Aggregate all chunks for a session into a complete transcript."""
+    start_time = time.time()
+    
     try:
-        # Get aggregated transcript
-        aggregated_result = await transcription_service.aggregate_session_transcript(
-            session=session,
-            session_id=session_id
-        )
+        # Use performance monitor
+        async with service_monitor.get_performance_monitor(
+            "session_completion", 
+            {"session_id": session_id}
+        ):
+            # Get aggregated transcript
+            aggregated_result = await transcription_service.aggregate_session_transcript(
+                session=session,
+                session_id=session_id
+            )
+            
+            # Create final transcription record (master transcript)
+            final_transcription = TranscriptionModel(
+                session_id=session_id,
+                transcript_text=aggregated_result["full_transcript"],
+                segments=aggregated_result["segments"],
+                confidence_score=aggregated_result["confidence_score"]
+            )
+            session.add(final_transcription)
+            await session.commit()
+            
+            # Create response
+            response = SessionCompleteResponse(
+                session_id=session_id,
+                full_transcript=aggregated_result["full_transcript"],
+                total_chunks=aggregated_result["total_chunks"],
+                confidence_score=aggregated_result["confidence_score"],
+                segments=aggregated_result["segments"]
+            )
         
-        # Create final transcription record (master transcript)
-        final_transcription = TranscriptionModel(
-            session_id=session_id,
-            transcript_text=aggregated_result["full_transcript"],
-            segments=aggregated_result["segments"],
-            confidence_score=aggregated_result["confidence_score"]
-        )
-        session.add(final_transcription)
-        await session.commit()
-        
-        # Create response
-        response = SessionCompleteResponse(
-            session_id=session_id,
-            full_transcript=aggregated_result["full_transcript"],
-            total_chunks=aggregated_result["total_chunks"],
-            confidence_score=aggregated_result["confidence_score"],
-            segments=aggregated_result["segments"]
+        # Record session completion metrics
+        duration_ms = (time.time() - start_time) * 1000
+        await record_session_completion(
+            session_id, 
+            aggregated_result["total_chunks"], 
+            duration_ms
         )
         
         # Trigger integration hooks if enabled

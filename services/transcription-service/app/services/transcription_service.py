@@ -18,35 +18,67 @@ class TranscriptionService:
         self.sample_rate = 16000
         self.channels = 1
         self.chunk_duration = 5  # seconds per chunk
-        self.silence_threshold = 0.03
-        self.silence_duration = 2.0  # seconds of silence to stop
+        self.silence_threshold = 0.02  # Reduced for better sensitivity
+        self.silence_duration = 1.5  # Reduced silence duration for faster response
+        self.min_audio_length = 0.5  # Minimum audio length in seconds
 
     async def record_audio(self) -> bytes:
-        """Record audio until silence is detected."""
+        """Record audio until silence is detected with improved sensitivity."""
         print("Recording... (speak now)")
         
         chunk_frames = int(self.sample_rate * self.chunk_duration)
         silence_frames = int(self.sample_rate * self.silence_duration)
+        min_frames = int(self.sample_rate * self.min_audio_length)
         
         recording = []
         silence_count = 0
+        total_frames = 0
 
         def callback(indata, frames, time, status):
-            nonlocal silence_count
+            nonlocal silence_count, total_frames
             if status:
-                print(f"Error: {status}")
+                print(f"Audio input status: {status}")
+            
             recording.append(indata.copy())
-            if np.abs(indata).mean() < self.silence_threshold:
+            total_frames += frames
+            
+            # Calculate RMS for better silence detection
+            rms = np.sqrt(np.mean(indata**2))
+            
+            if rms < self.silence_threshold:
                 silence_count += frames
             else:
                 silence_count = 0
+                
+            # Print audio level for debugging
+            if total_frames % (self.sample_rate // 4) == 0:  # Every 0.25 seconds
+                print(f"Audio level: {'█' * int(rms * 100):<20} {rms:.4f}")
 
-        with sd.InputStream(samplerate=self.sample_rate, channels=self.channels,
-                          callback=callback, dtype=np.float32):
-            while silence_count < silence_frames:
-                sd.sleep(100)  # Sleep for 100ms between checks
+        try:
+            with sd.InputStream(samplerate=self.sample_rate, channels=self.channels,
+                              callback=callback, dtype=np.float32):
+                while silence_count < silence_frames or total_frames < min_frames:
+                    sd.sleep(100)  # Sleep for 100ms between checks
+                    
+                    # Safety timeout to prevent infinite recording
+                    if total_frames > self.sample_rate * 30:  # 30 seconds max
+                        print("⚠️ Recording timeout reached")
+                        break
+
+            print(f"Recording completed. Duration: {total_frames / self.sample_rate:.2f}s")
+            
+        except Exception as e:
+            print(f"Recording error: {e}")
+            return b""
+
+        if not recording:
+            return b""
 
         audio_data = np.concatenate(recording, axis=0)
+        
+        # Apply basic noise gate
+        audio_data = np.where(np.abs(audio_data) > 0.01, audio_data, 0)
+        
         byte_io = io.BytesIO()
         with wave.open(byte_io, 'wb') as wf:
             wf.setnchannels(self.channels)
@@ -218,7 +250,7 @@ class TranscriptionService:
             # Check if this segment overlaps significantly with the last one
             if deduplicated:
                 last_segment = deduplicated[-1]
-                overlap_threshold = 0.5  # 50% overlap threshold
+                overlap_threshold = 0.2  # 20% overlap threshold
                 
                 # Calculate overlap duration
                 overlap_start = max(last_segment.get("start", 0), segment.get("start", 0))

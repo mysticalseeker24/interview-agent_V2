@@ -1,0 +1,89 @@
+{
+  "session_id": "voice_interview_1751912657",
+  "persona": "Taylor Morgan",
+  "role": "Resume-Driven Interview Specialist",
+  "turn_count": 10,
+  "conversation": [
+    {
+      "role": "user",
+      "content": "Hello, my name is..."
+    },
+    {
+      "role": "assistant",
+      "content": "Hi there! It's great to meet you. What’s your name, and can you tell me a bit about your background?"
+    },
+    {
+      "role": "user",
+      "content": "You"
+    },
+    {
+      "role": "assistant",
+      "content": "I appreciate your interest! I'm Taylor Morgan, a Resume-Driven Interview Specialist. I’m here to help you navigate this interview process. Let’s dive into your experience—what's a recent role you've held that you're particularly proud of?"
+    },
+    {
+      "role": "user",
+      "content": "Wasn't"
+    },
+    {
+      "role": "assistant",
+      "content": "It sounds like there might have been some confusion. Could you clarify your previous role or experience that you'd like to discuss? I’m here to help!"
+    },
+    {
+      "role": "user",
+      "content": "Yes, I was actually"
+    },
+    {
+      "role": "assistant",
+      "content": "Got it! Please go ahead and share what role you were in. I'm eager to hear about your experiences!"
+    },
+    {
+      "role": "user",
+      "content": "I"
+    },
+    {
+      "role": "assistant",
+      "content": "It seems like we're having a little trouble connecting. Could you share more details about your experience or what you'd like to discuss? I'm here to listen!"
+    },
+    {
+      "role": "user",
+      "content": "It's all pure ingenuity."
+    },
+    {
+      "role": "assistant",
+      "content": "That’s an intriguing perspective! Can you share a specific example of how your ingenuity has played a role in a project or situation at work? I'd love to hear more about it."
+    },
+    {
+      "role": "user",
+      "content": "I have worked as a"
+    },
+    {
+      "role": "assistant",
+      "content": "Great! What position have you worked in? I'd love to hear about your responsibilities and any impactful projects you've been involved in."
+    },
+    {
+      "role": "user",
+      "content": "Yes, I was involved."
+    },
+    {
+      "role": "assistant",
+      "content": "That’s interesting! Can you tell me more about your involvement? What specific role did you play in that project or situation?"
+    },
+    {
+      "role": "user",
+      "content": "I was a machine learning engineer"
+    },
+    {
+      "role": "assistant",
+      "content": "Awesome! As a machine learning engineer, what was one of the most challenging projects you worked on? What made it challenging, and how did you overcome those obstacles?"
+    },
+    {
+      "role": "user",
+      "content": "Let's end this."
+    },
+    {
+      "role": "assistant",
+      "content": "Of course! If you have any final thoughts or questions, feel free to share. Thank you for your time today!"
+    }
+  ],
+  "timestamp": 1751912864.7979393
+}
