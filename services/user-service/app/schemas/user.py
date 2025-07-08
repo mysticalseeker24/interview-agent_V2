@@ -1,43 +1,36 @@
-"""User schema definitions."""
-from typing import List, Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
+from typing import Optional
+from datetime import datetime
 
 
-class UserBase(BaseModel):
-    """Base user schema."""
+class UserCreate(BaseModel):
     email: EmailStr
-    first_name: str
-    last_name: str
-
-
-class UserCreate(UserBase):
-    """User creation schema."""
     password: str
+    full_name: Optional[str] = None
+
+
+class UserRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
+    id: int
+    email: EmailStr
+    full_name: Optional[str] = None
+    is_active: bool
+    is_admin: bool
+    created_at: datetime
+    updated_at: datetime
 
 
 class UserUpdate(BaseModel):
-    """User update schema."""
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
+    is_active: Optional[bool] = None
 
 
-class RoleRead(BaseModel):
-    """Role read schema."""
-    id: int
-    name: str
-    description: Optional[str] = None
-    
-    class Config:
-        from_attributes = True
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
 
 
-class UserRead(UserBase):
-    """User response schema."""
-    id: int
-    is_active: bool
-    is_admin: bool
-    roles: List[RoleRead] = []
-    
-    class Config:
-        from_attributes = True
+class TokenPayload(BaseModel):
+    sub: str
+    exp: int

@@ -1,42 +1,19 @@
-"""Database configuration and session management."""
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-from app.core.config import get_settings
-from app.models import Base
+from app.core.settings import settings
 
-settings = get_settings()
+engine = create_async_engine(settings.DATABASE_URL, echo=False)
+AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
-# Create async engine
-engine = create_async_engine(
-    settings.DATABASE_URL,
-    echo=settings.DEBUG,
-    future=True
-)
-
-# Create async session factory
-async_session = sessionmaker(
-    bind=engine,
-    class_=AsyncSession,
-    expire_on_commit=False
-)
+Base = declarative_base()
 
 
-async def get_db() -> AsyncSession:
-    """
-    Dependency to get database session.
-    
-    Yields:
-        AsyncSession: Database session
-    """
-    async with async_session() as session:
-        try:
-            yield session
-        finally:
-            await session.close()
+async def get_db():
+    async with AsyncSessionLocal() as session:
+        yield session
 
 
-async def create_tables():
-    """Create database tables for User, Role, and UserRole models."""
+async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

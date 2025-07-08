@@ -80,6 +80,18 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 - **Speaker Diarization**: Advanced speaker identification and confidence scoring
 - **Caching System**: SQLite-based TTS audio caching for performance optimization
 
+#### **Media Service** (Port 8005) - *Chunked Media Management*
+- **Chunked Upload System**: Handles audio/video chunks with sequence management and gap detection
+- **Device Enumeration**: Lists available cameras and microphones for frontend selection
+- **Session Management**: Tracks upload sessions with metadata and completion detection
+- **File Organization**: Structured storage with session-based directories (uploads/{session_id}/)
+- **Event Emission**: Notifies Transcription Service of new chunks via HTTP webhooks
+- **Background Processing**: Celery workers for metadata extraction and file validation
+- **Shared Storage**: Docker volume mounted by both Media and Transcription services
+- **Performance Monitoring**: Prometheus metrics and comprehensive health checks
+- **Multiple Format Support**: WebM, MP3, WAV, M4A, OGG with validation
+- **Inter-Service Integration**: RESTful APIs for Interview Service coordination
+
 ### Infrastructure Components
 - **PostgreSQL**: Primary database for interview, user, transcription services
 - **Local JSON Storage**: Resume service uses file-based storage for simplified deployment

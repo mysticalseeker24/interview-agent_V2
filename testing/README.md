@@ -12,6 +12,7 @@ Each service has its own dedicated testing guide with complete setup and validat
 - **[Interview Service Testing](interview-service-testing.md)** - Dynamic question generation, follow-up creation, RAG pipeline
 - **[Resume Service Testing](resume-service-testing.md)** - Multi-template resume parsing, text-to-JSON pipeline
 - **[Transcription Service Testing](transcription-service-testing.md)** - Enhanced STT/TTS, chunked audio, persona interviews
+- **[Media Service Testing](media-service-testing.md)** - Chunked uploads, device enumeration, session management
 
 ### Upcoming Services
 - **User Service Testing** - Authentication, user management
@@ -24,6 +25,7 @@ Each service has its own dedicated testing guide with complete setup and validat
 | Interview Service | ✅ Complete | ✅ Validated | RAG, Follow-ups, o4-mini |
 | Resume Service | ✅ Complete | ✅ Validated | Multi-template, LLM enhancement |
 | Transcription Service | ✅ Complete | ✅ Validated | Enhanced STT/TTS, Chunked Audio, Personas |
+| Media Service | ✅ Complete | ✅ Validated | Chunked uploads, Device enumeration, Events |
 | User Service | 🔄 In Progress | ⏳ Pending | Auth, profiles |
 | Frontend | 🔄 In Progress | ⏳ Pending | React UI |
 
@@ -31,7 +33,8 @@ Each service has its own dedicated testing guide with complete setup and validat
 
 ### Essential Infrastructure
 - **PostgreSQL 14+** - Primary database for interview service
-- **Redis 6+** - Caching and session management
+- **SQLite** - Local database for media service metadata
+- **Redis 6+** - Caching, session management, and background tasks
 - **Python 3.11+** - Runtime environment
 
 ### API Keys Required
@@ -69,6 +72,7 @@ docker run --name talentsync-redis -p 6379:6379 -d redis:6-alpine
 # Test individual services (follow specific testing guides)
 cd services/interview-service && python test_codebase.py
 cd services/resume-service && python test_comprehensive.py
+cd services/media-service && python test_comprehensive.py
 ```
 
 ### 4. Integration Testing
@@ -91,6 +95,13 @@ cd services/resume-service && python test_comprehensive.py
 - **Confidence Improvement**: +5-15% with LLM
 - **Cost**: $0.001-0.005 per resume (with LLM)
 
+### Media Service
+- **Chunk Upload**: <2 seconds for 10MB file
+- **Session Summary**: <100ms
+- **Device Enumeration**: <50ms
+- **Health Check**: <20ms
+- **Concurrent Users**: 100+ simultaneous uploads
+
 ## 🔧 Common Setup Issues
 
 ### Dependency Issues
@@ -109,6 +120,12 @@ docker exec -it talentsync-postgres psql -U talentsync -d talentsync -c "SELECT 
 
 # Check Redis
 docker exec -it talentsync-redis redis-cli ping
+
+# Check Media Service Storage
+ls -la services/media-service/uploads/
+
+# Test Media Service Health
+curl http://localhost:8005/health
 ```
 
 ### API Key Issues
