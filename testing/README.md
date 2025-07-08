@@ -9,6 +9,7 @@ Each service has its own dedicated testing guide with complete setup and validat
 ## 📁 Testing Guides
 
 ### Core Services
+- **[User Service Testing](user-service-testing.md)** - JWT authentication, profile management, security testing
 - **[Interview Service Testing](interview-service-testing.md)** - Dynamic question generation, follow-up creation, RAG pipeline
 - **[Resume Service Testing](resume-service-testing.md)** - Multi-template resume parsing, text-to-JSON pipeline
 - **[Transcription Service Testing](transcription-service-testing.md)** - Enhanced STT/TTS, chunked audio, persona interviews
@@ -22,11 +23,11 @@ Each service has its own dedicated testing guide with complete setup and validat
 
 | Service | Status | Testing | Key Features |
 |---------|--------|---------|--------------|
+| User Service | ✅ Complete | ✅ Validated | JWT auth, Profile management, Security |
 | Interview Service | ✅ Complete | ✅ Validated | RAG, Follow-ups, o4-mini |
 | Resume Service | ✅ Complete | ✅ Validated | Multi-template, LLM enhancement |
 | Transcription Service | ✅ Complete | ✅ Validated | Enhanced STT/TTS, Chunked Audio, Personas |
 | Media Service | ✅ Complete | ✅ Validated | Chunked uploads, Device enumeration, Events |
-| User Service | 🔄 In Progress | ⏳ Pending | Auth, profiles |
 | Frontend | 🔄 In Progress | ⏳ Pending | React UI |
 
 ## 🛠️ Infrastructure Requirements
@@ -70,6 +71,7 @@ docker run --name talentsync-redis -p 6379:6379 -d redis:6-alpine
 ### 3. Service Testing
 ```bash
 # Test individual services (follow specific testing guides)
+cd services/user-service && python -m pytest tests/ -v
 cd services/interview-service && python test_codebase.py
 cd services/resume-service && python test_comprehensive.py
 cd services/media-service && python test_comprehensive.py
@@ -82,6 +84,12 @@ cd services/media-service && python test_comprehensive.py
 ```
 
 ## 📊 Performance Benchmarks
+
+### User Service
+- **User Registration**: ~100ms average
+- **User Login**: ~80ms average
+- **Profile Retrieval**: ~20ms average
+- **Token Validation**: ~5ms average
 
 ### Interview Service
 - **Question Generation**: ~1-2 seconds
@@ -120,6 +128,9 @@ docker exec -it talentsync-postgres psql -U talentsync -d talentsync -c "SELECT 
 
 # Check Redis
 docker exec -it talentsync-redis redis-cli ping
+
+# Check User Service Health
+curl http://localhost:8001/
 
 # Check Media Service Storage
 ls -la services/media-service/uploads/

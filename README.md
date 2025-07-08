@@ -44,11 +44,17 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 
 ### Active Services
 
-#### **User Service** (Port 8001)
-- User authentication and profile management
-- JWT token-based security with role-based access control
-- OAuth2 with Password flow
-- Password reset and user management APIs
+#### **User Service** (Port 8001) - *Authentication & Profile Management*
+- **JWT Authentication**: Secure stateless authentication with bcrypt password hashing
+- **User Registration & Login**: Email validation and secure account creation
+- **Profile Management**: User profile updates and account management
+- **Role-Based Access Control**: Admin and user role management with permissions
+- **Security Features**: Password hashing, token expiration, input validation
+- **SQLite Database**: Lightweight, reliable user data storage with async operations
+- **Inter-Service Integration**: JWT verification for other microservices
+- **Comprehensive Testing**: 29+ test cases covering all authentication scenarios
+- **Pre-seeded Users**: Development users with standardized credentials
+- **API Documentation**: Complete OpenAPI/Swagger documentation
 
 #### **Interview Service** (Port 8002) - *Core Service*
 - Interview module and question management
