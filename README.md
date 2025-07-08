@@ -466,19 +466,154 @@ talentsync/
 └── README.md               # This file
 ```
 
-### Contributing Guidelines
-1. Follow the coding conventions in `docs/talent_sync_coding_conventions.md`
-2. Add comprehensive tests for new features
-3. Update documentation for API changes
-4. Use meaningful commit messages and PR descriptions
-5. Ensure all health checks pass before deployment
+## 🚀 Getting Started
 
-## 📄 License
+Follow these instructions to get TalentSync up and running on your local machine:
 
-Copyright © 2025 TalentSync. All rights reserved.
+### Prerequisites
 
-## 🔗 Additional Resources
+- Docker and Docker Compose
+- Git
+- OpenAI API key (for LLM capabilities, embeddings, and transcription)
+- Pinecone API key (for vector database - or use the included local emulator)
+- AssemblyAI API key (optional, for enhanced transcription capabilities)
+- 8GB+ RAM and 4+ CPU cores for running all services
 
-- [Technical Architecture](docs/talent_sync_tech_architecture.md)
-- [Project Specifications](docs/talent_sync_project_spec.md)
-- [Coding Conventions](docs/talent_sync_coding_conventions.md)
+### Installation and Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/talentsync.git
+   cd talentsync
+   ```
+
+2. Create a `.env` file in the root directory with the required API keys:
+   ```
+   # Required API Keys
+   OPENAI_API_KEY=your_openai_api_key
+   PINECONE_API_KEY=your_pinecone_api_key  # or use "local" for the emulator
+   ASSEMBLYAI_API_KEY=your_assemblyai_api_key  # optional
+   
+   # Security
+   SECRET_KEY=your-secret-key-here-change-in-production
+   ```
+
+3. Start all services with Docker Compose:
+   ```bash
+   docker-compose up -d
+   ```
+
+4. Verify all services are running:
+   ```bash
+   python check_services.py
+   ```
+
+5. Import the interview question datasets (first time setup):
+   ```bash
+   curl -X POST http://localhost:8003/api/v1/datasets/import/all
+   ```
+
+6. Access the web application at http://localhost:3000
+
+### Checking Service Status
+
+The included `check_services.py` script provides a quick way to verify that all services are operational:
+
+```bash
+python check_services.py
+```
+
+This will display the health status of all services in the stack:
+- User Service (8001)
+- Media Service (8002)  
+- Interview Service (8003)
+- Resume Service (8004)
+- Transcription Service (8005)
+- Feedback Service (8006)
+- Frontend (3000)
+- Nginx Proxy (80)
+
+### Running Individual Services for Development
+
+While Docker Compose is the recommended way to run the full system, you can run individual services for development:
+
+#### Interview Service (Core)
+
+```powershell
+cd services/interview-service
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8003
+```
+
+#### Frontend
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+The development frontend will be available at http://localhost:5173 and will connect to the backend services through the nginx proxy.
+
+### Using the Integrated Platform
+
+1. **User Authentication**: Sign up or log in at the landing page
+2. **Browse Modules**: Explore interview modules by domain and difficulty on the dashboard 
+3. **Start Session**: Select a module to create a new interview session
+4. **Prepare in Lobby**:
+   - Upload your resume for personalized questions
+   - Test your microphone and camera
+   - Adjust audio settings
+5. **Complete Interview**:
+   - Answer questions asked by the AI interviewer
+   - Audio is automatically recorded, transcribed, and analyzed
+   - Dynamic follow-up questions are generated based on your responses
+6. **Review Feedback**:
+   - Receive comprehensive performance analytics
+   - Get AI-generated feedback on strengths and areas for improvement
+   - Compare your performance against historical data
+
+### Integrated Services Architecture
+
+TalentSync uses a microservices architecture with all services integrated through an nginx proxy:
+
+| Service | Port | Description | Integration Points |
+|---------|------|-------------|-------------------|
+| Frontend | 3000 | React application | Connects to all backend services via nginx proxy |
+| User Service | 8001 | Authentication & profiles | Provides JWT authentication for all services |
+| Media Service | 8002 | Audio/video handling | Processes and stores interview media files |
+| Interview Service | 8003 | Core orchestration | Manages interview sessions and questions |
+| Resume Service | 8004 | Resume parsing | Extracts information from uploaded resumes |
+| Transcription Service | 8005 | STT/TTS | Handles audio transcription and text-to-speech |
+| Feedback Service | 8006 | Analytics & reports | Generates interview performance reports |
+| Nginx Proxy | 80 | API Gateway | Routes all API requests to appropriate services |
+
+### Key Integration Points
+
+- **API Gateway**: All backend API requests go through the nginx proxy at `/api/*` endpoints
+- **Shared Authentication**: JWT tokens issued by the User Service are validated across all services
+- **Resource Sharing**: Services share resources through Docker volumes:
+  - `media_uploads`: Shared between Media and Transcription services
+  - `resume_uploads`: Used by the Resume service for storing parsed resumes
+  - `audio_uploads`: Used by Transcription service for audio processing
+- **Database**: Interview Service now uses SQLite instead of PostgreSQL for simplified deployment
+- **Vector Database**: Pinecone (or local emulator) for semantic search capabilities
+
+### Health and Monitoring
+
+You can check the health of individual services at their health endpoints:
+
+```bash
+curl http://localhost:8001/api/v1/health  # User Service
+curl http://localhost:8002/api/v1/health  # Media Service
+curl http://localhost:8003/api/v1/health  # Interview Service
+curl http://localhost:8004/api/v1/health  # Resume Service
+curl http://localhost:8005/api/v1/health  # Transcription Service
+curl http://localhost:8006/api/v1/health  # Feedback Service
+```
+
+Or use the provided health check script for a comprehensive overview:
+
+```bash
+python check_services.py
+```

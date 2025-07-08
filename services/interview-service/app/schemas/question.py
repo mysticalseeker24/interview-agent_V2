@@ -75,7 +75,7 @@ class QuestionImport(BaseModel):
     scoring_criteria: Dict[str, Any] = {}
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "text": "Tell me about your experience with Python.",
                 "difficulty": "medium",
@@ -96,7 +96,7 @@ class QuestionBatchImport(BaseModel):
     module_id: Optional[int] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "module_id": 1,
                 "questions": [
@@ -130,7 +130,7 @@ class QuestionSync(BaseModel):
     difficulty: Optional[str] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": 123,
                 "text": "Tell me about your experience with Python.",
@@ -146,7 +146,7 @@ class QuestionSyncBatch(BaseModel):
     questions: List[QuestionSync]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "questions": [
                     {

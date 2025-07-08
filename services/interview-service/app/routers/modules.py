@@ -8,7 +8,7 @@ from sqlalchemy.future import select
 from app.core.database import get_db
 from app.core.security import get_current_user
 from app.models import Module, Question
-from app.schemas.module import ModuleResponse
+from app.schemas.module import ModuleResponse, ModuleCreate
 from app.schemas.question import QuestionResponse
 from app.schemas.user import UserRead
 
@@ -58,6 +58,58 @@ async def list_modules(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to list modules"
+        )
+
+
+@router.post("/", response_model=ModuleResponse, status_code=status.HTTP_201_CREATED)
+async def create_module(
+    module: ModuleCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserRead = Depends(get_current_user)
+):
+    """
+    Create a new interview module.
+    
+    Args:
+        module: Module data
+        db: Database session
+        current_user: Current authenticated user
+        
+    Returns:
+        Created module
+    """
+    try:
+        new_module = Module(
+            title=module.title,
+            description=module.description,
+            category=module.category,
+            difficulty=module.difficulty,
+            duration_minutes=module.duration_minutes,
+            is_active=True
+        )
+        
+        db.add(new_module)
+        await db.commit()
+        await db.refresh(new_module)
+        
+        return ModuleResponse(
+            id=new_module.id,
+            title=new_module.title,
+            description=new_module.description,
+            category=new_module.category,
+            difficulty=new_module.difficulty,
+            duration_minutes=new_module.duration_minutes,
+            is_active=bool(new_module.is_active),
+            created_at=new_module.created_at,
+            updated_at=new_module.updated_at
+        )
+        
+    except Exception as e:
+        await db.rollback()
+        logger.error(f"Error creating module: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to create module: {str(e)}"
         )
 
 

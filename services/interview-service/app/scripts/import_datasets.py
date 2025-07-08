@@ -15,6 +15,9 @@ from sqlalchemy import text
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 
 from app.core.database import async_session, create_tables
+from app.core.config import get_settings
+
+settings = get_settings()
 from app.models.question import Question
 from app.models.module import Module, ModuleCategory, DifficultyLevel
 from app.services.embedding_service import EmbeddingService
@@ -36,7 +39,14 @@ DATASET_MODULE_MAPPING = {
 }
 
 # Dataset root directory
-DATA_DIR = Path(__file__).resolve().parent.parent.parent.parent.parent / "data"
+# Handle both Docker and local paths
+potential_paths = [
+    Path(__file__).resolve().parent.parent.parent.parent.parent / "data",  # Docker path
+    Path(__file__).resolve().parent.parent.parent.parent / "data",         # Local path
+]
+
+DATA_DIR = next((p for p in potential_paths if p.exists()), potential_paths[0])
+logger.info(f"Using data directory: {DATA_DIR}")
 
 embedding_service = EmbeddingService()
 
@@ -161,7 +171,12 @@ async def main():
     logger.info("Starting dataset import process")
     
     # Create tables if they don't exist
-    await create_tables()
+    try:
+        await create_tables()
+        logger.info("Database tables created successfully")
+    except Exception as e:
+        logger.error(f"Error creating tables: {e}")
+        logger.info("Continuing with existing tables...")
     
     # Get async session
     async with async_session() as db:

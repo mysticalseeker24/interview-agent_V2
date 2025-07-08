@@ -36,7 +36,6 @@ class Response(Base):
     # Relationships
     session = relationship("Session", back_populates="responses")
     question = relationship("Question", back_populates="responses")
-    scores = relationship("Score", back_populates="response", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Response(id={self.id}, session_id={self.session_id}, question_id={self.question_id})>"

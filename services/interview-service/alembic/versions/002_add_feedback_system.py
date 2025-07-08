@@ -7,7 +7,6 @@ Create Date: 2025-07-05 12:00:00.000000
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = '002_add_feedback_system'

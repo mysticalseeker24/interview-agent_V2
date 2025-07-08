@@ -217,12 +217,12 @@ class EmbeddingService:
                     )
                     
                     # Update sync status
-                    update_query = """
+                    update_query = text("""
                         UPDATE questions
-                        SET last_synced = NOW()
+                        SET last_synced = CURRENT_TIMESTAMP
                         WHERE id = :question_id
-                    """
-                    await session.execute(text(update_query), {"question_id": question_id})
+                    """)
+                    await session.execute(update_query, {"question_id": question_id})
                     
                     processed += 1
                     

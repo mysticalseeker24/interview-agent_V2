@@ -7,8 +7,8 @@ class HealthResponse(BaseModel):
     """Health check response schema."""
     status: str
     service: str
-    version: str
     database: str
+    version: Optional[str] = None
     redis: Optional[str] = None
     pinecone: Optional[str] = None
     error: Optional[str] = None

@@ -14,7 +14,7 @@ class QuestionSync(BaseModel):
     difficulty: Optional[str] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": 123,
                 "text": "Tell me about your experience with Python.",
@@ -30,7 +30,7 @@ class QuestionSyncBatch(BaseModel):
     questions: List[QuestionSync]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "questions": [
                     {

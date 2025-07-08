@@ -1,6 +1,8 @@
 """Configuration management for Interview Service."""
+import os
 from functools import lru_cache
 from typing import List
+from pathlib import Path
 
 from pydantic_settings import BaseSettings
 
@@ -8,8 +10,8 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
     
-    # Database settings
-    DATABASE_URL: str = "postgresql+asyncpg://user:password@localhost/talentsync_interviews"
+    # Database settings - Using SQLite instead of PostgreSQL
+    DATABASE_URL: str = f"sqlite+aiosqlite:///{Path(__file__).parent.parent.parent}/data/interviews.db"
     
     # Redis settings
     REDIS_URL: str = "redis://localhost:6379/1"
@@ -32,13 +34,19 @@ class Settings(BaseSettings):
     # Application settings
     DEBUG: bool = False
     LOG_LEVEL: str = "INFO"
-    PORT: int = 8002
+    PORT: int = 8003
     
     # External service URLs
     USER_SERVICE_URL: str = "http://localhost:8001"
-    RESUME_SERVICE_URL: str = "http://localhost:8002"
+    MEDIA_SERVICE_URL: str = "http://localhost:8002"
+    RESUME_SERVICE_URL: str = "http://localhost:8004"
     TRANSCRIPTION_SERVICE_URL: str = "http://localhost:8005"
     FEEDBACK_SERVICE_URL: str = "http://localhost:8006"
+    
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+        extra = "allow"  # Allow extra fields from environment variables
     
     class Config:
         env_file = ".env"

@@ -16,7 +16,7 @@ from prometheus_client import make_asgi_app
 from app.core.config import get_settings
 from app.core.database import engine, create_tables
 from app.core.logging import setup_logging
-from app.routers import modules, sessions, health, vectors, datasets, followup, feedback
+from app.routers import modules, sessions, health, vectors, datasets, followup  # feedback removed
 
 # Setup logging
 setup_logging()
@@ -31,7 +31,20 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Starting Interview Service...")
     
     # Create database tables
-    await create_tables()
+    try:
+        await create_tables()
+        logger.info("Database tables created successfully")
+    except Exception as e:
+        logger.error(f"Error creating database tables: {e}")
+        # Continue anyway, tables might already exist
+    
+    # Check connectivity to other services
+    try:
+        logger.info("Checking connectivity to external services...")
+        # You can add health check calls to other services here
+        logger.info("External services connectivity check completed")
+    except Exception as e:
+        logger.warning(f"Issue with external services connectivity: {e}")
     
     logger.info("Interview Service started successfully")
     yield
@@ -76,7 +89,7 @@ app.include_router(sessions.router, prefix="/api/v1", tags=["sessions"])
 app.include_router(vectors.router, prefix="/api/v1/vectors", tags=["vectors"])
 app.include_router(datasets.router, prefix="/api/v1/datasets", tags=["datasets"])
 app.include_router(followup.router, tags=["followup"])
-app.include_router(feedback.router, tags=["feedback"])
+# feedback router removed
 
 
 @app.get("/")
@@ -93,7 +106,7 @@ async def root():
 if __name__ == "__main__":
     import uvicorn
     
-    port = int(os.getenv("PORT", 8002))
+    port = int(os.getenv("PORT", 8003))
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",

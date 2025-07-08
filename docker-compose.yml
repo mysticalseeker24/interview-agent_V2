@@ -56,6 +56,24 @@ services:
       timeout: 10s
       retries: 3
 
+  media-service:
+    build: ./services/media-service
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002
+      - DATABASE_URL=postgresql+asyncpg://talentsync:secret@postgres:5432/talentsync
+      - REDIS_URL=redis://redis:6379/1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   interview-service:
     build: ./services/interview-service
     env_file: .env
@@ -64,16 +82,16 @@ services:
       - redis
       - pinecone-emulator
     ports:
-      - "8002:8002"
+      - "8004:8004"
     environment:
-      - PORT=8002
+      - PORT=8004
       - DATABASE_URL=postgresql+asyncpg://talentsync:secret@postgres:5432/talentsync
-      - REDIS_URL=redis://redis:6379/1
+      - REDIS_URL=redis://redis:6379/2
       - PINECONE_API_KEY=local
       - USER_SERVICE_URL=http://user-service:8001
-      - TRANSCRIPTION_SERVICE_URL=http://transcription-service:8004
+      - TRANSCRIPTION_SERVICE_URL=http://transcription-service:8005
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -104,15 +122,15 @@ services:
       - postgres
       - redis
     ports:
-      - "8004:8004"
+      - "8005:8005"
     environment:
-      - PORT=8004
+      - PORT=8005
       - DATABASE_URL=postgresql+asyncpg://talentsync:secret@postgres:5432/talentsync
-      - REDIS_URL=redis://redis:6379/2
+      - REDIS_URL=redis://redis:6379/3
     volumes:
       - audio_uploads:/app/audio
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -128,6 +146,7 @@ services:
       - ./ssl:/etc/nginx/ssl
     depends_on:
       - user-service
+      - media-service
       - interview-service
       - resume-service
       - transcription-service

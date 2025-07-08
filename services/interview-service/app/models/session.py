@@ -50,8 +50,6 @@ class Session(Base):
     module = relationship("Module", back_populates="sessions")
     responses = relationship("Response", back_populates="session", cascade="all, delete-orphan")
     asked_questions = relationship("SessionQuestion", back_populates="session")
-    scores = relationship("Score", back_populates="session", cascade="all, delete-orphan")
-    feedback_report = relationship("FeedbackReport", back_populates="session", uselist=False, cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Session(id={self.id}, user_id={self.user_id}, status={self.status})>"

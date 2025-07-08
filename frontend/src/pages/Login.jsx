@@ -72,7 +72,7 @@ const Login = () => {
     try {
       const result = await login(formData);
       if (result.success) {
-        navigate('/');
+        navigate('/dashboard');
       } else {
         setErrors({ general: result.error });
       }

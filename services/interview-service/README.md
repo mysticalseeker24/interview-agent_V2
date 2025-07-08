@@ -1,6 +1,6 @@
 # TalentSync Interview Service
 
-The Interview Service is the core orchestration service for the TalentSync platform, responsible for managing interview modules, questions, sessions, dynamic follow-up generation, post-interview feedback analysis, and the complete RAG (Retrieval-Augmented Generation) pipeline.
+The Interview Service is the core orchestration service for the TalentSync platform, responsible for managing interview modules, questions, sessions, dynamic follow-up generation, and the complete RAG (Retrieval-Augmented Generation) pipeline.
 
 ## Features
 
@@ -22,20 +22,12 @@ The Interview Service is the core orchestration service for the TalentSync platf
 - **Multi-source Generation**: Combines LLM generation with RAG-based retrieval
 - **Quality Assurance**: Automated validation and fallback mechanisms
 
-#### 📊 **Post-Interview Feedback System**
-- **Semantic Analysis**: Uses sentence-transformers for response similarity scoring
-- **Fluency Assessment**: Advanced NLP metrics for communication evaluation  
-- **Percentile Ranking**: Historical comparison with database of past interviews
-- **AI Narrative Generation**: o4-mini powered comprehensive feedback reports
-- **Async Processing**: Celery-based background task execution
-- **Structured Scoring**: Per-question detailed metrics and session aggregates
-
 ### Technical Capabilities
 - **Continuous Sync**: Real-time synchronization of questions to vector database
 - **Semantic Similarity**: Find related questions using vector embeddings
 - **Question Tracking**: Prevent duplicate questions within sessions
 - **Multi-Domain Support**: Software Engineering, Machine Learning, Data Structures, Resume-based
-- **Hybrid Storage**: PostgreSQL for relational data + Pinecone for vector search
+- **Hybrid Storage**: SQLite for relational data + Pinecone for vector search
 - **Background Processing**: Celery workers for non-blocking operations
 - **Schema Management**: Alembic migrations for database versioning
 
@@ -43,12 +35,12 @@ The Interview Service is the core orchestration service for the TalentSync platf
 
 ### Technology Stack
 - **Backend**: FastAPI with async support
-- **Database**: PostgreSQL 13+ with Alembic migrations
+- **Database**: SQLite (default and only supported for this service)
 - **Vector DB**: Pinecone for embeddings and semantic search
 - **Task Queue**: Celery with Redis broker for background processing
 - **AI Models**: 
   - OpenAI text-embedding-ada-002 for embeddings
-  - o4-mini for follow-up generation and feedback narratives
+  - o4-mini for follow-up generation
   - sentence-transformers for semantic similarity analysis
 - **API**: RESTful endpoints with OpenAPI documentation
 
@@ -57,6 +49,7 @@ The Interview Service is the core orchestration service for the TalentSync platf
 - **Resume Service**: Resume parsing and skill extraction  
 - **Transcription Service**: Interview recording and analysis
 - **Media Service**: Audio/video processing for interviews
+- **Feedback Service**: Handles all feedback and scoring operations
 - **Frontend**: React-based interview interface
 
 ## API Endpoints
@@ -118,8 +111,7 @@ The Interview Service is the core orchestration service for the TalentSync platf
 
 ```bash
 # Database Configuration
-DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/talentsync
-ALEMBIC_DATABASE_URL=postgresql://user:password@localhost:5432/talentsync
+DATABASE_URL=sqlite+aiosqlite:///./talentsync.db
 
 # Vector Database
 PINECONE_API_KEY=your-pinecone-api-key

@@ -1,0 +1,12 @@
+{
+  "session_id": 1,
+  "avg_correctness": 85.5,
+  "avg_fluency": 78.0,
+  "avg_depth": 82.5,
+  "overall_score": 82.0,
+  "total_questions": 5,
+  "answers": [
+    {"question": "What is a binary search?", "answer": "It's a search algorithm..."},
+    {"question": "Explain OOP.", "answer": "Object-oriented programming is..."}
+  ]
+}

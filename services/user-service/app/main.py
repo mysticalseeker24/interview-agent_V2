@@ -29,3 +29,8 @@ async def root():
         "version": "1.0.0",
         "status": "running"
     }
+
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy", "service": "user-service"}

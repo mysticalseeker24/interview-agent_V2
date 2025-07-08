@@ -6,7 +6,8 @@ LABEL service="media-service"
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive \
+    PORT=8002
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -39,11 +40,11 @@ RUN mkdir -p uploads logs && \
 USER appuser
 
 # Expose ports
-EXPOSE 8003 9003
+EXPOSE ${PORT}
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8003/health || exit 1
+    CMD curl -f http://localhost:${PORT}/health || exit 1
 
 # Default command
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8003"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8002"]
