@@ -20,7 +20,7 @@ COPY requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir --retries 10 --timeout 300 -r requirements.txt
 
 # Additional dependencies for REST API-based sync
 RUN pip install --no-cache-dir redis==5.0.1 psycopg2-binary==2.9.9 httpx==0.25.0

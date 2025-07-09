@@ -25,9 +25,12 @@ RUN groupadd -r appuser && useradd -r -g appuser appuser
 # Copy pyproject.toml for dependency installation
 COPY pyproject.toml .
 
+# Copy requirements first for better caching
+COPY requirements.txt .
+
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -e .
+    pip install --no-cache-dir --retries 10 --timeout 300 -r requirements.txt
 
 # Copy application code
 COPY . .
