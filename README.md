@@ -98,6 +98,16 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 - **Multiple Format Support**: WebM, MP3, WAV, M4A, OGG with validation
 - **Inter-Service Integration**: RESTful APIs for Interview Service coordination
 
+#### **Feedback Service** (Port 8006) - *AI-Powered Feedback Generation*
+- **Blackbox AI Integration**: Utilizes `blackboxai/openai/o4-mini` model for feedback reports
+- **Interview Analysis**: Processes interview data to generate performance feedback
+- **Report Generation**: Creates detailed feedback reports with strengths, weaknesses, and improvement areas
+- **API Integration**: Exposes endpoints for interview services to submit data and retrieve reports
+- **Background Processing**: Asynchronous report generation with Celery
+- **Data Security**: Ensures candidate data privacy and compliance with regulations
+- **Comprehensive Testing**: Extensive test coverage for feedback accuracy and system reliability
+- **API Documentation**: Complete OpenAPI/Swagger documentation
+
 ### Infrastructure Components
 - **PostgreSQL**: Primary database for interview, user, transcription services
 - **Local JSON Storage**: Resume service uses file-based storage for simplified deployment
@@ -209,6 +219,10 @@ Once running, services are available at:
 - **Transcription Service**: http://localhost:8004
   - API Docs: http://localhost:8004/docs
   - Health: http://localhost:8004/health
+
+- **Feedback Service**: http://localhost:8006
+  - API Docs: http://localhost:8006/docs
+  - Health: http://localhost:8006/health
 
 - **API Gateway (nginx)**: http://localhost
 
@@ -376,6 +390,7 @@ Test API endpoints using the interactive documentation:
 - User Service: http://localhost:8001/docs  
 - Resume Service: http://localhost:8003/docs
 - Transcription Service: http://localhost:8004/docs
+- Feedback Service: http://localhost:8006/docs
 
 ## 📚 API Documentation
 
@@ -386,12 +401,14 @@ Each service provides comprehensive API documentation:
 - **User Service**: http://localhost:8001/docs
 - **Resume Service**: http://localhost:8003/docs
 - **Transcription Service**: http://localhost:8004/docs
+- **Feedback Service**: http://localhost:8006/docs
 
 ### Service-Specific Documentation
 - [Interview Service README](services/interview-service/README.md) - Core orchestration and RAG pipeline
 - [User Service README](services/user-service/README.md) - Authentication and user management
 - [Resume Service README](services/resume-service/README.md) - Resume parsing and analysis
 - [Transcription Service README](services/transcription-service/README.md) - Audio transcription and device management
+- [Feedback Service README](services/feedback-service/README.md) - AI-powered feedback generation
 
 ## 🔍 Monitoring & Health Checks
 
@@ -404,6 +421,7 @@ curl http://localhost:8001/api/v1/health  # User Service
 curl http://localhost:8002/api/v1/health  # Interview Service
 curl http://localhost:8003/api/v1/health  # Resume Service  
 curl http://localhost:8004/api/v1/health  # Transcription Service
+curl http://localhost:8006/api/v1/health  # Feedback Service
 
 # Database connectivity
 curl http://localhost:8002/api/v1/health/database
@@ -454,7 +472,8 @@ talentsync/
 │   ├── interview-service/     # Core orchestration service
 │   ├── user-service/         # Authentication and user management
 │   ├── resume-service/       # Resume parsing and analysis
-│   └── transcription-service/ # Audio transcription
+│   ├── transcription-service/ # Audio transcription
+│   └── feedback-service/     # AI-powered feedback generation
 ├── docs/                     # Technical documentation
 ├── frontend/                 # Frontend application (when added)
 ├── scripts/                  # Development and deployment scripts
