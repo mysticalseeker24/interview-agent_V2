@@ -73,7 +73,7 @@ def create_test_audio_samples():
         },
         {
             "name": "technical_answer.mp3", 
-            "text": "I implemented a RESTful API using FastAPI with SQLAlchemy for the ORM. The service handles user authentication through JWT tokens and integrates with a PostgreSQL database for persistence.",
+            "text": "I implemented a RESTful API using FastAPI with SQLAlchemy for the ORM. The service handles user authentication through JWT tokens and integrates with a SQLite database for persistence.",
             "voice": "echo"
         },
         {

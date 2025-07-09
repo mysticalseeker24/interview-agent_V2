@@ -16,7 +16,7 @@ from app.core.database import get_db
 logger = logging.getLogger(__name__)
 
 class VectorSyncService:
-    """Service for continuous synchronization between PostgreSQL and Pinecone via REST APIs."""
+    """Service for continuous synchronization between SQLite and Pinecone via REST APIs."""
     
     def __init__(self):
         """Initialize the vector sync service."""
@@ -73,7 +73,7 @@ class VectorSyncService:
                         q_id = question[0]
                         update_query = """
                             UPDATE questions
-                            SET last_synced = NOW()
+                            SET last_synced = CURRENT_TIMESTAMP
                             WHERE id = :question_id
                         """
                         await db.execute(text(update_query), {"question_id": q_id})

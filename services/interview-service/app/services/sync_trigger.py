@@ -1,6 +1,6 @@
 """
 Database trigger for question sync via REST API.
-This module contains functions for synchronizing questions between PostgreSQL and Pinecone.
+This module contains functions for synchronizing questions between SQLite and Pinecone.
 """
 import logging
 import asyncio

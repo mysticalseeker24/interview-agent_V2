@@ -91,7 +91,7 @@ Based on specific projects mentioned in resume:
 - Monitoring, logging, and troubleshooting approaches
 - Infrastructure as Code and automation practices
 
-#### For Databases (PostgreSQL, MongoDB, Redis, etc.)
+#### For Databases (SQLite, MongoDB, Redis, etc.)
 - Schema design and optimization decisions
 - Query performance and indexing strategies
 - Data migration and backup/recovery procedures

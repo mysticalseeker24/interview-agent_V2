@@ -364,7 +364,7 @@ curl http://localhost:8002/api/v1/health/vector
 - Python 3.11+
 - OpenAI API Key
 - Pinecone API Key
-- PostgreSQL (optional for development)
+- SQLite (default, no installation required)
 
 ### Setup Instructions
 
@@ -421,7 +421,7 @@ docker build -t talentsync-interview-service .
 
 # Run container
 docker run -p 8002:8002 \
-  -e DATABASE_URL=postgresql+asyncpg://... \
+  -e DATABASE_URL=sqlite+aiosqlite:///./talentsync.db \
   -e PINECONE_API_KEY=... \
   -e OPENAI_API_KEY=... \
   talentsync-interview-service
@@ -468,7 +468,7 @@ pytest tests/test_vectors.py -v
 ## Troubleshooting
 
 ### Common Issues
-1. **Database Connection**: Verify PostgreSQL is running and accessible
+1. **Database Connection**: Verify SQLite file permissions and path
 2. **Pinecone Errors**: Check API key and index configuration
 3. **OpenAI Limits**: Monitor API usage and rate limits
 4. **Import Failures**: Validate JSON format and file permissions
@@ -495,7 +495,7 @@ curl http://localhost:8002/api/v1/health
 
 The service uses a REST API-based approach for vector synchronization instead of message queues for simplified deployment:
 
-1. **Database Triggers**: PostgreSQL triggers mark questions needing synchronization
+1. **Database Triggers**: SQLite triggers mark questions needing synchronization
 2. **REST Endpoints**: Dedicated endpoints for sync operations  
 3. **Background Tasks**: FastAPI background tasks for non-blocking operations
 4. **Periodic Sync**: Optional scheduled sync via endpoint calls
@@ -633,7 +633,7 @@ session_question = SessionQuestion(
 )
 ```
 
-### When Dynamic Follow-Up Works with PostgreSQL
+### When Dynamic Follow-Up Works with SQLite
 
 The dynamic follow-up system requires the following database setup to function:
 
@@ -661,7 +661,7 @@ SELECT question_id FROM session_questions WHERE session_id = :session_id;
 #### ✅ **Operational Status**
 The dynamic follow-up will work when:
 
-- ✅ **PostgreSQL is running** and accessible
+- ✅ **SQLite is running** and accessible
 - ✅ **Questions imported** into the database
 - ✅ **Pinecone index exists** with question embeddings
 - ✅ **Session is active** and session_id is valid
