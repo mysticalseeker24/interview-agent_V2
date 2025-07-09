@@ -18,15 +18,14 @@ TalentSync uses a **microservice-based** design with a **hybrid data storage** p
 
 ## 2. Microservices & Responsibilities
 
-| Service                   | Language       | Responsibilities                                                                                                   |
-| ------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **User Service**          | Python/FastAPI | Account management, authentication (JWT), profile settings                                                         |
-| **Interview Service**     | Python/FastAPI | Module/listing APIs, session lifecycle, question queue management                                                  |
-| **Resume Service**        | Python/FastAPI | Resume upload endpoint, text extraction (pypdf), NER parsing (spaCy/HF), JSON output of candidate skills/projects  |
-| **Media Service**         | Python/FastAPI | Device enumeration, WebRTC signaling (optional), local blob storage, media upload to backend                       |
-| **Transcription Service** | Python/FastAPI | Orchestrates hybrid STT: Whisper (local) fallback to AssemblyAI; returns timestamped transcripts                   |
-| **Feedback Service**      | Python/FastAPI | Background tasks (Celery) for scoring (semantic similarity, fluency metrics), percentile computation, LLM feedback |
-| **Admin Service**         | Python/FastAPI | Protected CRUD APIs for modules/questions, analytics dashboards                                                    |
+| Service              | Port   |
+|----------------------|--------|
+| user-service         | 8001   |
+| resume-service       | 8004   |
+| interview-service    | 8006   |
+| transcription        | 8005   |
+| media-service        | 8002   |
+| feedback-service     | 8010   |
 
 ---
 

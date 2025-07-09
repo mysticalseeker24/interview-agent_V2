@@ -10,13 +10,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
     
-    # Database settings - Using SQLite instead of PostgreSQL
-    DATABASE_URL: str = f"sqlite+aiosqlite:///{Path(__file__).parent.parent.parent}/data/interviews.db"
-    
-    # Redis settings
-    REDIS_URL: str = "redis://localhost:6379/1"
-    
-    # Pinecone settings
+    # Pinecone settings (vector DB only, no relational DB)
     PINECONE_API_KEY: str = "your-pinecone-api-key-here"
     PINECONE_ENVIRONMENT: str = "us-west1-gcp"
     PINECONE_INDEX_NAME: str = "questions-embeddings"
@@ -34,7 +28,7 @@ class Settings(BaseSettings):
     # Application settings
     DEBUG: bool = False
     LOG_LEVEL: str = "INFO"
-    PORT: int = 8003
+    PORT: int = 8006
     
     # External service URLs
     USER_SERVICE_URL: str = "http://localhost:8001"

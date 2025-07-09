@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.services.embedding_service import EmbeddingService
 from app.schemas.question import QuestionSync, QuestionResponse, QuestionSyncBatch
-from app.models.question import Question
 
 router = APIRouter()
 embedding_service = EmbeddingService()

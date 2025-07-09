@@ -1,6 +1,6 @@
 # TalentSync Interview Service
 
-The Interview Service is the core orchestration service for the TalentSync platform, responsible for managing interview modules, questions, sessions, dynamic follow-up generation, and the complete RAG (Retrieval-Augmented Generation) pipeline.
+The Interview Service is the core orchestration service for the TalentSync platform, responsible for managing interview modules, questions, sessions, dynamic follow-up generation, post-interview feedback analysis, and the complete RAG (Retrieval-Augmented Generation) pipeline.
 
 ## Features
 
@@ -22,25 +22,31 @@ The Interview Service is the core orchestration service for the TalentSync platf
 - **Multi-source Generation**: Combines LLM generation with RAG-based retrieval
 - **Quality Assurance**: Automated validation and fallback mechanisms
 
+#### 📊 **Post-Interview Feedback System**
+- **Semantic Analysis**: Uses sentence-transformers for response similarity scoring
+- **Fluency Assessment**: Advanced NLP metrics for communication evaluation  
+- **Percentile Ranking**: Historical comparison with database of past interviews
+- **AI Narrative Generation**: o4-mini powered comprehensive feedback reports
+- **Async Processing**: Celery-based background task execution
+- **Structured Scoring**: Per-question detailed metrics and session aggregates
+
 ### Technical Capabilities
 - **Continuous Sync**: Real-time synchronization of questions to vector database
 - **Semantic Similarity**: Find related questions using vector embeddings
 - **Question Tracking**: Prevent duplicate questions within sessions
 - **Multi-Domain Support**: Software Engineering, Machine Learning, Data Structures, Resume-based
-- **Hybrid Storage**: SQLite for relational data + Pinecone for vector search
+- **Vector Storage Only**: Pinecone for all question and session data (no relational DB)
 - **Background Processing**: Celery workers for non-blocking operations
-- **Schema Management**: Alembic migrations for database versioning
 
 ## Architecture
 
 ### Technology Stack
 - **Backend**: FastAPI with async support
-- **Database**: SQLite (default and only supported for this service)
 - **Vector DB**: Pinecone for embeddings and semantic search
 - **Task Queue**: Celery with Redis broker for background processing
 - **AI Models**: 
   - OpenAI text-embedding-ada-002 for embeddings
-  - o4-mini for follow-up generation
+  - o4-mini for follow-up generation and feedback narratives
   - sentence-transformers for semantic similarity analysis
 - **API**: RESTful endpoints with OpenAPI documentation
 
@@ -49,7 +55,6 @@ The Interview Service is the core orchestration service for the TalentSync platf
 - **Resume Service**: Resume parsing and skill extraction  
 - **Transcription Service**: Interview recording and analysis
 - **Media Service**: Audio/video processing for interviews
-- **Feedback Service**: Handles all feedback and scoring operations
 - **Frontend**: React-based interview interface
 
 ## API Endpoints
@@ -110,10 +115,7 @@ The Interview Service is the core orchestration service for the TalentSync platf
 ## Environment Variables
 
 ```bash
-# Database Configuration
-DATABASE_URL=sqlite+aiosqlite:///./talentsync.db
-
-# Vector Database
+# Pinecone Vector Database (no relational DB)
 PINECONE_API_KEY=your-pinecone-api-key
 PINECONE_ENVIRONMENT=us-west1-gcp
 PINECONE_INDEX_NAME=questions-embeddings
@@ -143,25 +145,6 @@ ALLOWED_HOSTS=["localhost", "127.0.0.1"]
 MAX_WORKERS=4
 SYNC_BATCH_SIZE=100
 ```
-
-## Database Schema
-
-### Core Tables
-- **`modules`**: Interview modules with categories and difficulty levels
-- **`questions`**: Interview questions with metadata and embeddings info
-- **`sessions`**: Interview session state and progress
-- **`responses`**: Candidate responses to questions with timestamps
-- **`session_questions`**: Track questions asked per session (prevents duplicates)
-
-### Feedback & Scoring System
-- **`scores`**: Per-question scoring metrics (semantic similarity, fluency, depth)
-- **`feedback_reports`**: Comprehensive AI-generated feedback with percentiles
-- **`session_aggregates`**: Calculated session-level performance metrics
-
-### Vector Integration
-- **`last_synced`**: Timestamp tracking for Pinecone synchronization
-- **`domain`**: Domain classification for vector search
-- **`embedding_version`**: Version tracking for embedding updates
 
 ## RAG Pipeline
 
@@ -364,7 +347,6 @@ curl http://localhost:8002/api/v1/health/vector
 - Python 3.11+
 - OpenAI API Key
 - Pinecone API Key
-- SQLite (default, no installation required)
 
 ### Setup Instructions
 
@@ -421,11 +403,28 @@ docker build -t talentsync-interview-service .
 
 # Run container
 docker run -p 8002:8002 \
-  -e DATABASE_URL=sqlite+aiosqlite:///./talentsync.db \
+  -e DATABASE_URL=postgresql+asyncpg://... \
   -e PINECONE_API_KEY=... \
   -e OPENAI_API_KEY=... \
   talentsync-interview-service
 ```
+
+## Local Development / Setup
+
+1. **Upload datasets to Pinecone**
+
+   ```powershell
+   cd talentsync/services/interview-service
+   $env:PYTHONPATH="."
+   python upload_datasets_to_pinecone.py
+   ```
+
+2. **Start all services**
+
+   From the project root:
+   ```powershell
+   docker compose -f talentsync/docker-compose.yml up --build --remove-orphans
+   ```
 
 ## Development
 
@@ -468,7 +467,7 @@ pytest tests/test_vectors.py -v
 ## Troubleshooting
 
 ### Common Issues
-1. **Database Connection**: Verify SQLite file permissions and path
+1. **Database Connection**: Verify PostgreSQL is running and accessible
 2. **Pinecone Errors**: Check API key and index configuration
 3. **OpenAI Limits**: Monitor API usage and rate limits
 4. **Import Failures**: Validate JSON format and file permissions
@@ -495,7 +494,7 @@ curl http://localhost:8002/api/v1/health
 
 The service uses a REST API-based approach for vector synchronization instead of message queues for simplified deployment:
 
-1. **Database Triggers**: SQLite triggers mark questions needing synchronization
+1. **Database Triggers**: PostgreSQL triggers mark questions needing synchronization
 2. **REST Endpoints**: Dedicated endpoints for sync operations  
 3. **Background Tasks**: FastAPI background tasks for non-blocking operations
 4. **Periodic Sync**: Optional scheduled sync via endpoint calls
@@ -633,7 +632,7 @@ session_question = SessionQuestion(
 )
 ```
 
-### When Dynamic Follow-Up Works with SQLite
+### When Dynamic Follow-Up Works with PostgreSQL
 
 The dynamic follow-up system requires the following database setup to function:
 
@@ -661,7 +660,7 @@ SELECT question_id FROM session_questions WHERE session_id = :session_id;
 #### ✅ **Operational Status**
 The dynamic follow-up will work when:
 
-- ✅ **SQLite is running** and accessible
+- ✅ **PostgreSQL is running** and accessible
 - ✅ **Questions imported** into the database
 - ✅ **Pinecone index exists** with question embeddings
 - ✅ **Session is active** and session_id is valid

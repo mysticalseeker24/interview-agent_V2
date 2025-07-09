@@ -27,13 +27,13 @@ integration_service = IntegrationService()
 # Health and Monitoring Endpoints
 @router.get("/health")
 async def health_check():
-    """Basic health check endpoint."""
-    return {
-        "status": "healthy",
-        "service": "transcription-service",
-        "version": settings.SERVICE_VERSION,
-        "timestamp": time.time()
-    }
+    """
+    Standardized health check endpoint.
+    
+    Returns:
+        dict: Health status
+    """
+    return {"status": "healthy"}
 
 @router.get("/health/detailed")
 async def detailed_health_check():

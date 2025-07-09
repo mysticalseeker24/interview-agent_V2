@@ -3,19 +3,17 @@ from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
 from datetime import datetime
 
-from app.models.session import SessionStatus, SessionMode
-
 
 class SessionCreate(BaseModel):
     """Session creation schema."""
     module_id: int
-    mode: SessionMode = SessionMode.PRACTICE
+    mode: str = "PRACTICE"
     parsed_resume_data: Optional[Dict[str, Any]] = None
 
 
 class SessionUpdate(BaseModel):
     """Session update schema."""
-    status: Optional[SessionStatus] = None
+    status: Optional[str] = None
     current_question_index: Optional[int] = None
 
 
@@ -37,8 +35,8 @@ class SessionResponse(BaseModel):
     id: int
     user_id: int
     module_id: int
-    mode: SessionMode
-    status: SessionStatus
+    mode: str
+    status: str
     current_question_index: int
     estimated_duration_minutes: int
     created_at: datetime
@@ -52,8 +50,8 @@ class SessionRead(BaseModel):
     id: int
     user_id: int
     module_id: int
-    status: SessionStatus
-    mode: SessionMode
+    status: str
+    mode: str
     current_question_index: int
     estimated_duration_minutes: int
     started_at: Optional[datetime] = None

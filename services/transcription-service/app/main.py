@@ -35,7 +35,7 @@ app.include_router(tts.router, prefix="/api/v1")
 # Mount static files for TTS audio serving
 app.mount("/tts/files", StaticFiles(directory="tts_files"), name="tts_files")
 
-@app.get("/health")
+@app.get("/api/v1/health")
 async def health_check():
     return JSONResponse(content={
         "status": "healthy", 

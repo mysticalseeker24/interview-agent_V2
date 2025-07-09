@@ -3,15 +3,13 @@ from typing import List, Optional
 from pydantic import BaseModel
 from datetime import datetime
 
-from app.models.module import DifficultyLevel, ModuleCategory
-
 
 class ModuleBase(BaseModel):
     """Base module schema."""
     title: str
     description: Optional[str] = None
-    category: ModuleCategory
-    difficulty: DifficultyLevel
+    category: str # Changed from ModuleCategory
+    difficulty: str # Changed from DifficultyLevel
     duration_minutes: int = 30
 
 
@@ -24,7 +22,7 @@ class ModuleUpdate(BaseModel):
     """Module update schema."""
     title: Optional[str] = None
     description: Optional[str] = None
-    difficulty: Optional[DifficultyLevel] = None
+    difficulty: Optional[str] = None # Changed from DifficultyLevel
     duration_minutes: Optional[int] = None
     is_active: Optional[bool] = None
 

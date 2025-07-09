@@ -1,6 +1,7 @@
 import os
 import requests
 import logging
+from fastapi import FastAPI, APIRouter
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -12,6 +13,21 @@ if not BLACKBOX_API_KEY:
 
 BLACKBOX_MODEL = os.getenv("BLACKBOX_MODEL", "blackboxai/openai/o4-mini")
 BLACKBOX_API_URL = "https://api.blackbox.ai/chat/completions"
+
+app = FastAPI()
+router = APIRouter()
+
+@router.get("/health")
+def health_check():
+    """
+    Standardized health check endpoint.
+    
+    Returns:
+        dict: Health status
+    """
+    return {"status": "healthy"}
+
+app.include_router(router)
 
 def generate_feedback_report(session_data: dict) -> str:
     """

@@ -3,8 +3,8 @@ import { rest } from 'msw';
 const BASE_URLS = {
   USER: 'http://localhost:8001',
   MEDIA: 'http://localhost:8002',
-  RESUME: 'http://localhost:8003',
-  INTERVIEW: 'http://localhost:8004',
+  RESUME: 'http://localhost:8004',
+  INTERVIEW: 'http://localhost:8006',
   TRANSCRIPTION: 'http://localhost:8005'
 };
 

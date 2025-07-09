@@ -79,6 +79,10 @@ async def generate_feedback(session_data: dict):
         await session.refresh(feedback)
         return {"id": feedback.id, "report_text": report_text}
 
+@app.get("/api/v1/health", response_model=dict)
+def health_check():
+    return {"status": "healthy"}
+
 if __name__ == "__main__":
     import uvicorn
     import os

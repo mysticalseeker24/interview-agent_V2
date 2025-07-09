@@ -2,7 +2,6 @@
 import logging
 from typing import List, Dict, Any
 import httpx
-from app.models import Question
 from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)
@@ -15,7 +14,7 @@ class ResumeService:
         """Initialize Resume Service."""
         self.settings = get_settings()
     
-    async def generate_templated_questions(self, resume_data: Dict[str, Any]) -> List[Question]:
+    async def generate_templated_questions(self, resume_data: Dict[str, Any]) -> List[Dict[str, Any]]:
         """
         Generate interview questions based on resume data.
         
@@ -34,36 +33,36 @@ class ResumeService:
         
         # Create skill-based questions
         for skill in skills[:5]:  # Limit to top 5 skills
-            question = Question(
-                text=f"Can you describe your experience with {skill}? What projects have you used it in?",
-                difficulty="medium",
-                question_type="open_ended",
-                expected_duration_seconds=180,
-                tags=[skill.lower(), "experience"],
-                ideal_answer=f"Candidate should demonstrate practical experience with {skill}",
-                scoring_criteria={
+            question = {
+                "text": f"Can you describe your experience with {skill}? What projects have you used it in?",
+                "difficulty": "medium",
+                "question_type": "open_ended",
+                "expected_duration_seconds": 180,
+                "tags": [skill.lower(), "experience"],
+                "ideal_answer": f"Candidate should demonstrate practical experience with {skill}",
+                "scoring_criteria": {
                     "technical_depth": "Shows understanding of core concepts",
                     "practical_experience": "Provides specific examples",
                     "problem_solving": "Discusses challenges and solutions"
                 }
-            )
+            }
             questions.append(question)
         
         # Create project-based questions
         for project in projects[:3]:  # Limit to top 3 projects
-            question = Question(
-                text=f"Tell me about your {project} project. What was your role and what challenges did you face?",
-                difficulty="medium", 
-                question_type="scenario",
-                expected_duration_seconds=240,
-                tags=[project.lower(), "project"],
-                ideal_answer=f"Candidate should explain the {project} project with technical details",
-                scoring_criteria={
+            question = {
+                "text": f"Tell me about your {project} project. What was your role and what challenges did you face?",
+                "difficulty": "medium", 
+                "question_type": "scenario",
+                "expected_duration_seconds": 240,
+                "tags": [project.lower(), "project"],
+                "ideal_answer": f"Candidate should explain the {project} project with technical details",
+                "scoring_criteria": {
                     "project_complexity": "Describes technical complexity",
                     "role_clarity": "Clearly explains their contribution",
                     "problem_solving": "Discusses challenges and solutions"
                 }
-            )
+            }
             questions.append(question)
         
         logger.info(f"Generated {len(questions)} resume-driven questions")

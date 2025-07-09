@@ -66,6 +66,17 @@ async def root():
     }
 
 
+@app.get("/api/v1/health")
+async def health_check():
+    """
+    Standardized health check endpoint.
+    
+    Returns:
+        dict: Health status
+    """
+    return {"status": "healthy"}
+
+
 @app.post("/upload", response_model=ResumeUploadResponse)
 async def upload_resume(
     file: UploadFile = File(...),
@@ -305,4 +316,4 @@ async def get_pipeline_info():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8004)

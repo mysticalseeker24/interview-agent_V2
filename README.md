@@ -186,19 +186,26 @@ TalentSync employs a clean microservices architecture optimized for scalability 
    "
    ```
 
-4. **Launch with Docker Compose**
+## Quickstart / Setup
+
+1. **Upload datasets to Pinecone**
+
+   Open a terminal and run:
    ```powershell
-   docker-compose up -d
+   cd talentsync/services/interview-service
+   $env:PYTHONPATH="."
+   python upload_datasets_to_pinecone.py
    ```
 
-5. **Initialize databases**
+2. **Start all services with Docker Compose**
+
+   From the project root:
    ```powershell
-   # Run migrations for each service
-   docker-compose exec user-service alembic upgrade head
-   docker-compose exec interview-service alembic upgrade head
-   docker-compose exec resume-service alembic upgrade head
-   docker-compose exec transcription-service alembic upgrade head
+   docker compose -f talentsync/docker-compose.yml up --build --remove-orphans
    ```
+
+- The Pinecone emulator is no longer required. The interview-service connects directly to your Pinecone instance.
+- All database and Redis dependencies have been removed from the interview-service.
 
 ### Service Endpoints
 

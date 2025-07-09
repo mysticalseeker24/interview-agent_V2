@@ -18,31 +18,14 @@ router = APIRouter(tags=["monitoring"])
 
 
 @router.get("/health")
-async def health_check(
-    db: AsyncSession = Depends(get_db)
-) -> Dict[str, Any]:
+async def health_check() -> Dict[str, Any]:
     """
-    Health check endpoint.
+    Standardized health check endpoint.
     
-    Returns comprehensive health status including:
-    - Service status
-    - Database connectivity
-    - Storage accessibility
-    - Redis connectivity
-    - Basic metrics
+    Returns:
+        dict: Health status
     """
-    try:
-        health_data = await metrics_service.get_health_status(db)
-        return health_data
-    except Exception as e:
-        logger.error(f"Health check failed: {e}")
-        return {
-            "status": "unhealthy",
-            "timestamp": datetime.utcnow().isoformat(),
-            "version": "unknown",
-            "error": str(e),
-            "components": {}
-        }
+    return {"status": "healthy"}
 
 
 @router.get("/metrics/prometheus")

@@ -28,7 +28,7 @@ WORKDIR /app
 # Create non-root user
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
-# Copy requirements.txt for dependency installation
+# Copy requirements first for better caching
 COPY requirements.txt .
 
 # Install Python dependencies
@@ -48,9 +48,9 @@ USER appuser
 # Expose port
 EXPOSE ${PORT}
 
-# Health check
+# Health check (robust: check health endpoint)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:${PORT}/health || exit 1
+    CMD curl -f http://localhost:${PORT}/api/v1/health || exit 1
 
-# Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8005"]
+# Run the application with environment variable support
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "${PORT}"]

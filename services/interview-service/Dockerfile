@@ -3,7 +3,7 @@ FROM python:3.11-slim
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV PORT=8003
+ENV PORT=8006
 
 # Set work directory
 WORKDIR /app
@@ -15,11 +15,12 @@ RUN apt-get update \
         libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy requirements first for better caching
+COPY requirements.txt .
+
 # Install Python dependencies
-COPY pyproject.toml ./
-RUN pip install --no-cache-dir poetry \
-    && poetry config virtualenvs.create false \
-    && poetry install --no-dev --no-interaction --no-ansi
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Additional dependencies for REST API-based sync
 RUN pip install --no-cache-dir redis==5.0.1 psycopg2-binary==2.9.9 httpx==0.25.0
@@ -35,13 +36,9 @@ USER appuser
 # Expose port
 EXPOSE ${PORT}
 
-# Health check
+# Health check (robust: check health endpoint)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:${PORT}/health || exit 1
+    CMD curl -f http://localhost:${PORT}/api/v1/health || exit 1
 
-# Copy script to run services
-COPY ./entrypoint.sh ./entrypoint.sh
-RUN chmod +x ./entrypoint.sh
-
-# Run the application
-CMD ["./entrypoint.sh"]
+# Run the application with environment variable support
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "${PORT}"]

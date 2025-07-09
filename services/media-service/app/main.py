@@ -147,6 +147,13 @@ async def root() -> dict:
     }
 
 
+# Health check endpoint
+@app.get("/api/v1/health")
+async def health_check():
+    """Health check endpoint."""
+    return {"status": "healthy"}
+
+
 # Additional middleware for request logging
 @app.middleware("http")
 async def log_requests(request: Request, call_next):

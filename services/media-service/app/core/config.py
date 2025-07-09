@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     
     # Server Configuration
     host: str = Field(default="0.0.0.0", description="Server host")
-    port: int = Field(default=8005, description="Server port")
+    port: int = Field(default=8002, description="Server port")
     workers: int = Field(default=1, description="Number of workers")
     
     # Database Configuration

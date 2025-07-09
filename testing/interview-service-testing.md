@@ -25,7 +25,7 @@ DATABASE_URL=postgresql+asyncpg://talentsync:secret@localhost:5432/talentsync
 REDIS_URL=redis://localhost:6379
 
 # Service Configuration
-INTERVIEW_SERVICE_PORT=8002
+INTERVIEW_SERVICE_PORT=8006
 ```
 
 ### 2. Dependencies Installation
@@ -93,13 +93,13 @@ else:
 cd services/interview-service
 
 # Start the service
-uvicorn app.main:app --reload --port 8002
+uvicorn app.main:app --reload --port 8006
 ```
 
 ### Test Service Health
 ```bash
 # Test health endpoint
-curl http://localhost:8002/health
+curl http://localhost:8006/health
 
 # Expected response:
 # {"status": "healthy", "service": "interview-service", "timestamp": "..."}
@@ -109,7 +109,7 @@ curl http://localhost:8002/health
 
 ```bash
 # Test follow-up generation with RAG mode
-curl -X POST "http://localhost:8002/api/v1/followup/generate" \
+curl -X POST "http://localhost:8006/api/v1/followup/generate" \
   -H "Content-Type: application/json" \
   -d '{
     "session_id": 1,
@@ -119,7 +119,7 @@ curl -X POST "http://localhost:8002/api/v1/followup/generate" \
   }'
 
 # Test follow-up generation with o4-mini refinement
-curl -X POST "http://localhost:8002/api/v1/followup/generate" \
+curl -X POST "http://localhost:8006/api/v1/followup/generate" \
   -H "Content-Type: application/json" \
   -d '{
     "session_id": 1, 
@@ -129,10 +129,10 @@ curl -X POST "http://localhost:8002/api/v1/followup/generate" \
   }'
 
 # Get follow-up question history for a session
-curl http://localhost:8002/api/v1/followup/history/1
+curl http://localhost:8006/api/v1/followup/history/1
 
 # Check follow-up service health
-curl http://localhost:8002/api/v1/followup/health
+curl http://localhost:8006/api/v1/followup/health
 ```
 
 ### Expected Dynamic Follow-Up Response
@@ -183,7 +183,7 @@ python test_feedback_integration.py
 ✅ **PostgreSQL**: Running and accessible  
 ✅ **Redis**: Running and accessible  
 ✅ **Pinecone Index**: Created successfully (`questions-embeddings`)  
-✅ **Interview Service**: Successfully started on port 8002  
+✅ **Interview Service**: Successfully started on port 8006  
 ✅ **RAG Pipeline**: Service running with dataset loading  
 ✅ **Dynamic Follow-Up Generation**: Working with o4-mini  
 
@@ -208,7 +208,7 @@ python test_feedback_integration.py
 4. **Port Already in Use**:
    ```bash
    # Kill existing process
-   lsof -ti:8002 | xargs kill -9
+   lsof -ti:8006 | xargs kill -9
    ```
 
 ## Performance Metrics

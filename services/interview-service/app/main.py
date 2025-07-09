@@ -30,14 +30,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan manager for startup/shutdown tasks."""
     logger.info("Starting Interview Service...")
     
-    # Create database tables
-    try:
-        await create_tables()
-        logger.info("Database tables created successfully")
-    except Exception as e:
-        logger.error(f"Error creating database tables: {e}")
-        # Continue anyway, tables might already exist
-    
+    # No database tables to create; only Pinecone/vector DB is used
     # Check connectivity to other services
     try:
         logger.info("Checking connectivity to external services...")
@@ -50,7 +43,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     yield
     
     logger.info("Shutting down Interview Service...")
-    await engine.dispose()
     logger.info("Interview Service shutdown complete")
 
 
@@ -106,7 +98,7 @@ async def root():
 if __name__ == "__main__":
     import uvicorn
     
-    port = int(os.getenv("PORT", 8003))
+    port = int(os.getenv("PORT", 8006))
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",
