@@ -1,1 +1,0 @@
-# TalentSync User Service

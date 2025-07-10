@@ -1,9 +1,0 @@
-fastapi
-uvicorn[standard]
-sqlalchemy
-databases
-pydantic
-openai
-aiofiles
-httpx
-python-dotenv
