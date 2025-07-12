@@ -41,7 +41,7 @@ Consistent, readable code is critical for maintainability and team collaboration
   - Offload CPU-intensive/long-running tasks to background workers (e.g. Celery).
   - Implement rate limiting at the gateway or via middleware (e.g. Redis token bucket).
   - Use connection pooling for database operations.
-  - Implement circuit breakers for external API calls (Groq, OpenAI).
+  - Implement circuit breakers for external API calls (Groq, OpenAI o4-mini).
 
 ## 3. Frontend (React + Vite)
 - **Formatting & Linting:**
@@ -83,7 +83,7 @@ Consistent, readable code is critical for maintainability and team collaboration
   - Write unit and integration tests; aim for ≥80% coverage.
   - Use `@pytest.mark.asyncio` for async FastAPI routes.
   - Test rate limiting and circuit breaker patterns.
-  - Mock external API calls (Groq, OpenAI) in tests.
+- Mock external API calls (Groq, OpenAI o4-mini) in tests.
 - **Frontend (React):**
   - Use Jest and React Testing Library.
   - Mock API calls using MSW or jest mocks.
@@ -140,7 +140,7 @@ Consistent, readable code is critical for maintainability and team collaboration
 - Monitor rate limit violations for abuse detection
 
 **Circuit Breakers:**
-- Implement circuit breakers for external API calls (Groq, OpenAI)
+- Implement circuit breakers for external API calls (Groq, OpenAI o4-mini)
 - Configure timeout and retry policies
 - Monitor external service health
 

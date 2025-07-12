@@ -2,9 +2,9 @@
 
 ## 1. Introduction
 
-TalentSync is an end-to-end AI-powered interview simulation platform that helps candidates practice and improve their technical interviewing skills, while supplying recruiters with rich, data-driven candidate insights. The platform's mission is to enable personalized, adaptive mock interviews and generate actionable feedback, creating a structured pipeline of interview-ready candidates. With virtual interviews becoming commonplace (over 60% of HR professionals use video interviews), TalentSync leverages modern AI (including large language models and speech-AI) to deliver an interview experience that mirrors real-world hiring processes.
+TalentSync is an end-to-end OpenAI o4-mini powered interview simulation platform that helps candidates practice and improve their technical interviewing skills, while supplying recruiters with rich, data-driven candidate insights. The platform's mission is to enable personalized, adaptive mock interviews and generate actionable feedback, creating a structured pipeline of interview-ready candidates. With virtual interviews becoming commonplace (over 60% of HR professionals use video interviews), TalentSync leverages modern AI (including OpenAI o4-mini and Groq speech-AI) to deliver an interview experience that mirrors real-world hiring processes.
 
-**Key Goals:** Provide domain-specific interview modules (e.g. Software Eng, ML, DevOps, etc.) and a resume-driven mode. Use adaptive AI to tailor questions on-the-fly based on candidate profile and answers. Offer a polished browser-based audio/video interview interface. Generate automated transcripts, scoring, and narrative feedback so users can track and improve their performance.
+**Key Goals:** Provide domain-specific interview modules (e.g. Software Eng, ML, DevOps, etc.) and a resume-driven mode. Use adaptive OpenAI o4-mini to tailor questions on-the-fly based on candidate profile and answers. Offer a polished browser-based audio/video interview interface. Generate automated transcripts, scoring, and narrative feedback so users can track and improve their performance.
 
 ## 2. Core Features & Workflow
 
@@ -16,8 +16,8 @@ The typical TalentSync workflow follows these steps:
 - **Dashboard / Home:** The user sees a dashboard listing available interview modules, organized by domain and filterable by difficulty, duration, mode, etc.
 - **Module Selection:** The candidate selects one of eight core domains (e.g. Software Engineering, DevOps/Kubernetes, DSA, ML/AI Engineering, Large Language Models, or a Resume-Driven interview). Each module has a detailed card showing metadata and a "Start" button.
 - **Onboarding Lobby:** Before the interview, the user is guided through an onboarding lobby. This includes uploading a resume (if using the resume-driven module), checking camera/microphone settings with live preview, and reviewing interview tips.
-- **Interview Session:** The user joins a real-time interview room. A live video and audio feed connects the candidate with the AI interviewer. The AI poses adaptive questions, and the candidate answers verbally. The system records the session (video/audio).
-- **Post-Interview Report:** After the interview, the platform automatically generates a report. This includes a full transcript of the session, multi-dimensional scoring (correctness, completeness, fluency, etc.), percentile rankings against historical data, and an AI-crafted narrative feedback.
+- **Interview Session:** The user joins a real-time interview room. A live video and audio feed connects the candidate with the OpenAI o4-mini interviewer. The OpenAI o4-mini poses adaptive questions, and the candidate answers verbally. The system records the session (video/audio).
+- **Post-Interview Report:** After the interview, the platform automatically generates a report. This includes a full transcript of the session, multi-dimensional scoring (correctness, completeness, fluency, etc.), percentile rankings against historical data, and an OpenAI o4-mini crafted narrative feedback.
 - **Profile & History:** The candidate can revisit their profile to see past interview reports, listen to recordings, view scores/feedback, and retake practice interviews as desired. Account settings allow updating personal info and managing privacy consents.
 
 ### 2.2 Feature Breakdown
@@ -33,13 +33,13 @@ The typical TalentSync workflow follows these steps:
 
 **Workflow:** On page load, the frontend calls `GET /api/modules` to retrieve the list of available modules. Modules are displayed as interactive cards. When a user clicks "Details", a modal or detail page shows a summary; clicking "Start" begins the interview setup.
 
-#### Feature 2: Advanced AI Interviewer Logic
+#### Feature 2: Advanced OpenAI o4-mini Interviewer Logic
 
-**Purpose:** Create a realistic, adaptive Q&A experience using AI. The interviewer logic personalizes questions based on the candidate's profile (including resume) and prior answers.
+**Purpose:** Create a realistic, adaptive Q&A experience using OpenAI o4-mini. The interviewer logic personalizes questions based on the candidate's profile (including resume) and prior answers.
 
 **Components:**
-- **Resume-Driven Q&A:** If the user uploads a resume, the system uses NLP/LLM analysis to extract skills, projects, and experiences. The AI then generates or prioritizes questions tailored to that resume content, making the practice interview highly relevant.
-- **Adaptive Question Engine:** A core AI engine manages question flow. Initially it seeds a queue of base questions for the chosen module (core questions + any resume-based questions). After each candidate answer, the AI transcribes and analyzes it (via speech-to-text and NLP). It then determines the next question using semantic similarity and contextual templates. Follow-up questions adapt to what the candidate has said, simulating an interviewer adjusting based on responses.
+- **Resume-Driven Q&A:** If the user uploads a resume, the system uses OpenAI o4-mini analysis to extract skills, projects, and experiences. The OpenAI o4-mini then generates or prioritizes questions tailored to that resume content, making the practice interview highly relevant.
+- **Adaptive Question Engine:** A core OpenAI o4-mini engine manages question flow. Initially it seeds a queue of base questions for the chosen module (core questions + any resume-based questions). After each candidate answer, the OpenAI o4-mini transcribes and analyzes it (via speech-to-text and OpenAI o4-mini). It then determines the next question using semantic similarity and contextual templates. Follow-up questions adapt to what the candidate has said, simulating an interviewer adjusting based on responses.
 - **Interview Modes:** TalentSync supports multiple modes:
   - **Practice Mode (private):** For individual use, casual tone, instant feedback.
   - **General (formal):** Simulates a formal interview setting with stricter scoring.
@@ -66,11 +66,11 @@ The typical TalentSync workflow follows these steps:
 
 **Components:**
 - **Automated Transcription:** The audio recording is sent to Groq's Whisper-Large-V3 transcription service to produce a high-quality, punctuated transcript with speaker labels. Groq's optimized Whisper model achieves near-human accuracy on interview speech and even inserts correct punctuation and paragraph breaks with superior performance.
-- **Scoring Metrics:** Each answer is scored on multiple dimensions: Correctness (semantic similarity to model answers or expert key points), Completeness (did the answer cover major points of the question?), Fluency (speech rate, word-per-minute, use of filler words like "um/uh"), and Depth (variety of concepts, examples, or follow-up discussion). These metrics use a mix of NLP (embedding similarity, named-entity matching) and audio analysis (pause detection, filler counting).
+- **Scoring Metrics:** Each answer is scored on multiple dimensions: Correctness (semantic similarity to model answers or expert key points), Completeness (did the answer cover major points of the question?), Fluency (speech rate, word-per-minute, use of filler words like "um/uh"), and Depth (variety of concepts, examples, or follow-up discussion). These metrics use a mix of OpenAI o4-mini analysis (embedding similarity, named-entity matching) and audio analysis (pause detection, filler counting).
 - **Percentile Ranking:** Candidate performance is contextualized by comparing metrics against the database of all past interviewees (anonymized). For example, if a candidate's fluency score is higher than 85% of others, the report shows a 85th percentile ranking. This motivates improvement by giving users a benchmark of how they stack up.
-- **AI-Generated Feedback:** A large language model crafts a natural-language summary of strengths and weaknesses. It might highlight, for instance, "Your answer on X was well-structured and covered key points (90% fluency, top 20%). However, you could improve on providing examples for your claims," etc. This narrative feedback turns raw scores into actionable advice.
+- **AI-Generated Feedback:** OpenAI o4-mini crafts a natural-language summary of strengths and weaknesses. It might highlight, for instance, "Your answer on X was well-structured and covered key points (90% fluency, top 20%). However, you could improve on providing examples for your claims," etc. This narrative feedback turns raw scores into actionable advice.
 
-**Workflow:** After the interview ends, the system runs a background job (e.g. via Celery) to process the results. The audio blob is transcribed into text with timestamps using Groq's Whisper-Large-V3. The transcript and audio are used to compute all metrics (e.g. semantic scoring, fluency measures, filler word count). The LLM-based feedback generator then reads the transcript and metrics to produce a written summary. All data (scores, percentiles, transcript, feedback) are saved to the session record. Finally, the user is notified that their report is ready. This approach mirrors top hiring platforms that use ASR and NLP to automate interview analysis.
+**Workflow:** After the interview ends, the system runs a background job (e.g. via Celery) to process the results. The audio blob is transcribed into text with timestamps using Groq's Whisper-Large-V3. The transcript and audio are used to compute all metrics (e.g. semantic scoring, fluency measures, filler word count). The OpenAI o4-mini feedback generator then reads the transcript and metrics to produce a written summary. All data (scores, percentiles, transcript, feedback) are saved to the session record. Finally, the user is notified that their report is ready. This approach mirrors top hiring platforms that use ASR and OpenAI o4-mini to automate interview analysis.
 
 #### Feature 5: Profile Management & History
 
@@ -109,10 +109,10 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 **Active Services:**
 - **User Service** (Port 8001) - Authentication & Profile Management (SQLite)
 - **Interview Service** (Port 8006) - Core orchestration and RAG pipeline (Pinecone only)
-- **Resume Service** (Port 8004) - Resume parsing and analysis (File-based, no DB)
+- **Resume Service** (Port 8004) - OpenAI o4-mini powered resume parsing and analysis (File-based, no DB)
 - **Transcription Service** (Port 8005) - Enhanced STT/TTS with Groq
 - **Media Service** (Port 8002) - Chunked media management (SQLite)
-- **Feedback Service** (Port 8010) - AI-powered feedback generation (SQLite)
+- **Feedback Service** (Port 8010) - OpenAI o4-mini powered feedback generation (SQLite)
 
 ### 4.2 Data Storage Strategy
 
@@ -125,9 +125,9 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 
 - **Vector Database Integration**: Pinecone for semantic question similarity
 - **Embedding Generation**: OpenAI text-embedding-ada-002
-- **Dynamic Follow-up Generation**: Groq-powered contextual follow-ups
+- **Dynamic Follow-up Generation**: OpenAI o4-mini powered contextual follow-ups
 - **Semantic Analysis**: Sentence-transformers for response scoring
-- **Resume Analysis**: NLP-powered skill extraction
+- **Resume Analysis**: OpenAI o4-mini powered skill extraction
 - **Performance Analytics**: Multi-dimensional scoring
 - **Speech Processing**: Groq Whisper-Large-V3 for STT, PlayAI-TTS for TTS
 
@@ -144,7 +144,7 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 
 ### 5.1 Persona Implementation
 
-The platform uses **AI personas** to create different interview experiences. Each persona has:
+The platform uses **OpenAI o4-mini personas** to create different interview experiences. Each persona has:
 
 - **Unique personality traits** (enthusiastic, analytical, empathetic)
 - **Specialized questioning styles** (strategic, methodical, creative)
@@ -233,7 +233,7 @@ DATABASE_URL=sqlite:///./talentsync.db
 
 ## 8. References
 
-Note on References: TalentSync's design choices align with industry trends – for example, embedding AI for automated transcription and analysis is standard practice. Research also supports using LLMs as adaptive interviewers to create realistic questioning environments. These references inform our feature design and help ensure TalentSync's capabilities are state-of-the-art.
+Note on References: TalentSync's design choices align with industry trends – for example, embedding OpenAI o4-mini for automated transcription and analysis is standard practice. Research also supports using LLMs as adaptive interviewers to create realistic questioning environments. These references inform our feature design and help ensure TalentSync's capabilities are state-of-the-art.
 
-- Creating Top Hiring Intelligence Platforms with AI Models: https://www.assemblyai.com/blog/creating-top-hiring-intelligence-platforms-with-asr-nlp-and-nlu-tools
+- Creating Top Hiring Intelligence Platforms with AI Models: https://www.assemblyai.com/blog/creating-top-hiring-intelligence-platforms-with-asr-nlp-and-nlu-tools (Reference for industry practices)
 - [2410.01824] AI Conversational Interviewing: Transforming Surveys with LLMs as Adaptive Interviewers: https://arxiv.org/abs/2410.01824 
