@@ -1,0 +1,242 @@
+[
+  {
+    "id": "devops-001",
+    "text": "What is DevOps and why is it important in modern software development?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "What are the key principles or practices of DevOps?",
+      "How does DevOps differ from traditional IT operations or Agile methodologies?",
+      "Can you give an example of DevOps improving a development process?"
+    ],
+    "ideal_answer_summary": "DevOps is a software development approach that emphasizes collaboration between development (Dev) and IT operations (Ops) teams, combining practices, tools, and a culture aimed at automating and integrating processes. It is important because it enables faster and more frequent software releases with higher quality and reliability. By breaking down silos and automating workflows (such as continuous integration and continuous delivery), DevOps reduces deployment failures, shortens lead times, and improves recovery from outages. Overall, DevOps fosters a culture of shared responsibility, faster feedback, and continuous improvement, aligning IT efforts closely with business objectives."
+  },
+  {
+    "id": "devops-002",
+    "text": "What are Continuous Integration (CI) and Continuous Delivery/Deployment (CD), and how do they differ?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "Can you name some tools used for CI/CD and their roles?",
+      "What kinds of tests are typically run during CI before code integration?",
+      "How would you handle a situation where a build in CI fails?"
+    ],
+    "ideal_answer_summary": "Continuous Integration is the practice of frequently merging code changes into a shared repository, where each change triggers an automated build and test process to catch issues early. Continuous Delivery extends CI by automatically preparing validated builds for release to production, whereas Continuous Deployment goes a step further and automatically deploys every change to production if it passes all tests. The difference lies in the automation level of releasing: Continuous Delivery ensures code is always in a deployable state and typically requires a manual approval to deploy, while Continuous Deployment releases to users without manual intervention. Together, CI/CD pipelines ensure software can be released rapidly, reliably, and repeatedly by detecting problems early and automating the release process."
+  },
+  {
+    "id": "devops-003",
+    "text": "What is Infrastructure as Code (IaC), and why is it important in a DevOps context?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "Which tools have you used for Infrastructure as Code and how do they work?",
+      "How does IaC improve consistency between development, testing, and production environments?",
+      "What are some challenges you might face when adopting IaC in a team?"
+    ],
+    "ideal_answer_summary": "Infrastructure as Code is the practice of managing and provisioning infrastructure (servers, networks, configurations) using machine-readable definition files (code) rather than manual processes. In a DevOps context, IaC is important because it enables automation, consistency, and repeatability of environments. By treating infrastructure configuration like software code (stored in version control, peer reviewed, tested), teams can rapidly deploy environments, reduce configuration drift, and easily recover or replicate setups. IaC tools (such as Terraform, CloudFormation, or Ansible) allow scaling infrastructure on demand and ensure that environments across development, staging, and production remain consistent, ultimately speeding up deployments and improving reliability."
+  },
+  {
+    "id": "devops-004",
+    "text": "What are containers, and how do they differ from virtual machines (VMs)?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "How does containerization benefit the software deployment process?",
+      "What is Docker and what role does it play with containers?",
+      "When might you choose a VM over a container for deployment?"
+    ],
+    "ideal_answer_summary": "Containers are lightweight, portable execution environments that include an application and its dependencies, packaged together to run reliably across different computing environments. Unlike virtual machines, which encapsulate a full operating system and virtualize hardware, containers share the host OS kernel and isolate the application at the process level, making them much more efficient in terms of resource usage and startup time. This difference means containers are faster to boot and require less overhead than VMs, allowing higher density of applications per host. Containers are central to modern DevOps because they ensure consistency from development to production (\"it works on my machine\" issues are reduced) and work seamlessly with orchestration systems for scaling and managing deployments."
+  },
+  {
+    "id": "devops-005",
+    "text": "What does \"shift-left\" mean in the context of DevOps, especially regarding testing and security?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How would you implement a shift-left strategy for testing in a CI/CD pipeline?",
+      "What are the benefits of shifting security left (DevSecOps)?",
+      "Can you give an example of a tool that enables shift-left testing or security?"
+    ],
+    "ideal_answer_summary": "\"Shift-left\" is a principle of taking tasks that are traditionally done late in the software release process (such as testing or security checks) and moving them earlier (to the left) in the development timeline. In DevOps, this means integrating activities like testing, quality assurance, and security scanning into earlier stages of the pipeline (e.g., during code commits and CI builds) rather than waiting until deployment time. By shifting testing and security left, teams can catch defects and vulnerabilities sooner, reducing the cost and impact of issues. For example, developers might run unit tests and static code analysis on each commit, and incorporate security linting or dependency vulnerability scans as part of CI, thereby ensuring code quality and security from the beginning of the development process."
+  },
+  {
+    "id": "devops-006",
+    "text": "In a DevOps context, what is observability and what are its key components?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How do logs, metrics, and tracing each contribute to observability?",
+      "What tools have you used for monitoring and alerting in production systems?",
+      "How would you implement alerting to avoid alert fatigue?"
+    ],
+    "ideal_answer_summary": "Observability in DevOps refers to the ability to understand the internal state of a system by examining its outputs, and it typically relies on three key pillars: logs, metrics, and traces. Logs are detailed, timestamped records of events (useful for debugging specific issues), metrics are numerical measurements that are aggregated over time (such as CPU usage, request rates, error counts), and distributed traces follow a request or transaction across services to pinpoint performance bottlenecks. A highly observable system makes it easier to monitor health, detect anomalies, and diagnose problems quickly. Implementing observability involves using tools and platforms (like ELK/EFK stack for logs, Prometheus for metrics, Jaeger or Zipkin for tracing, and visualization/alerting via Grafana or cloud services) and ensuring that applications emit the necessary data for these tools to analyze."
+  },
+  {
+    "id": "devops-007",
+    "text": "How are incidents typically handled in a DevOps culture and what is the role of post-mortems?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What does a \"blameless\" post-mortem mean and why is it important?",
+      "Can you explain the terms RTO and RPO in the context of incident recovery?",
+      "How do Site Reliability Engineering (SRE) practices relate to incident management?"
+    ],
+    "ideal_answer_summary": "In a DevOps culture, incidents (outages, service disruptions, etc.) are handled with a focus on rapid recovery and learning rather than blame. Teams typically follow a well-defined incident response process: detecting the issue through monitoring alerts, assembling an incident response team, communicating to stakeholders, mitigating the problem (such as rolling back a bad deployment or applying a hotfix), and then fully resolving the root cause. Post-mortems are conducted after significant incidents to analyze what happened, why it happened, and how to prevent it in the future; in DevOps these are \"blameless\" – focusing on systemic improvements rather than individual errors. The post-mortem yields action items like adding better tests, improving monitoring, or adjusting processes, ensuring the team continuously learns and the system becomes more resilient over time."
+  },
+  {
+    "id": "devops-008",
+    "text": "What are some key metrics used to measure the success of DevOps practices (for example, deployment frequency or lead time)?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What is meant by lead time for changes, and why is it important?",
+      "How do change failure rates and MTTR (Mean Time to Recovery) reflect DevOps performance?",
+      "Have you used any dashboards or tools to track these metrics in real projects?"
+    ],
+    "ideal_answer_summary": "DevOps success is often measured by the improvement in software delivery performance. Key metrics include Deployment Frequency (how often the team deploys to production), Lead Time for Changes (how long it takes from code commit to production deployment), Change Failure Rate (what percentage of changes cause a failure in production), and Mean Time to Recovery (MTTR, how quickly the team recovers from incidents). High-performing DevOps teams aim for frequent deployments (from weekly to on-demand), short lead times (hours or days instead of weeks), low change failure rates (ideally under 15%), and quick recovery (MTTR measured in minutes or hours). These metrics, often called the DORA metrics, give concrete data on how well DevOps practices are working. Improvements in these metrics indicate faster delivery of value to users and more resilient systems."
+  },
+  {
+    "id": "devops-009",
+    "text": "What are Blue/Green deployments and Canary releases in the context of deployment strategies?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How would you implement a Blue/Green deployment in practice?",
+      "What are the risks or challenges associated with Canary deployments?",
+      "When might you choose one deployment strategy (Blue/Green vs Canary) over the other?"
+    ],
+    "ideal_answer_summary": "Blue/Green and Canary are deployment strategies designed to reduce risk and downtime during releases. In a Blue/Green deployment, you maintain two production environments (Blue and Green) and deploy the new version to the idle environment (say Green) while the old version (Blue) is still serving users; after testing the new version, you switch traffic to Green, making it live, and keep Blue as a fallback. A Canary release involves rolling out the new version to a small subset of users or servers first (the \"canary\" deployment) while the majority still uses the old version; if the canary performs well (no errors or issues), the new version is gradually rolled out to everyone. Both approaches allow testing in real environments with minimal impact: Blue/Green provides near-instant rollback by switching back, and Canary reduces blast radius by exposing issues on a small scale first."
+  },
+  {
+    "id": "devops-010",
+    "text": "How do you manage application configuration and secrets (sensitive data) across different environments in a DevOps pipeline?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What tools or services have you used for secret management?",
+      "How do you avoid storing secrets in source code or Docker images?",
+      "How would you handle configuration differences between development, staging, and production?"
+    ],
+    "ideal_answer_summary": "Managing configuration and secrets securely is critical in DevOps. Typically, configuration values that differ between environments (like database connection strings, API endpoints) and secrets (passwords, API keys, certificates) are externalized from the application code. Strategies include using configuration files or environment variables for non-sensitive config and dedicated secret management systems (such as HashiCorp Vault, AWS Secrets Manager, or Kubernetes secrets) for sensitive data. The CI/CD pipeline can inject the appropriate configs and secrets at deploy time, for example by referencing environment-specific files or vault entries. Key practices are to never hard-code secrets in code repositories, to encrypt secrets at rest and in transit, and to tightly control access. Using infrastructure-as-code and configuration management tools, teams ensure that each environment gets the correct config and secrets without exposing them, improving security and consistency."
+  },
+  {
+    "id": "devops-011",
+    "text": "Design a basic CI/CD pipeline for a new web application project, from code commit to deployment.",
+    "type": "design",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How would you integrate automated testing into this pipeline?",
+      "What would you include to ensure deployments are safe (e.g., approvals, canary tests)?",
+      "How might this pipeline differ for a microservices application versus a single application?"
+    ],
+    "ideal_answer_summary": "A basic CI/CD pipeline for a web application starts with Continuous Integration: when developers commit code to a version control repository (like Git), a CI server (e.g., Jenkins, GitLab CI, GitHub Actions) triggers a pipeline. The pipeline would include stages for compiling/building the application, running automated tests (unit and integration tests) to verify the change, and packaging the application (for example into a Docker image if containerized). Upon a successful build and test, the Continuous Delivery stage takes over: the pipeline could deploy the application to a staging environment where further tests or validations (like UI tests or performance tests) run. Finally, with all checks passed, the pipeline can either automatically deploy to production (Continuous Deployment) or await a manual approval for production release. This design ensures that each code change is validated and that deployment is automated, reducing manual effort and catching issues early."
+  },
+  {
+    "id": "devops-012",
+    "text": "How would you design a monitoring and logging architecture for a large-scale distributed application?",
+    "type": "design",
+    "difficulty": "hard",
+    "follow_up_templates": [
+      "What logging aggregation and search solutions would you recommend?",
+      "How would you implement distributed tracing in such a system?",
+      "What strategies would you use to ensure the monitoring system itself scales with the application?"
+    ],
+    "ideal_answer_summary": "Designing monitoring and logging for a large distributed application requires a centralized and scalable approach. For logging, one would set up an aggregation system where all services send their log events to a centralized log store (for example, using Fluentd/Logstash to send to an ELK/Opensearch stack or a cloud logging service). This allows engineers to search and analyze logs from all services in one place. For monitoring metrics, a time-series database like Prometheus (with Grafana for visualization) or a cloud monitoring service can collect and store metrics emitted by each service (CPU, memory, custom application metrics, etc.), with alerts configured on anomalies. Implementing distributed tracing (using tools like Jaeger or Zipkin, or cloud APM solutions) is crucial to track requests as they propagate through microservices, which helps isolate performance bottlenecks and errors in complex call flows. To ensure this monitoring infrastructure scales, the design might involve sharding or clustering of log and metric storage, data retention policies, and possibly an observability back-end that can handle high write and query loads. The result is a robust observability system where any issue in the distributed app can be detected (via metrics alerts) and diagnosed (via logs and traces) efficiently."
+  },
+  {
+    "id": "devops-013",
+    "text": "How can you deploy updates to an application with zero (or minimal) downtime?",
+    "type": "design",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What role do load balancers play in achieving zero-downtime deployments?",
+      "How would you handle database schema changes in a zero-downtime deployment?",
+      "Can you give an example of a technology or platform that supports rolling updates?"
+    ],
+    "ideal_answer_summary": "Achieving zero-downtime deployments involves deploying new application versions without interrupting service to users. One common approach is to use rolling updates or blue-green deployments. For example, in a rolling deployment, instances of the application are updated one batch at a time: a load balancer directs traffic away from a subset of instances, those instances are updated to the new version, tested for health, and then put back into rotation, proceeding until all instances are updated. Blue-green deployments, on the other hand, prepare the new version on a separate identical environment and switch traffic to it once it's verified, avoiding downtime entirely. Key to this process are load balancers or orchestration platforms (like Kubernetes) which can route and scale traffic appropriately and health-check instances. Planning for database changes is also crucial: techniques like backward-compatible database migrations, dual-writing (to old and new schemas), or using feature flags can ensure the app remains available during the transition. With careful orchestration and testing, these strategies allow continuous service availability even as new code is released."
+  },
+  {
+    "id": "devops-014",
+    "text": "Your company needs to run an application in multiple regions for high availability. How would you design the infrastructure and deployment strategy?",
+    "type": "design",
+    "difficulty": "hard",
+    "follow_up_templates": [
+      "How would you ensure data consistency and synchronization across regions?",
+      "What approach would you take for routing user traffic to the nearest or healthiest region?",
+      "How do you test failover between regions to verify resilience?"
+    ],
+    "ideal_answer_summary": "Designing a multi-region infrastructure for high availability involves deploying the application and its supporting services in two or more geographically separate regions. Each region would have a full stack of the application and databases, and global traffic management (such as DNS-based load balancing or global load balancers) would route users to the closest or healthiest region, reducing latency and providing redundancy. To keep data in sync, one might use a primary-secondary database replication across regions or a multi-master setup depending on the database technology, along with strategies to handle eventual consistency or conflict resolution. It's also crucial to centralize or replicate stateful components (datastores, caches) carefully, possibly using regional data stores with asynchronous replication to balance consistency and performance. The deployment strategy would use infrastructure-as-code to provision identical setups in each region and a CI/CD pipeline that can deploy updates to all regions (perhaps staggered to detect issues). Regular failover testing (simulating a region outage and ensuring traffic correctly shifts and systems can handle the load) is performed to validate that the multi-region architecture truly improves resilience."
+  },
+  {
+    "id": "devops-015",
+    "text": "Describe your approach to automating the provisioning of a new environment (infrastructure) for a web application.",
+    "type": "coding",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "Which Infrastructure as Code tool would you use and why?",
+      "How would you handle differences between environments (dev, staging, prod) in your code?",
+      "What steps would you include to ensure the infrastructure is secure and compliant?"
+    ],
+    "ideal_answer_summary": "To automate provisioning of a new environment, I would use an Infrastructure as Code (IaC) approach with tools like Terraform or CloudFormation. The process involves writing declarative configuration files that describe all required resources: servers (or containers), networks, load balancers, databases, etc., including their configurations. I would parameterize the code to handle different environments (using variables or separate config files for dev, staging, prod) so that the core infrastructure template is reusable. Running the IaC tool, it would plan and then apply the changes to create the environment exactly as specified. This approach ensures consistency (the environments are clones of each other except for intentional differences like sizing), and it's version-controlled, so any changes to infrastructure go through code review. Throughout the code, I'd incorporate security best practices (for example, using secure images, configuring least-privilege IAM roles, encryption settings for data stores) and possibly include automated validations or policy checks (using tools like Terraform Cloud/Sentinel or AWS Config) to ensure compliance."
+  },
+  {
+    "id": "devops-016",
+    "text": "Describe your approach to writing a script that monitors a server's memory usage and triggers an alert when usage exceeds a threshold.",
+    "type": "coding",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "What tools or languages might you use to implement this monitoring script?",
+      "How would you execute this script on a regular schedule (e.g., every 5 minutes)?",
+      "What methods could the script use to send an alert notification?"
+    ],
+    "ideal_answer_summary": "To monitor a server's memory usage with a script, I would write a small program (for example, a Bash, Python, or PowerShell script depending on the environment) that periodically checks the system's memory metrics and triggers an alert if a defined threshold is breached. The script could read memory usage from the operating system (such as using `free -m` on Linux or system APIs) or leverage monitoring tools/agents that provide CLI access to metrics. If memory usage exceeds the threshold (say 90%), the script might send an alert by various means: for example, sending an email or Slack message, logging to a monitoring system, or even triggering a paging alert through an API (like PagerDuty). To run the script regularly, one could use a scheduler (cron job on Linux or Task Scheduler on Windows) or incorporate it into an existing monitoring framework. In a modern DevOps setup, however, instead of a custom script, one might use existing monitoring systems with built-in alerting, but writing such a script demonstrates understanding of the underlying process."
+  },
+  {
+    "id": "devops-017",
+    "text": "How would you implement an automated backup and restore strategy for a critical database server?",
+    "type": "coding",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What tools or commands would you use to perform database backups?",
+      "How often would you schedule backups and what retention policy would you apply?",
+      "How would you verify that backups are valid and restorable?"
+    ],
+    "ideal_answer_summary": "Implementing an automated backup and restore strategy involves regularly taking backups, securely storing them, and periodically testing restoration. First, I would identify a reliable method to back up the particular database (for example, using `mysqldump` or MySQL binlogs for MySQL, `pg_dump` for PostgreSQL, or native backup tools for other databases, or even snapshotting if using cloud-managed databases). I would then write a script or use a scheduled job to run these backups at appropriate intervals (e.g., nightly full backups with frequent incremental backups depending on data change rate and RPO requirements). The backups would be saved to a secure, durable storage location (such as an AWS S3 bucket or off-site storage) with proper encryption and retention policies (keeping perhaps the last N backups or last X days of backups). I'd also automate verification of backups by periodically performing test restores in a non-production environment or using tools that validate backup files. Monitoring and alerts would be in place if any backup fails. This ensures that in the event of data loss or corruption, the latest backup can be quickly retrieved and restored with minimal data loss."
+  },
+  {
+    "id": "devops-018",
+    "text": "Describe your approach to creating a Jenkins pipeline (Jenkinsfile) for building, testing, and deploying an application.",
+    "type": "coding",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What stages would you include in the Jenkins pipeline and what does each do?",
+      "How would you handle errors or failed steps in the pipeline?",
+      "How can you parameterize a Jenkins pipeline to deploy to different environments?"
+    ],
+    "ideal_answer_summary": "A Jenkins pipeline, defined in a Jenkinsfile, typically consists of multiple stages that correspond to the steps in the software delivery process. I would start by setting up a source control trigger so that any new commit triggers the pipeline. Then, in the Jenkinsfile, define stages such as **Build** (compile the code, install dependencies), **Test** (run unit and integration tests), possibly **Static Analysis** (linting or security scans), and **Package** (bundle the artifact or create a Docker image). If all earlier stages succeed, I'd have a **Deploy** stage which could deploy the artifact to a staging environment (or directly to production if appropriate). Within the Jenkinsfile, I would use declarative syntax to make it clear and add post conditions: for example, if any stage fails, Jenkins can mark the build as failed and notify the team (via email or chat integration). To deploy to different environments, I'd parameterize the pipeline (for instance, an \"ENV\" parameter) or use separate jobs/pipelines per environment, and use those parameters to adjust deployment targets, configurations, or credentials. This pipeline as code ensures consistent and repeatable build processes and can be versioned alongside the application code."
+  },
+  {
+    "id": "devops-019",
+    "text": "What is DevSecOps and how can security practices be integrated into a DevOps pipeline?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What are some security tools or practices you would include in CI/CD (e.g., static code analysis, dependency scanning)?",
+      "How do you ensure developers are on board with DevSecOps practices?",
+      "Can you describe how to handle a critical security vulnerability discovered in production?"
+    ],
+    "ideal_answer_summary": "DevSecOps is an approach that integrates security practices into every phase of the DevOps software lifecycle, making security a shared responsibility of development, operations, and security teams. Instead of treating security as an afterthought or a separate process, DevSecOps embeds security checks and safeguards right into CI/CD pipelines and development workflows. For example, this means incorporating static application security testing (SAST) to analyze code for vulnerabilities during CI, using dependency scanners to catch known vulnerabilities in libraries, doing container image security scans, and running dynamic analysis or penetration tests on deployed environments. Teams also implement practices like secret scanning (to ensure no passwords/keys end up in code), configuration hardening in infrastructure as code, and continuous monitoring for security issues in production. By automating these checks and educating developers about secure coding, DevSecOps ensures that security issues are identified and addressed early, reducing risk and improving compliance without slowing down the delivery process."
+  },
+  {
+    "id": "devops-020",
+    "text": "What are some common challenges organizations face when adopting DevOps, and how can they be addressed?",
+    "type": "conceptual",
+    "difficulty": "hard",
+    "follow_up_templates": [
+      "How would you approach cultural resistance from teams hesitant to adopt DevOps practices?",
+      "What mistakes have you seen or heard of in failed DevOps implementations?",
+      "How do you measure and demonstrate the benefits of DevOps to stakeholders?"
+    ],
+    "ideal_answer_summary": "Adopting DevOps can present several challenges. One major challenge is cultural resistance – development and operations teams may be accustomed to working in silos with different goals. Overcoming this requires strong leadership support, training, and demonstrating the value of collaboration (for example, starting with a pilot project that shows success). Another challenge is the learning curve and skill gap: teams need to learn new tools (CI/CD, configuration management, cloud platforms) and practices, which can be addressed with proper training, hiring, or engaging DevOps advocates. There can also be tooling and infrastructure challenges, like integrating various tools into a cohesive pipeline or updating legacy systems to fit into automated workflows. Organizations sometimes struggle with measuring success; adopting key metrics (deployment frequency, lead time, MTTR, etc.) and showing improvements helps justify the effort. Ultimately, starting small, iterating, and fostering a blameless, learning-oriented culture are key ways to address these adoption challenges."
+  }
+]

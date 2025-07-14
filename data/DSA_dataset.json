@@ -1,0 +1,242 @@
+    [
+  {
+    "id": "dsa-001",
+    "text": "What are the differences between an array and a linked list?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "How does memory layout affect performance in arrays versus linked lists?",
+      "In what scenarios would you prefer a linked list over an array?",
+      "What about dynamic arrays - how do they compare to linked lists?"
+    ],
+    "ideal_answer_summary": "Arrays store elements in contiguous memory locations, enabling constant-time random access by index and excellent cache performance due to spatial locality. However, insertion and deletion in the middle require shifting elements, making these operations expensive. Linked lists store elements in nodes scattered throughout memory, with each node containing data and a pointer to the next node. This allows efficient insertion and deletion at any position when you have a reference to the node, but requires linear time to access arbitrary elements since you must traverse from the head. Arrays are preferred for frequent lookups and mathematical operations, while linked lists excel when frequent insertions and deletions are needed and when the exact size is unknown."
+  },
+  {
+    "id": "dsa-002",
+    "text": "What is a stack and a queue, and how do they differ?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "Can you describe real-world examples where stacks and queues are used?",
+      "How would you implement a queue using two stacks?",
+      "What are the time complexities of basic operations on stacks and queues?"
+    ],
+    "ideal_answer_summary": "A stack follows Last In, First Out (LIFO) principle where elements are added and removed from the same end, called the top. Like a stack of plates, you can only add or remove from the top. Primary operations are push (add) and pop (remove). A queue follows First In, First Out (FIFO) principle where elements are added at one end (rear) and removed from the other end (front), like a line of people. Primary operations are enqueue (add) and dequeue (remove). Stacks are used in function calls, expression evaluation, undo operations, and depth-first search. Queues are used in scheduling, breadth-first search, handling requests in web servers, and buffering data streams."
+  },
+  {
+    "id": "dsa-003",
+    "text": "How does a hash table work and what makes a good hash function?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What are the different collision resolution techniques?",
+      "How does load factor affect hash table performance?",
+      "When would you choose chaining over open addressing?"
+    ],
+    "ideal_answer_summary": "A hash table uses a hash function to map keys to indices in an underlying array, enabling average constant-time lookups, insertions, and deletions. A good hash function distributes keys uniformly across the array to minimize collisions and is fast to compute. When collisions occur (two keys hash to the same index), they're resolved through chaining (storing multiple values in linked lists at each index) or open addressing (finding alternative locations through probing). Performance depends on maintaining a reasonable load factor and having a quality hash function. Hash tables excel at implementing dictionaries, sets, and caches due to their excellent average-case performance."
+  },
+  {
+    "id": "dsa-004",
+    "text": "What is the difference between Breadth-First Search and Depth-First Search?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "Which data structures do BFS and DFS use internally?",
+      "How do their space complexities compare?",
+      "When would you choose DFS over BFS for a specific problem?"
+    ],
+    "ideal_answer_summary": "BFS explores nodes level by level, visiting all neighbors of the current node before moving to the next level, using a queue to track nodes to visit. It finds the shortest path in unweighted graphs and explores broadly before going deep. DFS explores as far as possible along each branch before backtracking, using a stack (or recursion) to track the path. It goes deep into one path before exploring alternatives. BFS has higher space complexity in wide graphs but guarantees shortest paths, while DFS uses less space but may not find optimal paths. BFS is ideal for shortest path problems and level-order traversal, while DFS works well for topological sorting, cycle detection, and when you need to explore all possibilities."
+  },
+  {
+    "id": "dsa-005",
+    "text": "What is Big-O notation, and why is it important in algorithm analysis?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "How does Big-O differ from Big-Theta and Big-Omega notation?",
+      "Can you explain why constants are dropped in Big-O analysis?",
+      "What's the difference between time and space complexity?"
+    ],
+    "ideal_answer_summary": "Big-O notation describes the upper bound of an algorithm's growth rate as input size approaches infinity, focusing on the dominant term while ignoring constants and lower-order terms. It's crucial for comparing algorithm efficiency and predicting performance on large datasets. For example, O(n) means linear growth, O(log n) means logarithmic growth, and O(n²) means quadratic growth. When input size doubles, an O(n) algorithm roughly doubles its work, while an O(log n) algorithm only increases by a constant amount. Big-O helps developers choose appropriate algorithms for their constraints and understand how algorithms scale, which becomes critical when dealing with large datasets or real-time systems."
+  },
+  {
+    "id": "dsa-006",
+    "text": "What are the time complexities of common sorting algorithms?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "Why is quicksort often faster in practice despite its worst-case complexity?",
+      "What makes a sorting algorithm stable versus unstable?",
+      "How do non-comparison sorts like counting sort achieve linear time?"
+    ],
+    "ideal_answer_summary": "Common sorting algorithms have varying time complexities: Simple algorithms like bubble sort, selection sort, and insertion sort have O(n²) worst-case complexity but O(n) best-case for nearly sorted data. Efficient comparison-based sorts like mergesort and heapsort guarantee O(n log n) time in all cases. Quicksort averages O(n log n) but has O(n²) worst-case, though this is rare with good pivot selection. Non-comparison sorts like counting sort, radix sort, and bucket sort can achieve O(n) time given specific constraints about the data range or distribution. The O(n log n) lower bound applies only to comparison-based sorts, while non-comparison sorts can break this barrier by using additional knowledge about the data structure."
+  },
+  {
+    "id": "dsa-007",
+    "text": "What is a binary search tree and what properties does it maintain?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "What happens to BST performance when data is inserted in sorted order?",
+      "How do you handle duplicate values in a BST?",
+      "What are the different tree traversal methods for BSTs?"
+    ],
+    "ideal_answer_summary": "A binary search tree is a binary tree where each node contains a key, and for every node, all keys in the left subtree are smaller than the node's key, and all keys in the right subtree are larger. This ordering property enables efficient search operations similar to binary search, with average O(log n) time complexity for search, insertion, and deletion. The tree can be traversed in-order to retrieve elements in sorted order. However, if elements are inserted in sorted order, the BST degenerates into a linked list with O(n) operations. BSTs form the foundation for more advanced self-balancing trees and are useful for maintaining sorted collections with efficient operations."
+  },
+  {
+    "id": "dsa-008",
+    "text": "What is a balanced binary tree, and why is balancing important?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How do AVL trees and Red-Black trees maintain balance?",
+      "What's the difference between perfectly balanced and height-balanced?",
+      "When is the overhead of maintaining balance not worth it?"
+    ],
+    "ideal_answer_summary": "A balanced binary tree maintains roughly equal heights between left and right subtrees, ensuring the tree height remains O(log n) relative to the number of nodes. Balancing is crucial because it preserves the efficiency of tree operations - an unbalanced tree can degenerate into a linear structure with O(n) operations instead of the desired O(log n). Self-balancing trees like AVL trees (strictly balanced) and Red-Black trees (roughly balanced) automatically maintain balance through rotations and recoloring during insertions and deletions. The balancing overhead is worthwhile when frequent searches are performed, but for write-heavy workloads with few searches, the maintenance cost might outweigh the benefits."
+  },
+  {
+    "id": "dsa-009",
+    "text": "What is dynamic programming and when should you use it?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What's the difference between memoization and tabulation?",
+      "How do you identify if a problem has optimal substructure?",
+      "Can you explain the concept of overlapping subproblems?"
+    ],
+    "ideal_answer_summary": "Dynamic programming is an optimization technique that solves complex problems by breaking them into simpler subproblems and storing results to avoid redundant computation. It applies to problems with optimal substructure (optimal solution contains optimal solutions to subproblems) and overlapping subproblems (same subproblems occur multiple times). Two approaches exist: memoization (top-down recursion with caching) and tabulation (bottom-up iterative building). DP dramatically improves efficiency - for example, naive Fibonacci recursion is O(2^n) while DP version is O(n). It's used for optimization problems like shortest paths, knapsack problems, and sequence alignment, transforming exponential algorithms into polynomial ones."
+  },
+  {
+    "id": "dsa-010",
+    "text": "What is a trie and what are its main use cases?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How does trie space complexity compare to storing words in a hash set?",
+      "What optimizations can be made to reduce trie memory usage?",
+      "How would you implement autocomplete using a trie?"
+    ],
+    "ideal_answer_summary": "A trie (prefix tree) is a tree data structure where each node represents a character and paths from root to nodes represent strings or prefixes. Each edge is labeled with a character, and nodes may be marked as end-of-word. Tries excel at prefix-based operations, making them ideal for autocomplete, spell checkers, word games, and IP routing tables. Search time is O(m) where m is the string length, independent of the number of stored strings. However, tries can be memory-intensive, especially with sparse datasets or large alphabets. They're particularly useful when you need to perform many prefix queries or when the dataset has significant prefix overlap, as common prefixes are stored only once."
+  },
+  {
+    "id": "dsa-011",
+    "text": "What is a heap and how does it differ from a priority queue?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How do you maintain heap property during insertion and deletion?",
+      "What's the difference between min-heap and max-heap?",
+      "Why can't you efficiently search for arbitrary elements in a heap?"
+    ],
+    "ideal_answer_summary": "A heap is a complete binary tree that satisfies the heap property: in a max-heap, each parent node is greater than or equal to its children, while in a min-heap, each parent is smaller than or equal to its children. Heaps are typically implemented using arrays for efficient memory usage and cache performance. A priority queue is an abstract data type that provides operations to insert elements with priorities and extract the highest (or lowest) priority element; heaps are the most common implementation. Binary heaps support O(log n) insertion and extraction of the minimum/maximum element, making them perfect for algorithms like Dijkstra's shortest path and heap sort."
+  },
+  {
+    "id": "dsa-012",
+    "text": "How are graphs typically represented in memory?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "When would you choose adjacency list over adjacency matrix?",
+      "How do these representations affect the performance of graph algorithms?",
+      "What about edge lists - when are they useful?"
+    ],
+    "ideal_answer_summary": "Graphs are commonly represented using adjacency lists or adjacency matrices. Adjacency lists use an array or hash map where each vertex maps to a list of its adjacent vertices, making them memory-efficient for sparse graphs and allowing fast iteration over neighbors. Adjacency matrices use a 2D array where matrix[i][j] indicates an edge between vertices i and j, providing O(1) edge lookup but using O(V²) space regardless of edge count. Choose adjacency lists for sparse graphs and when frequently iterating over neighbors; choose adjacency matrices for dense graphs or when frequently checking specific edge existence. Edge lists (simply storing all edges as pairs) are useful for some algorithms like Kruskal's minimum spanning tree."
+  },
+  {
+    "id": "dsa-013",
+    "text": "Describe your approach to solving the two-sum problem efficiently.",
+    "type": "coding",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "How would you modify this for the three-sum problem?",
+      "What if the array is sorted versus unsorted?",
+      "How would you handle duplicate values in the array?"
+    ],
+    "ideal_answer_summary": "I would use a hash map to solve the two-sum problem in one pass with O(n) time complexity. As I iterate through the array, for each number I calculate the complement needed to reach the target sum. I check if this complement already exists in the hash map; if so, I've found the pair and return their indices. If not, I store the current number and its index in the hash map and continue. This approach trades space for time, using O(n) extra space but avoiding the O(n²) nested loops of the brute force approach. The hash map lookup is average O(1), making the overall algorithm efficient and elegant."
+  },
+  {
+    "id": "dsa-014",
+    "text": "How would you implement binary search and what are the key considerations?",
+    "type": "coding",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "How do you handle finding the first occurrence of a duplicate value?",
+      "What modifications are needed for searching in a rotated sorted array?",
+      "How do you avoid integer overflow when calculating the middle index?"
+    ],
+    "ideal_answer_summary": "I would implement binary search using two pointers, left and right, initially set to the array boundaries. In each iteration, I calculate the middle index, avoiding overflow by using left plus half the difference between right and left. I compare the middle element with the target: if equal, I return the index; if the target is smaller, I search the left half by setting right to mid minus one; if larger, I search the right half by setting left to mid plus one. I continue until left exceeds right, indicating the target isn't present. The key considerations are proper boundary handling, avoiding infinite loops, and ensuring the algorithm terminates correctly with O(log n) time complexity."
+  },
+  {
+    "id": "dsa-015",
+    "text": "Explain your approach to implementing a merge sort algorithm.",
+    "type": "coding",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How does merge sort's stability property work?",
+      "What are the space complexity trade-offs of merge sort?",
+      "How would you optimize merge sort for nearly sorted arrays?"
+    ],
+    "ideal_answer_summary": "I would implement merge sort using a divide-and-conquer approach with two main functions: merge sort and merge. The merge sort function recursively divides the array in half until reaching base cases of single elements, then calls merge to combine sorted subarrays. The merge function takes two sorted arrays and creates a single sorted array by comparing elements from both arrays and selecting the smaller one. I'd use temporary arrays for merging to maintain stability. The algorithm guarantees O(n log n) time complexity in all cases and uses O(n) additional space. Key considerations include handling array boundaries correctly, ensuring stability by taking from the left array when elements are equal, and proper memory management."
+  },
+  {
+    "id": "dsa-016",
+    "text": "How would you detect if a linked list has a cycle?",
+    "type": "coding",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How do you find the start of the cycle once you detect it?",
+      "What's the mathematical proof behind Floyd's cycle detection?",
+      "How would you find the length of the cycle?"
+    ],
+    "ideal_answer_summary": "I would use Floyd's cycle detection algorithm, also known as the tortoise and hare approach. I'd use two pointers: a slow pointer that moves one step at a time and a fast pointer that moves two steps at a time. If there's a cycle, the fast pointer will eventually catch up to the slow pointer inside the cycle. If there's no cycle, the fast pointer will reach the end of the list. The algorithm runs in O(n) time and uses O(1) space, making it very efficient. To find the cycle's starting point after detection, I'd move one pointer back to the head and advance both pointers one step at a time until they meet again."
+  },
+  {
+    "id": "dsa-017",
+    "text": "Describe your approach to implementing depth-first search on a graph.",
+    "type": "coding",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What's the difference between recursive and iterative DFS implementation?",
+      "How do you handle disconnected components in DFS?",
+      "How would you modify DFS to detect cycles in a graph?"
+    ],
+    "ideal_answer_summary": "I would implement DFS using either recursion or an explicit stack. For recursive DFS, I'd maintain a visited set to track explored nodes, then for each unvisited neighbor, recursively call DFS. For iterative DFS, I'd use a stack to store nodes to visit, pushing neighbors and popping to explore. Both approaches visit each node and edge once, giving O(V + E) time complexity. Key considerations include handling disconnected components by calling DFS from each unvisited node, choosing appropriate data structures for the visited set (hash set for fast lookup), and deciding on pre-order or post-order processing based on the specific problem requirements."
+  },
+  {
+    "id": "dsa-018",
+    "text": "How would you implement breadth-first search to find shortest paths?",
+    "type": "coding",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How do you reconstruct the actual shortest path, not just the distance?",
+      "What modifications are needed for weighted graphs?",
+      "How does BFS guarantee finding the shortest path in unweighted graphs?"
+    ],
+    "ideal_answer_summary": "I would implement BFS using a queue to explore nodes level by level, ensuring the shortest path in unweighted graphs. I'd start by enqueueing the source node with distance zero, then repeatedly dequeue nodes, explore their unvisited neighbors, and enqueue them with incremented distance. I'd use a visited set to avoid revisiting nodes and a distance array to track shortest distances. To reconstruct paths, I'd maintain a parent array to track how each node was reached. The algorithm guarantees shortest paths because it explores nodes in order of increasing distance from the source. Time complexity is O(V + E) and space complexity is O(V) for the queue and auxiliary data structures."
+  },
+  {
+    "id": "dsa-019",
+    "text": "Explain your approach to solving the longest common subsequence problem.",
+    "type": "coding",
+    "difficulty": "hard",
+    "follow_up_templates": [
+      "How would you optimize the space complexity of your solution?",
+      "What's the difference between subsequence and substring for this problem?",
+      "How would you modify this to find the actual LCS string, not just its length?"
+    ],
+    "ideal_answer_summary": "I would solve the longest common subsequence problem using dynamic programming with a 2D table where entry (i,j) represents the LCS length of the first i characters of string one and first j characters of string two. If characters match, I'd take the diagonal value plus one; if they don't match, I'd take the maximum of the cell above or to the left. The base cases are empty strings having LCS length zero. This gives O(mn) time and space complexity. To optimize space, I could use only two rows since each cell depends only on the current and previous rows. To reconstruct the actual LCS, I'd trace back through the table, including characters when moving diagonally (indicating a match)."
+  },
+  {
+    "id": "dsa-020",
+    "text": "How would you design and implement a LRU cache?",
+    "type": "design",
+    "difficulty": "hard",
+    "follow_up_templates": [
+      "What data structures would you combine to achieve O(1) operations?",
+      "How would you handle thread safety in a concurrent environment?",
+      "What modifications would you make for other eviction policies like LFU?"
+    ],
+    "ideal_answer_summary": "I would implement LRU cache using a combination of a hash map and doubly-linked list to achieve O(1) time complexity for both get and put operations. The hash map provides fast key lookup, while the doubly-linked list maintains the access order with the most recently used item at the head and least recently used at the tail. For get operations, I'd move the accessed node to the head; for put operations, I'd add new nodes at the head and remove from the tail when capacity is exceeded. The doubly-linked structure allows efficient removal from any position. For thread safety, I'd add appropriate synchronization mechanisms. Key considerations include handling edge cases, maintaining invariants between the hash map and linked list, and ensuring proper memory management."
+  }
+]

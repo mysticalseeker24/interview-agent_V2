@@ -1,0 +1,242 @@
+[
+  {
+    "id": "k8s-001",
+    "text": "What is Kubernetes and what are its main components in the cluster architecture?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "What problem does Kubernetes solve in application deployment?",
+      "Can you name some key components of the Kubernetes control plane and their roles?",
+      "How does Kubernetes differ from a traditional platform like deploying on VMs without an orchestrator?"
+    ],
+    "ideal_answer_summary": "Kubernetes is an open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications. It manages clusters of nodes (servers) and schedules container workloads (in units called pods) onto these nodes. The main components of a Kubernetes cluster include the **control plane** (with components like the API server, etcd database for cluster state, scheduler for deciding placement of pods, and controller managers to handle routine tasks) and the **worker nodes** (each running a kubelet agent to manage pods on that node, and a kube-proxy for networking). By using Kubernetes, organizations solve the problem of running applications reliably at scale: Kubernetes handles service discovery, load balancing, self-healing (restarting failed containers), and rolling updates, which would be complex to manage manually on a fleet of servers."
+  },
+  {
+    "id": "k8s-002",
+    "text": "What is a Pod in Kubernetes and how is it different from a standalone container?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "Can a Pod contain multiple containers? If so, why might you use multiple containers in one Pod?",
+      "What happens if a container in a Pod crashes? How does Kubernetes handle such a scenario?",
+      "How do Pods communicate with each other within a cluster (for example, how does networking work for Pods)?"
+    ],
+    "ideal_answer_summary": "A Pod is the basic deployable unit in Kubernetes, which can encapsulate one or more tightly-coupled containers. In practice, a Pod often contains a single main container (e.g., an application container), but it can include additional sidecar containers (for logging, proxy, etc.) that share the Pod’s network and storage. All containers in a Pod share the same network namespace (meaning they can communicate over localhost) and can share storage volumes, which is a key difference from standalone containers that don't have this coupling. Pods are considered ephemeral; if a Pod (or containers within it) crashes or is evicted (due to node failure or scheduling decisions), Kubernetes can automatically restart or replace that Pod according to the desired state (e.g., via a Deployment controller ensuring a certain number of replicas). Each Pod gets its own IP address within the cluster, and Pods communicate across the cluster network usually by referencing each other through Services (which provide stable virtual IPs and DNS names), since Pod IPs are dynamic."
+  },
+  {
+    "id": "k8s-003",
+    "text": "What is a Deployment in Kubernetes and how does it relate to ReplicaSets and Pods?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How does a Deployment help in performing rolling updates of an application?",
+      "What is the difference between a Deployment and a DaemonSet?",
+      "How could you pause or roll back a Deployment update if something goes wrong?"
+    ],
+    "ideal_answer_summary": "A Deployment is a higher-level Kubernetes object that manages a set of identical Pods using a ReplicaSet (which in turn ensures the specified number of Pod replicas are running). When you create a Deployment, it automatically creates a ReplicaSet which then creates and maintains the desired number of Pods. Deployments provide declarative updates for Pods and ReplicaSets, meaning you can declare a new state (like an updated container image or different number of replicas), and the Deployment controller will orchestrate a rollout (performing a rolling update by gradually replacing Pods to reach the new state). Deployments also enable easy rollback to previous versions if a problem is detected, and you can pause a Deployment to apply multiple changes and then resume it to avoid triggering multiple restarts. In summary, a Deployment abstracts away the manual work of keeping Pods updated and at the right count, offering features like rolling updates, rollbacks, and scaling in a controlled way."
+  },
+  {
+    "id": "k8s-004",
+    "text": "How do Services work in Kubernetes and what are the different types of Services available?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What is a ClusterIP service and how is it used?",
+      "How would you expose a Kubernetes service to external clients (outside the cluster)?",
+      "What is an Ingress and how does it differ from a LoadBalancer service?"
+    ],
+    "ideal_answer_summary": "In Kubernetes, a Service is an abstraction that defines a logical set of Pods and a policy by which to access them, usually to enable stable networking for those Pods. Because Pods have dynamic IPs and can be ephemeral, a Service provides a consistent endpoint (virtual IP and DNS name) for clients to connect to. There are different Service types: **ClusterIP** (default, accessible only within the cluster, giving an internal IP for the group of Pods), **NodePort** (exposes the service on a static port on each node's IP, allowing external access via <NodeIP:NodePort>), and **LoadBalancer** (provisions an external load balancer through the cloud provider to route to the service, commonly used in cloud environments to expose services to the internet). An **Ingress** is a separate Kubernetes resource (often backed by an ingress controller) that manages external HTTP/HTTPS access to services, providing routing based on hostnames or paths, and can consolidate multiple services behind a single IP or domain. In short, Services handle internal and external connectivity for Pods, with Ingress providing more advanced Layer 7 routing capabilities."
+  },
+  {
+    "id": "k8s-005",
+    "text": "What role does etcd play in a Kubernetes cluster, and what would be the impact if it fails?",
+    "type": "conceptual",
+    "difficulty": "hard",
+    "follow_up_templates": [
+      "What kind of data is stored in etcd?",
+      "How can you secure and back up the etcd data store?",
+      "What mechanisms does Kubernetes use to maintain cluster state consistency using etcd?"
+    ],
+    "ideal_answer_summary": "etcd is a distributed key-value store that serves as the source of truth for all cluster data in Kubernetes. It stores the entire cluster state and configuration, including information about Pods, Deployments, Services, ConfigMaps, Secrets, and more. When you interact with the Kubernetes API (for example, `kubectl apply` a new deployment), the API server validates and writes the new state to etcd. The Kubernetes control plane components (like the scheduler and controllers) watch etcd for changes to desired state and act to achieve that state. If etcd fails or becomes unavailable, the cluster cannot process changes: no new pods can be scheduled, no configuration changes can be persisted, and in a severe case, even existing workloads might be impacted if they rely on state changes. Hence, etcd is typically run as a highly-available cluster itself (usually 3 or 5 nodes for quorum). Administrators must secure etcd with authentication and TLS encryption (because it holds sensitive data, including Secrets in base64-encoded form) and regularly back up etcd data, since losing etcd could mean losing the entire cluster state."
+  },
+  {
+    "id": "k8s-006",
+    "text": "What is a Kubernetes Namespace and how is it used?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "How do Namespaces help in managing resources for different teams or environments?",
+      "Can two Pods in different Namespaces have the same name, and why or why not?",
+      "What are ResourceQuotas and how do they relate to Namespaces?"
+    ],
+    "ideal_answer_summary": "A Kubernetes Namespace is a logical partitioning of cluster resources, used to create isolated environments within the same physical cluster. Namespaces allow different teams or applications to share a cluster without interfering with each other, by scoping names of resources: for instance, the same Deployment name can exist in two different namespaces without conflict. This is useful for separating environments (like dev, staging, prod) or tenants in a multi-tenant cluster. Resources like Pods, Services, Deployments, ConfigMaps, etc., live in a namespace (with some exceptions like nodes and persistent volumes which are cluster-scoped). Namespaces can also be used to apply policies: you can set ResourceQuotas on a namespace to limit how much CPU, memory, or number of resources that namespace’s workloads can consume, ensuring fair usage. Additionally, you can use namespace-based access control (with Kubernetes RBAC) to restrict which users or service accounts can view or manipulate resources in particular namespaces."
+  },
+  {
+    "id": "k8s-007",
+    "text": "How does the Kubernetes scheduler decide on which node to place a Pod?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What are taints and tolerations and how do they affect scheduling?",
+      "How can you ensure certain Pods land on specific nodes (e.g., only on nodes with SSDs)?",
+      "What happens if no node meets the requirements for a scheduled Pod?"
+    ],
+    "ideal_answer_summary": "The Kubernetes scheduler is responsible for assigning Pods to nodes based on resource requirements and constraints. When a Pod is created (and is unscheduled), the scheduler evaluates all available nodes to find a suitable fit. It considers factors such as the Pod's resource requests (CPU, memory) and checks which nodes have sufficient free resources. It also considers any scheduling constraints on the Pod: for instance, **node selectors** or **node affinity/anti-affinity** rules (which prefer or require certain labels on nodes), and **taints and tolerations** (where a node might repel Pods that don't explicitly tolerate its taint, used to dedicate nodes to certain workloads). The scheduler scores nodes according to how well they meet the criteria (like spreading Pods for load balancing) and then binds the Pod to the best-fitting node. If no node can satisfy the Pod's requirements (for example, not enough resources or no node has the required label), the Pod remains unscheduled (in a Pending state) until conditions change (like a node is added or resources free up)."
+  },
+  {
+    "id": "k8s-008",
+    "text": "What are ConfigMaps and Secrets in Kubernetes and how do applications use them?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "How would you inject configuration data from a ConfigMap into a Pod?",
+      "In what ways are Secrets handled differently from ConfigMaps in the cluster (e.g., security considerations)?",
+      "What happens if you update a ConfigMap that a running Pod is using?"
+    ],
+    "ideal_answer_summary": "ConfigMaps and Secrets are Kubernetes objects designed to externalize configuration from containers. **ConfigMaps** hold general configuration data as key-value pairs (or files), typically non-sensitive information like configuration settings. **Secrets** also store key-value data but are intended for sensitive information like passwords, API keys, and tokens; they are stored in etcd in an encoded form and treated with more care by the system (e.g., not logged). Applications use ConfigMaps and Secrets by having them injected into Pods either as environment variables or mounted as files/volumes. For example, you might store a configuration file in a ConfigMap and then mount it so that the application in the Pod can read it. Secrets can be mounted similarly or exposed as env vars, but it's recommended to mount as volumes to avoid showing up in process lists. Kubernetes will supply updated values to the Pod if a ConfigMap or Secret is updated (when mounted as a volume, the updated value eventually appears, though not instantaneously; environment variable values don't update in a running pod). Proper use of ConfigMaps and Secrets allows separation of config from code, and especially for Secrets, ensures sensitive data is handled securely with least exposure."
+  },
+  {
+    "id": "k8s-009",
+    "text": "How can you scale applications in Kubernetes? Describe both manual scaling and auto-scaling.",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What is a Horizontal Pod Autoscaler (HPA) and how does it work?",
+      "How do you scale the nodes (infrastructure) of a Kubernetes cluster when needed?",
+      "What metrics can an HPA use to make scaling decisions besides CPU usage?"
+    ],
+    "ideal_answer_summary": "Kubernetes supports both manual and automatic scaling of applications. **Manual scaling** is straightforward: you can change the number of replicas of a Deployment (for example, `kubectl scale deployment/myapp --replicas=5`), and Kubernetes will add or remove Pods to match that count. For **auto-scaling**, Kubernetes offers the Horizontal Pod Autoscaler (HPA) to scale the number of pod replicas based on observed metrics like CPU utilization (or custom metrics). The HPA monitors the average CPU usage of a Deployment (or other scalable resource) and if usage rises above a threshold, it will increase replicas; if usage falls below a lower threshold, it decreases replicas. There is also a Vertical Pod Autoscaler that can adjust resource requests of pods, and a Cluster Autoscaler that can add or remove worker nodes based on overall cluster load (to ensure there's room to schedule pods). To scale nodes at the cluster level (in cloud environments), Cluster Autoscaler typically works with your cloud provider to spin new VMs when pods are pending due to insufficient resources, and remove nodes when they're underutilized. Metrics for HPA can go beyond CPU/memory; with Kubernetes Metrics Server or custom metrics, you can scale on things like request latency, queue length, or any other custom metric available through the Kubernetes API."
+  },
+  {
+    "id": "k8s-010",
+    "text": "What is a StatefulSet in Kubernetes and when would you use it instead of a Deployment?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How do StatefulSets provide stable network identities and persistent storage for pods?",
+      "What is a Headless Service and why is it often used with StatefulSets?",
+      "Can you give an example of an application that would require a StatefulSet?"
+    ],
+    "ideal_answer_summary": "A StatefulSet is a Kubernetes workload object designed for applications that require persistent identity or stable storage - typically stateful applications. Unlike a Deployment (which manages interchangeable, stateless pods), a StatefulSet maintains a sticky identity for each of its Pods. Each pod gets a persistent identifier (e.g., an ordinal index and a stable network hostname) and can attach to persistent storage volumes that remain associated with that specific pod even if it restarts. This is crucial for applications like databases (e.g., MySQL clusters, Cassandra, ZooKeeper) where each node might have unique data or roles. StatefulSets handle the creation and deletion of pods sequentially (one at a time) to gracefully introduce or remove nodes. A Headless Service (a service without a cluster IP) is often used alongside StatefulSets to facilitate stable network identities, as it allows each pod in the set to be reached via a consistent DNS name (podname.serviceName). In summary, you would use a StatefulSet when you need ordered deployment, stable network IDs, or stable storage for pods – common for stateful or clustered applications – whereas Deployments are preferred for stateless, replicated services."
+  },
+  {
+    "id": "k8s-011",
+    "text": "Design a Kubernetes cluster architecture to support a microservices-based web application.",
+    "type": "design",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How would you organize namespaces or other mechanisms to separate different environments or teams?",
+      "What components would you include for monitoring, logging, and security in this cluster design?",
+      "How would you ensure high availability for the Kubernetes control plane and worker nodes?"
+    ],
+    "ideal_answer_summary": "Designing a Kubernetes cluster for a microservices web application involves ensuring isolation, scalability, and observability. A typical architecture might include multiple namespaces to separate concerns (for example, a namespace per environment like dev/staging/prod or per team/service grouping). Within each namespace, each microservice is deployed as a Deployment with a set of replicas for resilience, exposed via Services for internal communication. An Ingress controller (like NGINX or a cloud LB) is deployed to route external HTTP traffic to the appropriate service based on URL paths or hostnames. The cluster would have a sufficient number of worker nodes (spread across multiple availability zones if in cloud) to run these microservices with headroom for scaling. The control plane (API server, etcd, scheduler, controllers) would be set up in a highly available configuration (multiple control plane nodes) to avoid a single point of failure. For monitoring and logging, I would integrate a solution like the EFK stack (Elasticsearch/Fluentd/Kibana) or a cloud logging service to aggregate container logs, and Prometheus/Grafana for metrics, possibly using service meshes or exporters for granular insight. Role-Based Access Control (RBAC) policies would be configured for security, ensuring that teams or services have least-privilege permissions. Additionally, network policies might be used to restrict cross-service communication as appropriate. Overall, the design ensures each microservice is loosely coupled and the infrastructure can handle failures and growth."
+  },
+  {
+    "id": "k8s-012",
+    "text": "How would you design a deployment strategy on Kubernetes to update an application with zero downtime?",
+    "type": "design",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What Kubernetes features ensure that traffic isn't routed to a pod until it's ready to serve requests?",
+      "How can you monitor the success of a rolling update and decide to rollback if needed?",
+      "Would your approach differ for a stateful application versus a stateless one?"
+    ],
+    "ideal_answer_summary": "Kubernetes by default facilitates zero-downtime deployments through rolling updates when using Deployments. To design a zero-downtime update, I would leverage the Deployment's rolling update strategy: update a few pods at a time while keeping the rest serving traffic. Specifically, I'd ensure that readiness probes are configured on the containers. This way, the Kubernetes scheduler will wait to send traffic to new pods until they report as ready, and will stop sending traffic to old pods as they're taken out of service. I might configure the Deployment update strategy parameters, such as maxUnavailable (to ensure at least N pods are always up) and maxSurge (to allow extra pods during the transition), to fine-tune how gradual the rollout is. During the rollout, I would monitor the new pods' health and application metrics. Kubernetes will mark the Deployment as updated once all new pods are running and ready. If any pod fails its liveness or readiness checks or if metrics indicate an issue, I can pause or rollback the Deployment using `kubectl rollout undo` to the previous ReplicaSet. For stateful applications, zero downtime is trickier; I might need to ensure backwards compatibility (since stateful sets update one by one) and use Pod disruption budgets to control the pace of disruption. But for stateless web app deployments, this rolling update strategy ensures users are unaffected during the update."
+  },
+  {
+    "id": "k8s-013",
+    "text": "How would you implement a comprehensive logging and monitoring solution for applications running in Kubernetes?",
+    "type": "design",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What strategy would you use to collect and aggregate logs from all pods in the cluster?",
+      "How can you monitor cluster-level metrics (like node resource usage and network traffic)?",
+      "Would you consider using any Kubernetes-specific tools or add-ons for observability (like service mesh, etc.)?"
+    ],
+    "ideal_answer_summary": "Implementing logging and monitoring in Kubernetes involves capturing data from both the applications and the cluster itself. For logging, I would deploy a log collection agent on each node (commonly as a DaemonSet) such as Fluentd or Filebeat. This agent would tail container log files and system logs, then forward them to a centralized logging system. That could be an ELK stack (Elasticsearch for storage/search, Kibana for visualization) or a cloud-based log service. This setup ensures all pod logs (across all nodes) are aggregated for analysis and troubleshooting. For monitoring metrics, I'd use Prometheus as a monitoring system, which can scrape metrics from the Kubernetes metrics server as well as from instrumented applications and cluster components (cAdvisor, kubelet, etc.). Deploying Prometheus with a stack like the Prometheus Operator simplifies capturing both cluster-level and application-level metrics. Grafana can then be used on top for dashboards and visualizing these metrics. Additionally, for request tracing in a microservices environment, one could deploy a distributed tracing system (like Jaeger) and have apps emit trace spans. I would also consider Kubernetes-specific observability tools: for instance, using a service mesh like Istio or Linkerd provides fine-grained telemetry (latencies, success rates) and can integrate with the monitoring stack. Overall, the goal is to ensure that any issue in the cluster can be quickly identified via logs (what happened) and metrics/traces (why it happened and where). Setting up alerts on key metrics (like high error rates or low available memory) completes the solution by proactively notifying the team of problems."
+  },
+  {
+    "id": "k8s-014",
+    "text": "How would you design a Kubernetes cluster for a multi-tenant environment where multiple teams or applications share the cluster securely?",
+    "type": "design",
+    "difficulty": "hard",
+    "follow_up_templates": [
+      "How can you ensure that one team's application cannot accidentally affect another's (resource or security-wise)?",
+      "What Kubernetes features would you leverage to partition resources and access (e.g., Namespaces, RBAC)?",
+      "How would you allow for differing resource needs (and limits) for different teams while preventing any single team from monopolizing cluster resources?"
+    ],
+    "ideal_answer_summary": "Designing a multi-tenant Kubernetes cluster requires strong isolation and governance mechanisms. First, I would segregate teams or applications using Namespaces, with each team getting one or multiple dedicated namespaces. Within each namespace, I'd enforce resource constraints using ResourceQuotas and LimitRanges, ensuring that teams cannot use more than their allotted CPU, memory, or number of objects, which prevents any single team from starving others of resources. For security and access control, I'd use Kubernetes RBAC (Role-Based Access Control) to define Roles and RoleBindings such that a team’s service accounts and users can only manipulate resources within their own namespace. This prevents unauthorized cross-tenant access. Network isolation can be achieved with Network Policies: by default, I could enforce that namespaces cannot talk to each other unless explicitly allowed, so one team's application won't accidentally access another's service. Additionally, I'd tag or label nodes and potentially use node pools if certain teams have special requirements (dedicated nodes for sensitive workloads, etc.). In a cloud environment, using multiple node pools allows isolation at the node level as well. Common infrastructure components (CI/CD agents, ingress controllers, monitoring agents) would run in their own protected namespace. Auditing and strict security context policies (like Pod Security Standards or OPA/Gatekeeper for policy enforcement) would be in place cluster-wide to ensure everyone adheres to security best practices. This multi-faceted approach ensures that while teams share the underlying cluster, their workloads remain isolated, secure, and fairly distributed."
+  },
+  {
+    "id": "k8s-015",
+    "text": "How would you architect a solution to deploy an application across multiple Kubernetes clusters for disaster recovery or geo-redundancy?",
+    "type": "design",
+    "difficulty": "hard",
+    "follow_up_templates": [
+      "What challenges arise in keeping multiple clusters in sync (in terms of deployments and configurations)?",
+      "How would you manage traffic routing or failover between clusters in different regions?",
+      "Would you use any specific tooling (like GitOps or federation) to manage multi-cluster deployments?"
+    ],
+    "ideal_answer_summary": "Deploying an application across multiple Kubernetes clusters for DR (disaster recovery) or geo-redundancy involves maintaining consistent deployment and quick failover. One approach is to use an infrastructure-as-code or GitOps model (with tools like ArgoCD or Flux) to deploy the same application configuration to multiple clusters. This ensures that any change to the app (new version, config change) is applied uniformly to all clusters, keeping them in sync. Data consistency can be challenging; if the app uses a database, you might need a cross-region replication strategy or designate one cluster as primary and another as secondary ready to take over (which might require manual or semi-automated failover). For routing traffic, a global DNS or load balancing solution is used: for example, using DNS health checks that point users to the primary cluster and automatically switch to the secondary cluster if the primary goes down. Alternatively, solutions like Cloud provider global load balancers or Anycast IPs can distribute traffic to the nearest healthy cluster. Challenges include synchronizing stateful data, dealing with network latency between clusters, and managing configuration differences (like URLs or secrets per environment). Kubernetes federation is an evolving solution that attempts to coordinate multiple clusters, but many setups rely on separate clusters with their own control planes, coordinated at the deployment and networking level. Ultimately, you'd periodically test failover by simulating cluster failure to ensure the secondary cluster can seamlessly take over, thereby validating the multi-cluster DR design."
+  },
+  {
+    "id": "k8s-016",
+    "text": "Describe your approach to writing a Kubernetes Deployment YAML manifest for a simple web application.",
+    "type": "coding",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "What key fields must be specified in a Deployment spec (e.g., selectors, replicas, container images)?",
+      "How would you parameterize or templatize this manifest for different environments (dev vs prod)?",
+      "Once you have the YAML, how do you apply it to a cluster and manage version control for it?"
+    ],
+    "ideal_answer_summary": "To create a Kubernetes Deployment manifest for a web application, I would write a YAML file specifying the API version and kind (\"Deployment\"), and include metadata like name and labels. Under the spec, key fields include the number of replicas desired, a selector that matches labels on the Pods, and a template that defines the Pod specification. Inside the Pod template, I'd specify metadata (labels that match the selector) and the spec for the containers: at least one container with the container image (for the web app), container port (if it listens on a port), and any necessary environment variables or volume mounts. I might also include resource requests/limits and liveness/readiness probes for production readiness. For example, the YAML would contain something like: `spec: replicas: 3`, `selector: matchLabels: app: myweb`, and `template: spec: containers: - name: myweb-container, image: myimage:tag, ports: - containerPort: 80`. To templatize differences between environments, I could use a tool like Helm or Kustomize to inject varying values (such as resource sizes or image tags) for dev, staging, prod, etc. Once the YAML is prepared, I'd apply it to the cluster using `kubectl apply -f deployment.yaml`. I would keep this manifest in version control (e.g., Git) as part of my infrastructure-as-code practice, so changes to the deployment are tracked and reviewable."
+  },
+  {
+    "id": "k8s-017",
+    "text": "How would you implement health checks for a web application running in Kubernetes?",
+    "type": "coding",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What's the difference between readiness and liveness probes, and how would you configure each for a web service?",
+      "What are some probe types Kubernetes supports and when would you use a TCP or command probe instead of HTTP?",
+      "What happens to a Pod if its liveness probe continues to fail?"
+    ],
+    "ideal_answer_summary": "In Kubernetes, health checks are implemented via liveness and readiness probes in the Pod's container specification. To set this up for a web application, I would edit the Deployment (or Pod) manifest to include, under the container spec, a **readiness probe** and/or a **liveness probe**. For a typical web service, I might use an HTTP GET probe: for example, a readiness probe that calls the `/health` or `/status` endpoint of the web app. I'd configure the probe with a path and port, and possibly initial delay, timeout, and success threshold values. The readiness probe tells Kubernetes when the container is ready to receive traffic – if it fails, the endpoints controller will remove the Pod from Service load balancers, so no traffic goes to it until it passes. The liveness probe monitors the container's health during its lifetime – if the liveness probe fails (e.g., the HTTP endpoint is unresponsive or returns an error consistently), Kubernetes will consider the container unhealthy and kill/restart it according to the restart policy. Besides HTTP probes, Kubernetes also supports TCP probes (just check a socket is open) and exec (command) probes; I'd choose those if HTTP isn't applicable (for example, a non-HTTP service might use a TCP probe, or a custom script could be run with exec). In summary, readiness probes prevent traffic from reaching unready pods, and liveness probes ensure pods that hang or crash are automatically restarted to maintain application health."
+  },
+  {
+    "id": "k8s-018",
+    "text": "How can Helm be used in managing Kubernetes applications, and what advantages does it offer?",
+    "type": "coding",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What is a Helm chart and what are some key files or templates it includes?",
+      "How would you use Helm to deploy the same application to multiple environments with minor configuration differences?",
+      "How does Helm handle upgrading an application or rolling back to a previous version?"
+    ],
+    "ideal_answer_summary": "Helm is a package manager for Kubernetes that helps you define, install, and upgrade even the most complex Kubernetes applications. It uses a packaging format called \"charts\", which are collections of YAML templates that Kubernetes resources (Deployments, Services, etc.), combined with default values. Using Helm, you can templatize your Kubernetes manifests: for example, a Helm chart might have placeholders for an image tag or number of replicas, which can be easily configured via a **values.yaml** file or command-line parameters. This makes deploying the same application to multiple environments easier — you reuse the chart but supply different values (like different domain names, resource sizes, feature flags, etc.) for dev, staging, prod, etc. Helm also keeps track of releases (each installation of a chart is a release managed by Helm), which means you can easily upgrade a release (Helm will calculate what changed in the templates and apply the diff) or roll back to a previous version of the chart if something goes wrong. The advantages of Helm include package reuse and sharing (there are many community charts), reduced repetition (one chart can serve many environments or configurations), and a built-in mechanism for versioning and managing releases of your Kubernetes manifests."
+  },
+  {
+    "id": "k8s-019",
+    "text": "Describe your approach to writing a Kubernetes Service and Ingress configuration to expose a web application to external users.",
+    "type": "coding",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What Service type would you use to expose an application externally, and why?",
+      "How would you configure an Ingress resource for a host like 'example.com' to route to your service?",
+      "How do you handle TLS/SSL termination in a Kubernetes Ingress setup?"
+    ],
+    "ideal_answer_summary": "To expose a web application outside the cluster, I would typically use a combination of a Kubernetes Service and an Ingress (assuming an ingress controller is set up in the cluster). First, I'd create a Service YAML. If my application is a web app that needs internet access, I'd probably use a Service of type **ClusterIP** (for internal routing) combined with an Ingress, or type **LoadBalancer** if I want a cloud provider to directly provision a load balancer. For portability, let's say I use a ClusterIP Service. I'd define the Service with a selector for the app's Pods and a port (e.g., port 80 targeting the Pod's containerPort 80). This Service gives a stable internal endpoint for the Pods. Next, I'd create an Ingress resource. In the Ingress YAML, I'd specify rules for the host (for example, `host: example.com`) and a path mapping (like `/` path to route to my Service on port 80). The ingress controller (like Nginx or cloud LB) will ensure traffic hitting the cluster's ingress point is routed to the appropriate service. For TLS, I would configure the Ingress with a TLS section, referencing a TLS secret that contains the certificate and key for 'example.com'. Many ingress controllers will handle TLS termination, meaning they will decrypt HTTPS traffic and forward it as HTTP to the service. So in summary, the Service YAML sets up how to reach the Pods, and the Ingress YAML sets up the external interface (domain, path, SSL) that users hit. Applying both manifests would result in users being able to access the app via the specified URL, securely if TLS is configured."
+  },
+  {
+    "id": "k8s-020",
+    "text": "Describe your approach to implementing network policies in Kubernetes to restrict traffic between pods.",
+    "type": "coding",
+    "difficulty": "hard",
+    "follow_up_templates": [
+      "What is the default behavior in Kubernetes if no NetworkPolicies are applied?",
+      "How would you write a NetworkPolicy to only allow traffic from one namespace to a specific application in another?",
+      "What are some ways to test or ensure your NetworkPolicies are working as intended?"
+    ],
+    "ideal_answer_summary": "NetworkPolicies in Kubernetes are like firewall rules for Pods, allowing you to specify what traffic is allowed to and from sets of Pods. To implement them, you write a YAML manifest for a NetworkPolicy object. First, it's important to note that by default (with no network policies), Kubernetes pods can talk to each other without restrictions (assuming the underlying network plugin supports it). Once you apply a NetworkPolicy to a pod (via labels), that pod's traffic is restricted to only what the policy allows. In creating a NetworkPolicy, I would define the `podSelector` to target the group of pods I want to secure (e.g., pods with app=frontend). Then I specify ingress and/or egress rules. For example, I could allow ingress only from pods in a certain namespace or with certain labels (maybe app=backend for a backend service) on specific ports. Everything not explicitly allowed is blocked. If I wanted to allow only traffic from one namespace, my policy's ingress could have a `from` clause with `namespaceSelector` pointing to that namespace's label. Similarly, to allow specific app traffic, I'd use a `podSelector` for the allowed source. To apply these restrictions cluster-wide, each application team or service would have appropriate policies. Testing can involve using tools like `kubectl exec` or small test Pods to attempt connections that should be blocked versus allowed, ensuring the rules work. Implementing network policies effectively ensures that even if multiple services share a cluster, their network interactions are controlled (principle of least privilege), enhancing security by limiting the blast radius if one service is compromised."
+  }
+]

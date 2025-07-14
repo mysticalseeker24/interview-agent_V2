@@ -1,0 +1,242 @@
+[
+  {
+    "id": "ai-001",
+    "text": "What is MLOps and how does it differ from traditional DevOps in software development?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "What are some key activities or components in an MLOps lifecycle?",
+      "Why is MLOps important for machine learning projects?",
+      "Can you give an example of a tool or platform that supports MLOps practices?"
+    ],
+    "ideal_answer_summary": "MLOps (Machine Learning Operations) is a practice and set of tools that apply DevOps principles (automation, continuous integration/delivery, monitoring) to machine learning workflows. While traditional DevOps focuses on reliably delivering software applications, MLOps deals with the added complexity of training and updating ML models, data management, and experimental cycles. Key differences include the need to manage datasets and model versions, track experiments, and validate model performance in addition to deploying code. An MLOps process typically covers data preparation, model training, packaging the model (like a service), deployment to production, and continuous monitoring of the model’s performance (accuracy, drift) with feedback loops for retraining. Overall, MLOps aims to streamline the path from model development to production, ensuring that models can be updated frequently and reliably, similar to how DevOps enables frequent software releases."
+  },
+  {
+    "id": "ai-002",
+    "text": "What are the typical stages of a machine learning pipeline from raw data to deployed model?",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "follow_up_templates": [
+      "What happens during the data preprocessing stage and why is it important?",
+      "Where do model evaluation and validation fit into the pipeline?",
+      "How does feedback or new data get incorporated after a model is deployed?"
+    ],
+    "ideal_answer_summary": "A typical machine learning pipeline consists of several stages: First is **data collection and ingestion**, where raw data from various sources is gathered. Next is **data preprocessing/cleaning** which may involve data cleaning, transformation, feature engineering, and splitting data into training/validation sets. Then comes **model training** where an algorithm is trained on the prepared training data. After training, there's **model evaluation** on validation (or test) data to assess performance and tune hyperparameters. Once a satisfactory model is obtained, the next stage is **model deployment** – packaging the model (for example, as a REST API service or embedded component) and deploying it to a production environment. In production, there’s **monitoring** of the model’s performance (tracking metrics like accuracy, latency, etc., and checking for data drift or concept drift). The pipeline is often iterative: feedback from production (like new data or declining performance) might trigger a model update. At that point, the cycle repeats – the model may be retrained with new data or adjustments, validated, and redeployed, ideally in an automated fashion following MLOps practices."
+  },
+  {
+    "id": "ai-003",
+    "text": "What does it mean to deploy a machine learning model to production, and what are some common ways to serve a model?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What is the difference between batch inference and online (real-time) inference?",
+      "Have you used any model serving frameworks or tools (e.g., TensorFlow Serving, TorchServe)? If so, how do they work?",
+      "How do you handle versioning when you deploy new models?"
+    ],
+    "ideal_answer_summary": "Deploying a machine learning model to production means taking a trained model and making it available in a stable, scalable environment where it can provide predictions or decisions as part of a larger system. Common ways to serve a model include: **online inference** via a web service or API (for instance, wrapping the model in a Flask/FastAPI app or using dedicated serving platforms like TensorFlow Serving, TorchServe, or cloud ML serving services) which provides real-time predictions for individual requests; and **batch inference**, where the model is used on large batches of data periodically (like generating predictions overnight on new data and writing results to a database). Another method is embedding models directly into client-side applications or edge devices for on-device inference, though that involves export to a suitable format and environment. When deploying, considerations include model versioning (to keep track of which version of the model is running), scalability (ensuring the serving setup can handle the load, possibly via container orchestration or serverless setups), and latency requirements (optimizing model performance and possibly using hardware accelerators if needed). Ultimately, model deployment is about operationalizing the model – integrating it so that end-users or systems can get predictions reliably and monitoring it as a live service."
+  },
+  {
+    "id": "ai-004",
+    "text": "What is the difference between offline (batch) predictions and online (real-time) predictions in the context of serving AI models?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "When would you choose a batch prediction approach over real-time, and vice versa?",
+      "How might the infrastructure differ for batch vs. real-time serving (in terms of tools or resources)?",
+      "Can you give an example of an application that requires real-time predictions and one that is fine with batch predictions?"
+    ],
+    "ideal_answer_summary": "Offline (batch) predictions refer to generating model outputs on a large set of data at once, usually on a scheduled basis or as needed, without immediate user interaction. For example, running a model overnight to score all customers for churn risk is a batch inference task. Online (real-time) predictions, on the other hand, are generated on-demand for individual inputs or small groups of inputs, typically in response to user actions or system triggers — for instance, serving a recommendation to a user as they browse a website. The choice between batch and online depends on the use case requirements for latency and data size. Batch processing is suitable when immediate results aren't necessary or when working with very large datasets periodically (and often leverages big data frameworks or distributed processing). Real-time serving is needed when systems or users require an instant response (usually within milliseconds to seconds). Infrastructure-wise, batch predictions might use tools like Apache Spark or distributed jobs running on a schedule, and can utilize cheaper spot resources since latency is not critical. Real-time serving typically involves a persistent service (like a REST API or gRPC server) possibly behind a load balancer, and needs to be optimized for low latency and high availability (often with autoscaling). An example: a fraud detection model for credit card transactions needs online scoring (each transaction checked in real-time), whereas a model that re-ranks an entire product catalog for search optimization could run in batch once a day."
+  },
+  {
+    "id": "ai-005",
+    "text": "What is model drift (or concept drift), and how can you detect and address it in a deployed AI system?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What are some indicators that a model is drifting or no longer performing as well as it did?",
+      "How would you set up monitoring to catch model drift in production?",
+      "Once drift is detected, what steps can you take to mitigate it?"
+    ],
+    "ideal_answer_summary": "Model drift, or concept drift, refers to the degradation of a model’s predictive performance over time because the statistical properties of the input data (or the relationship between features and target) have changed compared to what the model was trained on. In other words, the model's assumptions become less valid. There are a couple of types: **concept drift** (the underlying concept the model is predicting changes, e.g., customer behavior patterns shift) and **data drift** (the input distribution shifts, e.g., different population or sensor calibration changes). You can detect drift by monitoring model outputs and performance metrics in production. Indicators include a rising error rate or loss when comparing predictions to ground truth (if ground truth becomes available later), changes in data distribution (detected via statistical tests or divergence measures on input features), or significant changes in model output distribution. Setting up monitoring might involve tracking metrics like accuracy or AUC on recent data, monitoring feature statistics (like mean/variance of features over time), and using drift detection algorithms that compare current data to training data distribution. When drift is detected, the typical mitigation is to retrain or update the model with more recent data that reflects the new reality. This could be done on a schedule or triggered by drift alarms. In some cases, one might also adjust the model (e.g., fine-tune it if it's a neural network) or even switch to a different modeling approach if the drift indicates a more fundamental change. Regularly retraining on fresh data and implementing an MLOps pipeline for continuous improvement is a key strategy to handle drift."
+  },
+  {
+    "id": "ai-006",
+    "text": "Once a machine learning model is in production, how do you monitor its performance and what metrics would you track?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What is the importance of monitoring data quality (input features) in production?",
+      "How would you implement alerting for when model performance drops below a certain threshold?",
+      "Can you name some tools or platforms that help with ML model monitoring?"
+    ],
+    "ideal_answer_summary": "Monitoring an ML model in production is crucial to ensure it continues to perform as expected. Key things to monitor include: 1) **Prediction accuracy or error rates** (when you can collect ground truth later, e.g., comparing recommendations vs. user actions, or actual outcomes vs. predictions). 2) **Statistical properties of inputs and outputs**: track feature distributions (to detect data drift, missing values, out-of-range values) and output distributions (for instance, a sudden shift in the fraction of positive predictions could indicate an issue). 3) **Latency and throughput** of the model service (for performance and user experience). 4) **Resource usage** like CPU/GPU and memory on the serving infrastructure. 5) **Business KPI metrics** that the model is tied to (for example, click-through rate if it's a recommender). To implement this, one might set up dashboards and automated alerts. For example, if accuracy measured on a rolling window of data drops below a threshold, or if input data starts deviating significantly (say beyond 3 standard deviations from training mean), it triggers an alert to investigate. Tools for ML monitoring include specialized platforms like Evidently AI for monitoring data drift, Seldon Core/Alchemy, or you can integrate with APM tools and logging systems. Many teams also extend their existing monitoring (like Prometheus/Grafana) to log model metrics. Overall, continuous monitoring allows you to catch issues like model degradation, data pipeline problems, or concept drift early and retrigger the model training or fixes as necessary."
+  },
+  {
+    "id": "ai-007",
+    "text": "How is continuous integration/continuous delivery (CI/CD) applied in machine learning projects?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What additional steps might you have in a CI/CD pipeline for ML that you wouldn't have in traditional software?",
+      "How do you validate a new model before deploying it automatically?",
+      "Can you mention any tools that facilitate CI/CD specifically for machine learning (e.g., Kubeflow Pipelines, MLFlow)?"
+    ],
+    "ideal_answer_summary": "CI/CD for machine learning (often part of MLOps) extends the standard DevOps pipeline to accommodate the model training and deployment process. Continuous Integration in ML involves steps like automated testing of data processing code, unit tests for model code, and possibly training a model on a subset of data to ensure the training pipeline works end-to-end. It might also include linting of notebooks or verifying data schemas. Continuous Delivery/Deployment for ML has to deal with models and data artifacts. After code passes CI, a pipeline could automatically train or retrieve a new model (this might be triggered by new data arrival or periodically). Then, similar to software, we have a deployment step, but deploying a model might mean pushing it to a model registry or directly to a serving environment. Before deployment, there's typically an additional validation phase unique to ML: evaluating the model on hold-out data or comparing it against the current production model's performance (perhaps via A/B testing or champion/challenger evaluation) to ensure the new model is an improvement. This can be automated up to a point: e.g., only deploy if the new model meets certain accuracy criteria. Tools like MLflow or Kubeflow can orchestrate these pipelines, where Kubeflow Pipelines can automate end-to-end ML workflows, and MLflow can track experiments and facilitate pushing models through stages (staging -> production). The goal is to reduce the manual overhead in going from new data or model code changes to an updated model in production, while maintaining rigor in testing and validation."
+  },
+  {
+    "id": "ai-008",
+    "text": "Why is reproducibility important in machine learning experiments, and how can you ensure that your experiments are reproducible?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What factors can lead to unreproducible results in model training?",
+      "Have you used any tools for experiment tracking and reproducibility (like MLflow, Weight & Biases, etc.)?",
+      "How do you handle randomness in training (for example, random weight initialization or random data shuffling) to ensure reproducibility?"
+    ],
+    "ideal_answer_summary": "Reproducibility in machine learning means that an experiment (model training) can be run again with the same setup and yield the same results. This is important for verifying results, debugging, and collaborating: if a model shows a certain performance, other team members or future you should be able to replicate that performance. It also builds trust when models are deployed, knowing exactly which steps and data led to that model. Factors affecting reproducibility include randomness in data splitting or weight initialization, differences in library versions or hardware (especially for parallel computations), and not fixing random seeds. Data provenance is also crucial – using a slightly different dataset (even by accident) will yield different results. To ensure reproducibility: you should fix random seeds for pseudo-random processes during training, document or script all preprocessing steps so they can be rerun exactly, use version control for code and ideally for data (or at least keep snapshots/hashes of datasets used). Containerizing the training environment can help eliminate differences in software versions or system libraries. Experiment tracking tools like MLflow, Weights & Biases, or even custom logging can record parameters, code version (Git commit), data version, and environment details for each run. This way, anyone can refer back and rerun that specific experiment configuration. The goal is that months later or in another environment, you can re-run an experiment and expect the same model results, which is essential for reliable model development and comparisons."
+  },
+  {
+    "id": "ai-009",
+    "text": "What is a feature store in the context of AI/ML, and why would you use one?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How does a feature store ensure consistency between training and serving (online) features?",
+      "Can you give an example of features that would be managed by a feature store?",
+      "What are the challenges of not using a feature store when you have many models and data sources?"
+    ],
+    "ideal_answer_summary": "A feature store is a centralized repository and management system for features – the input variables used by machine learning models. It typically serves two purposes: storing and versioning the historical feature data for training and providing a real-time or on-demand interface to retrieve the latest feature values for serving (online inference). Using a feature store helps ensure consistency between the features used during model training and the features used in production. Without a feature store, it's easy for training code to compute features one way and production code another way, leading to training-serving skew. The feature store enforces a single definition of each feature that both training and inference pipelines use. For example, in an e-commerce scenario, a feature store might manage a feature like \"average purchase value in last 30 days\" for each user. For training, it can provide the historical sequence of that feature value for each training example, and in production, when a new prediction is needed, it can provide the current computed value of that feature for a given user in real-time. Feature stores also handle the heavy lifting of feature computation, often including pipelines to compute or update features, and they maintain time-stamped values of features (which is crucial for creating training datasets that reflect what was known at the time). In summary, a feature store improves productivity by reusing features across models, enhances consistency and correctness, and can provide low-latency access to features for online predictions. Not using one might work for small projects, but at scale, teams often struggle with duplicate feature logic, inconsistent data, and stale features in production."
+  },
+  {
+    "id": "ai-010",
+    "text": "What is A/B testing in the context of machine learning model deployment, and how do you carry it out?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What metrics would you compare during an A/B test for a new model vs the current model?",
+      "How do you decide how much traffic to route to the new model in an experiment?",
+      "What other testing strategies can be used for models (e.g., shadow deployments, canary releases)?"
+    ],
+    "ideal_answer_summary": "A/B testing for machine learning models is an experimental approach to compare two (or more) model versions to see which performs better in a real-world setting. Typically, you have the incumbent model (A) and a new candidate model (B) and you split traffic or instances between them to compare outcomes. To carry it out, you'd deploy the new model alongside the old one. Then, you route a certain percentage of user requests (say 10-50%) to the new model while the rest continue to go to the old model. Both models' predictions are logged along with outcomes or user interactions. Over some period, you collect metrics on both. The metrics to compare depend on the task: for a classification or recommendation model, it could be accuracy or click-through rate; for a conversion model, actual business conversion metrics. You also want to ensure the new model isn't negatively impacting other aspects like latency or user experience. Statistical analysis is used to determine if any difference in performance is significant. One often monitors the metrics in real-time and may gradually ramp up traffic to the new model if it's doing well (canarying). If the new model underperforms or causes issues, traffic can be rolled back to 0%. In addition to A/B testing, there are related strategies: **canary releases** (similar concept of gradually increasing new version traffic), and **shadow testing** (where the new model gets the same traffic as the old model but only in the background, not affecting users, just to compare outputs). These strategies ensure that a new model is properly vetted with live data before fully replacing an existing one."
+  },
+  {
+    "id": "ai-011",
+    "text": "Why is data (and data pipeline) versioning important in AI applications, and how can it be implemented?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "Have you used any tools for dataset versioning or tracking data lineage?",
+      "What could go wrong if you retrain a model on data that has changed but you didn't track the changes?",
+      "How does versioning the data pipeline (code) relate to model reproducibility?"
+    ],
+    "ideal_answer_summary": "Data versioning means keeping track of which version of the dataset (or data processing steps) was used to train each model or produce each result. It's crucial because models are highly dependent on data – if the data changes (due to new collection, corrections, or preprocessing changes), it can significantly affect model outcomes. Without data versioning, you might not be able to reproduce a model's results because the exact training data used isn't recorded. It also makes debugging hard: if model performance shifts, was it code or data that changed? Data lineage and versioning help answer that. Implementing data versioning can be done in several ways. At a simple level, storing snapshots of data with version tags or timestamps (even as files with versioned filenames or in versioned S3 paths) can work. More sophisticated approaches use tools like DVC (Data Version Control) which works with Git to manage large data files, or Pachyderm, or lakehouse solutions that allow time-travel queries (like Delta Lake). In addition, the data pipeline code (the transformations) should be versioned in source control just like any code. If you change a feature calculation, that should be tied to a version so you know which models were trained with the old vs new logic. By combining dataset snapshots and pipeline version control, you can always trace which data (and which preprocessing) produced which model, thereby making the ML process auditable and reproducible, and allowing safe rollbacks if needed."
+  },
+  {
+    "id": "ai-012",
+    "text": "When deploying deep learning models (e.g., large neural networks) to production, what special considerations are there (think of performance, hardware, etc.)?",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How do GPUs or specialized hardware (TPUs, ASICs) factor into serving deep learning models?",
+      "What techniques can be used to improve the inference speed of a deep learning model?",
+      "How would you approach scaling a service that provides deep learning model predictions to a large number of users?"
+    ],
+    "ideal_answer_summary": "Deploying large deep learning models comes with special considerations mainly around performance and resources. Firstly, deep learning models (like large CNNs, RNNs, or Transformers) can be computationally intensive, meaning inference may be slow on CPUs. So one consideration is whether to use GPUs (or TPUs/other accelerators) in production for faster inference, especially if you need low-latency responses. However, GPUs are more costly and can complicate infrastructure. Another consideration is memory and model size: large models consume a lot of RAM/VRAM. Techniques like model quantization (reducing precision of weights), pruning (removing unnecessary neurons), or distillation (using a smaller model trained to mimic the large model) can help reduce the footprint and improve speed. There's also the option of hardware-specific optimizations, such as using TensorRT for NVIDIA GPUs or OpenVINO for Intel, which optimize the model computations. Batching of predictions is another technique: if latency tolerances allow, processing multiple requests in a batch on a GPU can vastly improve throughput (amortizing the cost). From a scaling perspective, you might containerize the model server and run multiple instances behind a load balancer. Using auto-scaling based on GPU utilization or request rate is common to handle variable load. Also caching frequent results or using CDN edge ML inference (for example, running models on edge devices or in users' browsers if possible) might be considered for scale. Monitoring is crucial: you need to watch GPU usage, latency, and throughput. If a model is particularly large (like some NLP models), you might even consider techniques like serving on-demand or using smaller variants for less critical requests. In summary, deep learning model deployment often requires balancing speed, cost, and complexity, often leveraging specialized hardware and optimization techniques to meet production requirements."
+  },
+  {
+    "id": "ai-013",
+    "text": "What are some considerations for ethical AI and bias when deploying machine learning models, and how can an AI engineer address them?",
+    "type": "conceptual",
+    "difficulty": "hard",
+    "follow_up_templates": [
+      "How would you determine if your model is exhibiting bias towards a certain group?",
+      "What steps can be taken during model development to mitigate bias?",
+      "Can you name any tools or frameworks that help in evaluating fairness or explainability of models?"
+    ],
+    "ideal_answer_summary": "Ethical considerations in AI include ensuring fairness (avoiding bias), transparency, privacy, and accountability in how models make decisions. When deploying models, it's important to consider how they might unintentionally disadvantage certain groups or produce harmful outcomes. To address bias, an AI engineer should start by examining training data for representation issues (is a certain group underrepresented or labeled with prejudice?). During model evaluation, one should measure performance across different demographic segments to see if there's a gap (for instance, does a facial recognition model perform worse on certain skin tones?). These are often called fairness metrics (like disparate impact, equal opportunity difference, etc.). If bias is detected, mitigation strategies include re-balancing the training dataset, using techniques like bias-aware learning or fairness constraints, or post-processing the outputs to correct bias. Involving domain experts and affected communities in reviewing model behavior is also valuable. Explainability is another key aspect: using tools and methods (like LIME, SHAP, or integrated gradients) to make the model's decisions more interpretable helps stakeholders understand and trust the model, and also can surface potential biases or spurious correlations the model is using. Privacy is important if the model uses personal data – techniques like data anonymization or federated learning (where data stays on device) might be needed. There are frameworks and toolkits such as IBM's AI Fairness 360 or Google's What-If Tool that assist in assessing fairness, and Model Cards for reporting model details and intended use. Ultimately, addressing ethics and bias is an ongoing process: it involves careful design, continual monitoring of model outcomes in production, and readiness to update models or even turn them off if they cause unintended harm."
+  },
+  {
+    "id": "ai-014",
+    "text": "What unique challenges do ML engineers face when taking a machine learning model from a research environment (like a notebook) to a production environment?",
+    "type": "conceptual",
+    "difficulty": "hard",
+    "follow_up_templates": [
+      "How do issues like data pipeline differences or data quality manifest when moving to production?",
+      "Why might a model perform well in offline experiments but poorly once deployed?",
+      "How can collaboration between data scientists (research) and engineers (production) be improved to smooth this transition?"
+    ],
+    "ideal_answer_summary": "Transitioning from a research or notebook environment to production is often challenging for several reasons. One issue is **scalability**: a model that was prototyped on a small subset of data or on a single machine may need to handle much more data or traffic in production, requiring optimization and scaling (like distributed processing, better resource management, etc.). Another challenge is **environment mismatch**: in research, you might manually run steps in a notebook with certain library versions or dependencies installed. In production, everything needs to be automated, reproducible, and maintainable – meaning packaging code, managing dependencies, and ensuring the runtime environment is consistent (often via containers). **Data pipeline differences** can also trip you up: the data used in the notebook might have been cleaned or pre-selected manually, whereas production data streams could contain anomalies, missing values, or different distributions. If those aren't accounted for, the model can behave unexpectedly (hence the need for robust preprocessing in production identical to training). Moreover, models might rely on interactive exploration or manual feature tweaks that don't directly translate to automated pipelines. Converting those into reliable code is non-trivial. There's also a challenge in **monitoring and logging** – in a notebook you see results immediately and can poke around; in production, you need to set up logging of predictions and errors to know what's going on. Finally, **collaboration** issues: data scientists might not be familiar with writing production-grade code (tests, modularization, etc.), so ML engineers have to often refactor prototype code. Encouraging best practices like writing reusable pipeline code from the start, using experiment tracking, and close collaboration (maybe even pair programming between DS and engineering) can help. The ultimate goal is to reduce the gap between a promising model in research and a performant, reliable service in production."
+  },
+  {
+    "id": "ai-015",
+    "text": "Design an end-to-end machine learning pipeline for a task (for example, predicting customer churn), from data ingestion to model deployment.",
+    "type": "design",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "How would you incorporate data validation and cleaning into this pipeline?",
+      "What would you use to orchestrate the pipeline steps (e.g., any workflow tools or would it be custom code)?",
+      "How do you ensure the model stays up-to-date as new data comes in (would retraining be triggered, and how)?"
+    ],
+    "ideal_answer_summary": "For an end-to-end ML pipeline (taking customer churn as an example), I would break it into distinct stages and use tools to automate each stage. First, **data ingestion**: define how customer data is collected (maybe from a database or streaming events). I might use an ETL pipeline or tools like Apache Airflow to fetch daily snapshots of relevant data (customer activity, support calls, etc.). Next, **data validation and preprocessing**: incorporate checks to ensure data is in the expected format (using something like Great Expectations for validation). Then clean and transform the data into features – e.g., aggregate usage metrics per customer, encode categorical data. This could be a step in Airflow or a separate Spark job if data is large. The features and labels (churn yes/no) are then stored or passed to the training stage. **Model training**: Use a script or notebook that can be executed in a training environment (perhaps via Airflow or Kubeflow Pipelines) which reads the prepared data, splits into train/validation, and trains a model (say a gradient boosted tree or neural network). Track metrics on validation set. Ideally, this training step is containerized to run on a schedule or triggered by new data. Once a model is trained and validated, the pipeline goes to **model deployment** – packaging the model (serialize with pickle or ONNX or use MLflow to register it). Then deploy it to a serving environment – which might be a REST API service in Kubernetes or a serverless function. This step can be automated if the new model passes certain quality thresholds: e.g., CI/CD could pick up the new model artifact and deploy it. Finally, have a **monitoring** component: the pipeline would also include steps or parallel processes to monitor predictions vs outcomes (when they become known, like which customers actually churned) and data drift. If performance drops or enough new data accumulates, it could trigger a retraining (closing the loop). To orchestrate all this, I'd consider using a workflow orchestration tool like Kubeflow Pipelines or Airflow, where each of these stages is a task. The pipeline ensures reproducibility (same data transformations every time) and automation (from ingestion to deployment)."
+  },
+  {
+    "id": "ai-016",
+    "text": "Design a system that serves a machine learning model for real-time predictions at scale (thousands of requests per second).",
+    "type": "design",
+    "difficulty": "hard",
+    "follow_up_templates": [
+      "How would you ensure the model service can scale to handle high load? What technologies might you use?",
+      "What strategies would you implement to keep the latency low for each prediction request?",
+      "How would you handle model updates in this high-scale environment to avoid downtime?"
+    ],
+    "ideal_answer_summary": "To serve a model at thousands of requests per second, I'd design a scalable, distributed system around a few key components: a load balancer, multiple instances of the model server, and an autoscaling mechanism. Concretely, I might containerize the model in a lightweight server (perhaps using something like FastAPI or a dedicated serving solution like TensorFlow Serving if it's a TF model) and deploy it in a cluster (Kubernetes could be a good fit here). A Kubernetes Service or cloud load balancer would distribute incoming prediction requests across many pod instances of the model server. For scaling, I'd enable horizontal pod autoscaling based on metrics like CPU usage or request throughput so the system can automatically add more instances when load increases. I'd also consider using multiple nodes and ensure the environment has enough CPU/GPU resources depending on model requirements. If using GPUs, the design might involve a smaller number of powerful nodes rather than many CPU-only nodes. To keep latency low, a few strategies: ensure the model is optimized (e.g., use an optimized format like ONNX or TensorRT, and maybe batch requests internally if micro-batching can improve throughput without hurting single-request latency too much). Also use caching for any common queries if applicable, and ensure the serving code is efficient (avoid unnecessary overhead in the request path). I/O should be minimized; for example, load the model into memory and reuse it, and avoid disk reads on each request. For robust scaling, I'd also consider geographic distribution if clients are worldwide (multiple deployment regions with a global load balancer or CDN for edge inference if possible). Handling model updates in this scenario should be done with rolling updates: e.g., in Kubernetes, update the Deployment which will phase in containers with the new model version while phasing out old ones, all behind the load balancer so there's no downtime. A/B testing or canary can be used here too: send a small percent of traffic to new version instances first to monitor performance, then gradually increase. Logging and monitoring (via something like Prometheus/Grafana) would be in place to watch latency, error rates, and resource usage in real time. That way, we can ensure the service meets the scale and latency requirements and react quickly if it doesn't."
+  },
+  {
+    "id": "ai-017",
+    "text": "Design a workflow that automatically retrains and deploys an updated machine learning model when its performance in production degrades.",
+    "type": "design",
+    "difficulty": "hard",
+    "follow_up_templates": [
+      "How would you detect performance degradation automatically? What would trigger the retraining?",
+      "What steps would you include to ensure the newly retrained model is actually better before deploying it?",
+      "How can this workflow be implemented using MLOps tools (e.g., can this be set up in a pipeline with Kubeflow or similar)?"
+    ],
+    "ideal_answer_summary": "To automate retraining and deployment upon performance degradation, I would set up a closed-loop pipeline: First, implement continuous monitoring of the model's performance. For example, if it's a classification model, monitor metrics like accuracy or error rate on recent data (which implies collecting true outcomes – perhaps via a feedback system – and comparing them to predictions). Alternatively, monitor proxy metrics or drift in input data if direct outcomes aren't immediately available. If the monitoring system detects a drop beyond a certain threshold (say the model's error rate exceeds a predetermined limit or there's significant concept drift), that would trigger the retraining workflow. This trigger could be an alert that kicks off an automated pipeline (maybe an API call or message that a system like Kubeflow picks up). The retraining workflow would then pull the latest available data (since the last model update) – ensuring data is properly labeled and cleaned – and run the training process for a new model. This could be done using an orchestrated pipeline that includes data prep, model training, and evaluation. After training, it's crucial to validate the new model. So the workflow would evaluate the model on a validation set or even do a shadow deployment test. If the new model's performance on validation is better (or at least not worse) than the current model, the pipeline can proceed to deploy it. If it’s not better, one might abort or notify a human to inspect. Deployment can be automated by pushing the new model to the serving infrastructure, possibly gradually (canary deployment). Using containerization, this could mean building a new image with the updated model and updating a Kubernetes deployment. For implementation, MLOps platforms like Kubeflow Pipelines or Jenkins (for ML) can codify this whole process. They allow defining a pipeline DAG that can be triggered by an event (like a flag from monitoring). Tools like MLflow can version the model and maybe even serve as the gatekeeper (only move model from “staging” to “production” stage if it meets criteria). Overall, the design ensures the model in production remains up-to-date with changing data patterns, with minimal human intervention but with safeguards (evaluation checks) to maintain or improve performance."
+  },
+  {
+    "id": "ai-018",
+    "text": "Design a strategy for deploying a new version of an ML model such that you can evaluate its performance against the current version (for example, using A/B testing or shadow deployment).",
+    "type": "design",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What percentage of traffic would you send to the new model initially, and how would you choose that?",
+      "How would you collect and compare results from the two model versions objectively?",
+      "In what scenario might you prefer a shadow deployment (sending traffic to a new model without affecting users) over a direct A/B split?"
+    ],
+    "ideal_answer_summary": "To safely deploy and evaluate a new model version against the current one, I would use a phased rollout strategy, commonly A/B testing or canary release with monitoring. For example, start with a **canary deployment**: deploy the new model version in parallel with the old one, but direct only a small portion of live traffic to it (say 5-10%). The majority (90-95%) still goes to the old model to minimize risk. The routing can be done at the load balancer or application level, ensuring each request is served by one model or the other. While this is running, collect metrics on both sets of predictions. Key metrics might include response latency (to ensure the new model isn't slower), and domain-specific success metrics (like conversion rate for a recommendation model, or accuracy if ground truth is known later). You'd ideally design the system to log the model version used for each prediction and the eventual outcome so you can compare performance. If the new model is performing at least as well as the old one (and not introducing latency or errors), you can gradually increase the traffic share to the new model. Typically, one might go from 10% to 50% to 100% over a period of time, continuously monitoring. If at any point the new model underperforms or something goes wrong, you can quickly switch all traffic back to the stable old model (rollback). An alternative is **shadow deployment**, where the new model gets a copy of the live requests (in parallel) but its predictions are not used for real decisions – they're just logged. This is useful if you're concerned about the new model's impact; you gather performance data without affecting users. However, it doubles the processing work and needs careful logging to compare later. In either case, the strategy emphasizes limiting exposure of the new model until confidence is built, by directly comparing it in as close to real conditions as possible. Once the new model proves itself, it can fully replace the old one."
+  },
+  {
+    "id": "ai-019",
+    "text": "Describe your approach to implementing a REST API service that provides predictions from a trained machine learning model.",
+    "type": "coding",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What framework would you use to build the API and why?",
+      "How would you handle loading the model and ensuring it doesn't reload on every request?",
+      "What steps would you take to test and secure this API before making it public?"
+    ],
+    "ideal_answer_summary": "To implement a REST API for a trained ML model, I'd likely choose a web framework such as Flask or FastAPI in Python, as they are lightweight and commonly used for serving models (with FastAPI offering asynchronous support and better performance out of the box). The basic approach: serialize the trained model (e.g., using joblib/pickle for scikit-learn or saving a .h5 for a Keras model, etc.), and ensure it’s accessible to the API service. On application startup, load this model into memory so that it can be reused for all incoming requests, avoiding re-loading the model for each request (which would be too slow). I'd define an endpoint, say `/predict`, that accepts input data (could be JSON with feature values). The API handler will parse and validate this input, perhaps performing the same preprocessing steps as were used during training (this is crucial to do consistently). Then it would feed the processed input to the loaded model to get a prediction. Finally, it formats the prediction into a JSON response to return. For efficiency and scaling, ensure the web server can handle concurrent requests (using something like Uvicorn/Gunicorn if using Flask or FastAPI, to run multiple worker processes or threads). If the model is heavy, one might use batch prediction internally for throughput, but for a typical REST scenario it’s one request -> one prediction. Testing the API: I'd create unit tests or integration tests with known inputs to ensure it returns expected outputs and handles edge cases (like missing values or invalid inputs gracefully). For security, I’d consider adding authentication if it's a private API, or at least rate limiting/throttling to prevent abuse. Also, containerizing the service with Docker would ease deployment to production. Logging is important too: I would log requests (without sensitive data) and predictions to monitor usage and potential issues. Once this service is containerized and tested, I could deploy it behind a load balancer or as part of a larger microservice infrastructure to serve predictions to whatever application needs it."
+  },
+  {
+    "id": "ai-020",
+    "text": "How would you implement an automated data preprocessing and feature engineering pipeline for model training in production?",
+    "type": "coding",
+    "difficulty": "medium",
+    "follow_up_templates": [
+      "What technologies or frameworks might you use for handling large-scale data preprocessing (e.g., Spark, Beam)?",
+      "How do you ensure the same preprocessing logic is applied during training and inference?",
+      "Where would you integrate this preprocessing pipeline in the overall ML workflow?"
+    ],
+    "ideal_answer_summary": "Implementing an automated data preprocessing and feature engineering pipeline involves writing code that can systematically transform raw data into the features used by a model, and doing so in a way that’s repeatable and scalable. First, I'd likely separate this into distinct steps: data extraction, transformation, and loading (ETL). For large-scale data, tools like Apache Spark or Apache Beam (possibly via Cloud Dataflow) could be used to handle distributed processing. If the data volume is smaller or moderate, a Python pipeline using pandas or even SQL queries might suffice, but with big data I'd use PySpark for instance. I would code transformations for things like filling missing values, encoding categorical variables (one-hot, label encoding as needed), scaling/normalizing features, and computing any aggregate features (like counts or averages per entity). These transformations could be implemented as functions or using pipeline frameworks (for example, scikit-learn pipelines or Spark DataFrame transformations). Crucially, to ensure consistency between training and inference, I would ideally reuse the same code or logic in both places. For example, if using scikit-learn, I might fit a preprocessing pipeline (like using ColumnTransformer, StandardScaler, etc.) on training data and then serialize that pipeline object along with the model, so it can be applied to new data in production exactly the same way. In Spark, one can use Spark ML pipelines to similar effect. Alternatively, store any computed means/standard deviations or encoding mappings from the training phase and load those in the serving code. To automate this pipeline in production, I'd integrate it into the training workflow – e.g., if using Airflow, one task could run this preprocessing code to output a clean, feature-ready dataset (or even materialize features into a feature store). Then the next task is model training using that output. In summary, I'd implement the preprocessing as a well-defined pipeline, use appropriate tools for the data scale, and make sure to package or save the transformation logic so that the model sees the same data format during training and inference. This might mean exporting transformers or using a common library in both training and serving environments."
+  }
+]
