@@ -7,7 +7,7 @@ with proper validation and type safety.
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field, validator
+from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict
 
 
 class UserSignupRequest(BaseModel):
@@ -21,7 +21,8 @@ class UserSignupRequest(BaseModel):
     password: str = Field(..., min_length=8, description="User password (min 8 characters)")
     full_name: str = Field(..., min_length=1, max_length=100, description="User full name")
     
-    @validator("password")
+    @field_validator("password")
+    @classmethod
     def validate_password_strength(cls, v: str) -> str:
         """
         Validate password strength requirements.
@@ -92,12 +93,9 @@ class UserResponse(BaseModel):
     created_at: datetime = Field(..., description="Account creation timestamp")
     updated_at: Optional[datetime] = Field(None, description="Last update timestamp")
     
-    class Config:
-        """Pydantic configuration."""
-        from_attributes = True
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
 
 class UserProfileUpdateRequest(BaseModel):
@@ -110,7 +108,8 @@ class UserProfileUpdateRequest(BaseModel):
     full_name: Optional[str] = Field(None, min_length=1, max_length=100, description="User full name")
     is_active: Optional[bool] = Field(None, description="User account status")
     
-    @validator("full_name")
+    @field_validator("full_name")
+    @classmethod
     def validate_full_name(cls, v: Optional[str]) -> Optional[str]:
         """
         Validate full name if provided.

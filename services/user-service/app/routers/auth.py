@@ -18,8 +18,7 @@ from app.schemas.auth import (
     UserResponse,
     ErrorResponse,
 )
-from app.services.supabase_service import supabase_service
-from app.dependencies import security
+from app.dependencies import security, get_supabase_service
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +38,10 @@ router = APIRouter(prefix="/auth", tags=["authentication"])
         500: {"model": ErrorResponse, "description": "Internal server error"},
     },
 )
-async def signup_user(request: UserSignupRequest) -> AuthResponse:
+async def signup_user(
+    request: UserSignupRequest,
+    supabase_service = Depends(get_supabase_service)
+) -> AuthResponse:
     """
     Register a new user account.
     
@@ -48,6 +50,7 @@ async def signup_user(request: UserSignupRequest) -> AuthResponse:
     
     Args:
         request: User registration data
+        supabase_service: Supabase service instance
         
     Returns:
         AuthResponse: Authentication token and user information
@@ -125,7 +128,10 @@ async def signup_user(request: UserSignupRequest) -> AuthResponse:
         500: {"model": ErrorResponse, "description": "Internal server error"},
     },
 )
-async def login_user(request: UserLoginRequest) -> AuthResponse:
+async def login_user(
+    request: UserLoginRequest,
+    supabase_service = Depends(get_supabase_service)
+) -> AuthResponse:
     """
     Authenticate user with email and password.
     
@@ -133,6 +139,7 @@ async def login_user(request: UserLoginRequest) -> AuthResponse:
     
     Args:
         request: User login credentials
+        supabase_service: Supabase service instance
         
     Returns:
         AuthResponse: Authentication token and user information
@@ -195,13 +202,15 @@ async def login_user(request: UserLoginRequest) -> AuthResponse:
     },
 )
 async def logout_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    supabase_service = Depends(get_supabase_service)
 ) -> Dict[str, str]:
     """
     Logout user by invalidating the current token.
     
     Args:
         credentials: Current authentication credentials
+        supabase_service: Supabase service instance
         
     Returns:
         Dict[str, str]: Success message
@@ -255,16 +264,21 @@ async def logout_user(
     },
 )
 async def get_current_user_info(
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    supabase_service = Depends(get_supabase_service)
 ) -> UserResponse:
     """
     Get current authenticated user information.
     
+    Validates the Bearer token and returns the authenticated user's
+    profile information.
+    
     Args:
-        credentials: Current authentication credentials
+        credentials: HTTP Bearer token credentials
+        supabase_service: Supabase service instance
         
     Returns:
-        UserResponse: Current user information
+        UserResponse: Current user's profile information
         
     Raises:
         HTTPException: If authentication fails
@@ -276,11 +290,11 @@ async def get_current_user_info(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
+    token = credentials.credentials
+    
     try:
-        # Validate token and get user info
-        success, user_data, error_message = await supabase_service.validate_token(
-            credentials.credentials
-        )
+        # Validate token with Supabase
+        success, user_data, error_message = await supabase_service.validate_token(token)
         
         if not success or not user_data:
             raise HTTPException(
@@ -293,18 +307,18 @@ async def get_current_user_info(
         if not user_data.get("is_active", True):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Account is inactive",
+                detail="User account is inactive",
             )
         
         # Create user response
         user = UserResponse(**user_data)
-        logger.debug(f"Retrieved user info: {user.email}")
+        logger.debug(f"Retrieved current user: {user.email}")
         return user
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Unexpected error getting user info: {str(e)}")
+        logger.error(f"Unexpected error getting current user: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error",

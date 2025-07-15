@@ -15,8 +15,7 @@ from app.schemas.auth import (
     UserProfileUpdateRequest,
     ErrorResponse,
 )
-from app.services.supabase_service import supabase_service
-from app.dependencies import get_current_user, get_current_admin_user
+from app.dependencies import get_current_user, get_current_admin_user, get_supabase_service
 
 logger = logging.getLogger(__name__)
 
@@ -38,13 +37,15 @@ router = APIRouter(prefix="/users", tags=["users"])
     },
 )
 async def get_my_profile(
-    current_user: UserResponse = Depends(get_current_user)
+    current_user: UserResponse = Depends(get_current_user),
+    supabase_service = Depends(get_supabase_service)
 ) -> UserResponse:
     """
     Get current user's profile information.
     
     Args:
         current_user: Current authenticated user from dependency
+        supabase_service: Supabase service instance
         
     Returns:
         UserResponse: Current user's profile information
@@ -97,6 +98,7 @@ async def get_my_profile(
 async def update_my_profile(
     request: UserProfileUpdateRequest,
     current_user: UserResponse = Depends(get_current_user),
+    supabase_service = Depends(get_supabase_service)
 ) -> UserResponse:
     """
     Update current user's profile information.
@@ -104,6 +106,7 @@ async def update_my_profile(
     Args:
         request: Profile update data
         current_user: Current authenticated user from dependency
+        supabase_service: Supabase service instance
         
     Returns:
         UserResponse: Updated user profile information
@@ -168,6 +171,7 @@ async def update_my_profile(
 async def get_user_by_id(
     user_id: str,
     current_admin: UserResponse = Depends(get_current_admin_user),
+    supabase_service = Depends(get_supabase_service)
 ) -> UserResponse:
     """
     Get user profile by ID (admin only).
@@ -175,6 +179,7 @@ async def get_user_by_id(
     Args:
         user_id: User ID to retrieve
         current_admin: Current authenticated admin user from dependency
+        supabase_service: Supabase service instance
         
     Returns:
         UserResponse: User profile information
@@ -228,6 +233,7 @@ async def update_user_by_id(
     user_id: str,
     request: UserProfileUpdateRequest,
     current_admin: UserResponse = Depends(get_current_admin_user),
+    supabase_service = Depends(get_supabase_service)
 ) -> UserResponse:
     """
     Update user profile by ID (admin only).
@@ -236,6 +242,7 @@ async def update_user_by_id(
         user_id: User ID to update
         request: Profile update data
         current_admin: Current authenticated admin user from dependency
+        supabase_service: Supabase service instance
         
     Returns:
         UserResponse: Updated user profile information

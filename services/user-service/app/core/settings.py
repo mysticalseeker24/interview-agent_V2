@@ -8,7 +8,7 @@ import os
 from functools import lru_cache
 from typing import List
 
-from pydantic import Field, validator
+from pydantic import Field, field_validator, ConfigDict
 from pydantic_settings import BaseSettings
 
 
@@ -43,7 +43,7 @@ class Settings(BaseSettings):
         description="Allowed CORS origins"
     )
     ALLOWED_HOSTS: List[str] = Field(
-        default=["localhost", "127.0.0.1"],
+        default=["localhost", "127.0.0.1", "test"],
         description="Allowed hosts for TrustedHostMiddleware"
     )
     
@@ -64,40 +64,64 @@ class Settings(BaseSettings):
     SECRET_KEY: str = Field(..., description="Application secret key")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=30, description="Access token expiry in minutes")
     
-    @validator("SUPABASE_URL")
+    @field_validator("SUPABASE_URL")
+    @classmethod
     def validate_supabase_url(cls, v: str) -> str:
         """Validate Supabase URL format."""
         if not v.startswith(("https://", "http://")):
             raise ValueError("SUPABASE_URL must be a valid URL")
         return v
     
-    @validator("SUPABASE_ANON_KEY")
+    @field_validator("SUPABASE_ANON_KEY")
+    @classmethod
     def validate_supabase_anon_key(cls, v: str) -> str:
         """Validate Supabase anonymous key format."""
         if not v or len(v) < 10:
             raise ValueError("SUPABASE_ANON_KEY must be a valid key")
         return v
     
-    @validator("SUPABASE_SERVICE_ROLE_KEY")
+    @field_validator("SUPABASE_SERVICE_ROLE_KEY")
+    @classmethod
     def validate_supabase_service_role_key(cls, v: str) -> str:
         """Validate Supabase service role key format."""
         if not v or len(v) < 10:
             raise ValueError("SUPABASE_SERVICE_ROLE_KEY must be a valid key")
         return v
     
-    @validator("SECRET_KEY")
+    @field_validator("SECRET_KEY")
+    @classmethod
     def validate_secret_key(cls, v: str) -> str:
         """Validate secret key length."""
         if not v or len(v) < 32:
             raise ValueError("SECRET_KEY must be at least 32 characters long")
         return v
     
-    class Config:
-        """Pydantic configuration."""
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = True
-        extra = "allow"
+    @field_validator("ALLOWED_HOSTS", mode="before")
+    @classmethod
+    def parse_allowed_hosts(cls, v):
+        """Parse ALLOWED_HOSTS from string or list."""
+        if isinstance(v, str):
+            # Remove brackets and split by comma
+            v = v.strip("[]").split(",")
+            return [host.strip().strip('"').strip("'") for host in v if host.strip()]
+        return v
+    
+    @field_validator("ALLOWED_ORIGINS", mode="before")
+    @classmethod
+    def parse_allowed_origins(cls, v):
+        """Parse ALLOWED_ORIGINS from string or list."""
+        if isinstance(v, str):
+            # Remove brackets and split by comma
+            v = v.strip("[]").split(",")
+            return [origin.strip().strip('"').strip("'") for origin in v if origin.strip()]
+        return v
+    
+    model_config = ConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+        extra="allow"
+    )
 
 
 @lru_cache()

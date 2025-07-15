@@ -20,6 +20,19 @@ logger = logging.getLogger(__name__)
 security = HTTPBearer(auto_error=False)
 
 
+def get_supabase_service():
+    """
+    Get Supabase service instance.
+    
+    This dependency function allows for easy mocking in tests
+    by using FastAPI's dependency override system.
+    
+    Returns:
+        SupabaseService: Supabase service instance
+    """
+    return supabase_service
+
+
 async def get_current_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
 ) -> UserResponse:

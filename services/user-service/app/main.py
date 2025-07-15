@@ -183,7 +183,7 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 
 
 # Include routers
-app.include_router(auth.router, prefix="/auth", tags=["authentication"])
+app.include_router(auth.router, tags=["authentication"])
 app.include_router(users.router, prefix="/users", tags=["users"])
 
 
@@ -256,6 +256,14 @@ async def health() -> Dict[str, Any]:
         "version": settings.VERSION,
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
+
+
+@app.options("/health")
+async def health_options():
+    """
+    Handle OPTIONS requests for health endpoint (CORS preflight).
+    """
+    return {"message": "OK"}
 
 
 @app.get(
