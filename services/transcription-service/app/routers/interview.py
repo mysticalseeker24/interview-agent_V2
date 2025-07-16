@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..core.database import get_db
@@ -19,6 +19,8 @@ async def process_interview_round(
     session_id: str = Form(...),
     round_number: int = Form(1),
     user_audio: UploadFile = File(...),
+    domain: Optional[str] = Form(None),
+    persona_name: Optional[str] = Form(None),
     db: AsyncSession = Depends(get_db)
 ):
     """
@@ -31,24 +33,24 @@ async def process_interview_round(
     4. Agent replies based on JSON (TTS)
     """
     try:
-        # Validate input
-        if not agent_question.strip():
-            raise HTTPException(status_code=400, detail="Agent question cannot be empty")
-        
-        if not user_audio.filename:
-            raise HTTPException(status_code=400, detail="No audio file provided")
+        # Get the persona if domain and persona_name are provided
+        persona = None
+        if domain and persona_name:
+            from app.services.persona_service import persona_service
+            persona = persona_service.get_persona(domain, persona_name)
+            if not persona:
+                logger.warning(f"Persona '{persona_name}' not found for domain '{domain}', using default")
         
         # Read audio file
         audio_bytes = await user_audio.read()
-        if len(audio_bytes) == 0:
-            raise HTTPException(status_code=400, detail="Audio file is empty")
         
         # Process the interview round
         result = await interview_pipeline.process_interview_round(
             agent_question=agent_question,
             user_audio_bytes=audio_bytes,
             session_id=session_id,
-            round_number=round_number
+            round_number=round_number,
+            persona=persona
         )
         
         logger.info(f"Interview round {round_number} processed successfully for session {session_id}")

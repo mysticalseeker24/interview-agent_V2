@@ -23,6 +23,8 @@ class PersonaResponse(BaseModel):
     evaluation_criteria: List[str]
     success_indicators: List[str]
     technical_domains: List[str]
+    voice: str
+    voice_description: str
 
 class PersonaSelectionRequest(BaseModel):
     """Request model for persona selection."""
@@ -86,11 +88,13 @@ async def get_personas_by_domain(domain: str):
 async def get_specific_persona(domain: str, persona_name: str):
     """Get a specific persona by domain and name."""
     try:
+        from app.services.persona_service import persona_service
+        
         persona = persona_service.get_persona(domain, persona_name)
         if not persona:
             raise HTTPException(
                 status_code=404, 
-                detail=f"Persona {persona_name} not found for domain {domain}"
+                detail=f"Persona '{persona_name}' not found in domain '{domain}'"
             )
         
         return PersonaResponse(
@@ -101,15 +105,71 @@ async def get_specific_persona(domain: str, persona_name: str):
             interview_approach=persona.interview_approach,
             evaluation_criteria=persona.evaluation_criteria,
             success_indicators=persona.success_indicators,
-            technical_domains=persona.technical_domains
+            technical_domains=persona.technical_domains,
+            voice=persona.voice,
+            voice_description=persona_service.get_voice_description(persona.voice)
         )
-    except HTTPException:
-        raise
+        
     except Exception as e:
-        raise HTTPException(
-            status_code=500, 
-            detail=f"Error getting persona {persona_name} for domain {domain}: {str(e)}"
-        )
+        logger.error(f"Error getting specific persona: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.get("/voices")
+async def get_available_voices():
+    """Get all available TTS voices with their descriptions."""
+    try:
+        from app.services.persona_service import persona_service
+        
+        voices = persona_service.get_available_voices()
+        return {
+            "voices": voices,
+            "total_voices": len(voices)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting available voices: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.get("/voices/{voice}/personas")
+async def get_personas_by_voice(voice: str):
+    """Get all personas that use a specific voice."""
+    try:
+        from app.services.persona_service import persona_service
+        
+        personas = persona_service.get_personas_by_voice(voice)
+        return {
+            "voice": voice,
+            "voice_description": persona_service.get_voice_description(voice),
+            "personas": [
+                {
+                    "name": persona.name,
+                    "domain": persona.domain,
+                    "personality": persona.personality[:100] + "..." if len(persona.personality) > 100 else persona.personality
+                }
+                for persona in personas
+            ],
+            "count": len(personas)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting personas by voice: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.get("/voices/summary")
+async def get_voice_summary():
+    """Get a summary of voice assignments across all personas."""
+    try:
+        from app.services.persona_service import persona_service
+        
+        summary = persona_service.get_voice_summary()
+        return {
+            "voice_summary": summary,
+            "total_personas": sum(data["count"] for data in summary.values())
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting voice summary: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.post("/select", response_model=PersonaResponse)
 async def select_persona(request: PersonaSelectionRequest):

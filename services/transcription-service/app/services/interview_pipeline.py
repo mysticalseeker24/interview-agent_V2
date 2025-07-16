@@ -28,7 +28,8 @@ class InterviewPipeline:
         agent_question: str,
         user_audio_bytes: bytes,
         session_id: str,
-        round_number: int = 1
+        round_number: int = 1,
+        persona: Optional[Any] = None  # Add persona parameter
     ) -> Dict[str, Any]:
         """
         Process one round of the interview pipeline.
@@ -46,10 +47,11 @@ class InterviewPipeline:
             logger.info(f"Processing interview round {round_number} for session {session_id}")
             
             # Step 1: Agent asks question (TTS)
-            agent_audio_result = await self.tts_client.synthesize(
-                text=agent_question,
-                voice=settings.groq_default_voice,
-                format="wav"
+            # Generate TTS for agent question
+            question_voice = persona.voice if persona else "Briggs-PlayAI"
+            question_tts_result = await self.tts_client.synthesize(
+                agent_question, 
+                voice=question_voice
             )
             
             # Step 2: Transcribe user response (STT)
@@ -73,17 +75,18 @@ class InterviewPipeline:
             )
             
             # Step 5: Synthesize agent reply (TTS)
-            agent_reply_audio = await self.tts_client.synthesize(
-                text=agent_reply,
-                voice=settings.groq_default_voice,
-                format="wav"
+            # Generate TTS for agent reply
+            reply_voice = persona.voice if persona else "Briggs-PlayAI"
+            reply_tts_result = await self.tts_client.synthesize(
+                agent_reply, 
+                voice=reply_voice
             )
             
             return {
                 "session_id": session_id,
                 "round_number": round_number,
                 "agent_question": agent_question,
-                "agent_question_audio": agent_audio_result,
+                "agent_question_audio": question_tts_result,
                 "user_response": {
                     "raw_text": transcription_result["text"],
                     "structured_json": structured_response,
@@ -92,7 +95,7 @@ class InterviewPipeline:
                     "language": transcription_result.get("language", "en")
                 },
                 "agent_reply": agent_reply,
-                "agent_reply_audio": agent_reply_audio,
+                "agent_reply_audio": reply_tts_result,
                 "timestamp": "2024-01-01T00:00:00Z"  # Would use actual timestamp
             }
             
