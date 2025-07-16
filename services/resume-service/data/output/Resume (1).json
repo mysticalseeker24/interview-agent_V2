@@ -1,6 +1,6 @@
 {
   "contact": {
-    "name": "SAKSHAM MISHRA",
+    "name": "Saksham Mishra",
     "email": "saksham.mishra2402@gmail.com",
     "phone": "+91 85778 76517",
     "linkedin": null,
@@ -8,174 +8,169 @@
     "website": null,
     "location": "Prayagraj, India"
   },
-  "summary": null,
-  "experience": [],
+  "summary": "AI Engineer & Full Stack Developer specializing in machine learning, model deployment, and scalable AI systems, React Native, and Blockchain. 3x Hackathon Winner, Finalists in many. Led AI projects achieving 70% efficiency gains. Expert in NLP, Computer Vision, MLOps, and Solidity & Rust.",
+  "experience": [
+    {
+      "position": "AI Engineer Intern",
+      "company": "DonEros",
+      "start_date": "2024-11",
+      "end_date": "2025-03",
+      "location": "Remote",
+      "bullets": [
+        "Spearheaded the development of a generative AI-powered meeting insights application using advanced LLMs for topic modeling, NER, translation, and meeting minutes generation.",
+        "Led MLOps & LLMOps pipelines for continuous model retraining and optimization.",
+        "Enhanced Large Language Models including LLaMA, Falcon, and Mistral with Parameter Efficient Fine-Tuning and LoRA."
+      ],
+      "metrics": [
+        "Boosted user meeting efficiency by 70%",
+        "Improved performance by 20%",
+        "Improved model accuracy on educational datasets by 15%",
+        "Reduced inference latency by 10ms"
+      ],
+      "technologies": [
+        "Mistral",
+        "LLAMA",
+        "GPT",
+        "SQL",
+        "DuckDB"
+      ],
+      "raw_text": null
+    },
+    {
+      "position": "AI Engineer Intern",
+      "company": "Lead Developer",
+      "start_date": "2024-08",
+      "end_date": "2025-01",
+      "location": "Remote",
+      "bullets": [
+        "Deployed a sentiment analysis model leveraging BERT for multilingual text data.",
+        "Orchestrated the design and automation of data pipelines and model training workflows for semi-supervised learning.",
+        "Spearheaded the migration of legacy SQL Server databases to PostgreSQL."
+      ],
+      "metrics": [
+        "Increased accuracy of identifying negative customer feedback by 30%",
+        "Reduced deployment time by 35%",
+        "Boosted training efficiency by 25%",
+        "Resulted in a 25% improvement in data accessibility"
+      ],
+      "technologies": [
+        "BERT",
+        "Kaldi",
+        "PostgreSQL"
+      ],
+      "raw_text": null
+    }
+  ],
   "projects": [
     {
       "name": "StockIO",
-      "description": "Financial Application GITHUB",
+      "description": "Engineered a stock market prediction model using LSTM for forecasting and BERT for sentiment analysis.",
       "technologies": [
-        "Cassandra",
-        "FastAPI",
-        "BERT",
-        "Go",
-        "GitHub Actions",
-        "Ruby on Rails",
-        "CSS",
-        "React",
-        "Angular",
-        "Tailwind CSS",
         "Python",
-        "Kotlin",
+        "LSTM",
+        "BERT",
+        "financial APIs",
+        "React",
         "TypeScript",
-        "Prometheus",
-        "OpenCV",
-        "Ruby",
-        "C++",
-        "F#",
-        "Flask",
-        "PyTorch",
-        "R"
+        "Google Gemini Pro AI"
       ],
-      "url": null,
+      "url": "GITHUB",
       "start_date": null,
       "end_date": null,
       "bullets": [
-        "Python, LSTM, BERT, financial APIs,React, TypeScript, Google Gemini Pro AI",
-        "Engineered a stock market prediction model using LSTM for forecasting and BERT for sentiment analysis, achieving a",
-        "Sharpe ratio of 3.0 indicating improved risk-adjusted returns exceeding market benchmarks.",
-        "Deployed BERT for sentiment analysis on financial news, enhancing the accuracy of stock predictions by 15% and leading",
-        "to improved investment decisions in volatile market conditions.",
-        "Smart Cataloging / ProductScan GITHUB",
-        "React, Tailwind CSS, Flask, PyTorch, torchvision, OpenCV, Ultralytics, YOLO, Google Gemini API",
-        "Created an AI-powered product recognition system using YOLOv11nano for product detection and Google Gemini for",
-        "identification, automating cataloging from shelf images.",
-        "Reduced manual cataloging time by 50%, processing 1,000+ images daily."
+        "Achieved a Sharpe ratio of 3.0 indicating improved risk-adjusted returns exceeding market benchmarks.",
+        "Enhanced the accuracy of stock predictions by 15%."
+      ],
+      "metrics": [],
+      "raw_text": null
+    },
+    {
+      "name": "Smart Cataloging / ProductScan",
+      "description": "Created an AI-powered product recognition system using YOLOv11nano for product detection.",
+      "technologies": [
+        "React",
+        "Tailwind CSS",
+        "Flask",
+        "PyTorch",
+        "torchvision",
+        "OpenCV",
+        "Ultralytics",
+        "YOLO",
+        "Google Gemini API"
+      ],
+      "url": "GITHUB",
+      "start_date": null,
+      "end_date": null,
+      "bullets": [
+        "Automated cataloging from shelf images.",
+        "Reduced manual cataloging time by 50%."
       ],
       "metrics": [
-        "15%",
-        "50%"
+        "Processed 1,000+ images daily."
       ],
-      "raw_text": "StockIO : Financial Application GITHUB\nPython, LSTM, BERT, financial APIs,React, TypeScript, Google Gemini Pro AI\n• Engineered a stock market prediction model using LSTM for forecasting and BERT for sentiment analysis, achieving a\nSharpe ratio of 3.0 indicating improved risk-adjusted returns exceeding market benchmarks.\n• Deployed BERT for sentiment analysis on financial news, enhancing the accuracy of stock predictions by 15% and leading\nto improved investment decisions in volatile market conditions.\nSmart Cataloging / ProductScan GITHUB\nReact, Tailwind CSS, Flask, PyTorch, torchvision, OpenCV, Ultralytics, YOLO, Google Gemini API\n• Created an AI-powered product recognition system using YOLOv11nano for product detection and Google Gemini for\nidentification, automating cataloging from shelf images.\n• Reduced manual cataloging time by 50%, processing 1,000+ images daily."
+      "raw_text": null
     }
   ],
   "education": [
     {
       "institution": "Madan Mohan Malviya University of Technology",
-      "degree": "Bachelor in Technology with Specialization in Data Science Gorakhpur",
-      "field_of_study": "Technology with Specialization in Data Science Gorakhpur",
-      "start_date": null,
-      "end_date": "2023-09-15",
+      "degree": "Bachelor of Technology",
+      "field_of_study": "Data Science",
+      "start_date": "2023",
+      "end_date": null,
       "gpa": null,
       "honors": null,
-      "raw_text": "Madan Mohan Malviya University of Technology September 2023 – Current\nBachelor of Technology with Specialization in Data Science Gorakhpur, India"
+      "raw_text": null
     }
   ],
   "skills": [
     {
       "category": "Programming Languages",
       "skills": [
-        "Rust",
-        "C++",
-        "Python",
+        "JavaScript",
         "TypeScript",
-        "R",
-        "JavaScript"
+        "Python"
       ]
     },
     {
-      "category": "Web Technologies",
+      "category": "Frameworks & Libraries",
       "skills": [
-        "Node.js",
         "React",
-        "Next.js",
-        "Tailwind CSS",
-        "GraphQL",
-        "REST API"
-      ]
-    },
-    {
-      "category": "AI/ML & Data Science",
-      "skills": [
-        "LLM",
-        "Computer Vision",
-        "NLP"
+        "Flask",
+        "PyTorch",
+        "OpenCV"
       ]
     },
     {
       "category": "Cloud & DevOps",
       "skills": [
-        "GitHub Actions",
+        "AWS",
         "Docker",
-        "Kubernetes",
-        "AWS"
-      ]
-    },
-    {
-      "category": "Databases",
-      "skills": [
-        "Firebase",
-        "Redis",
-        "MongoDB",
-        "PostgreSQL"
-      ]
-    },
-    {
-      "category": "Mobile Development",
-      "skills": [
-        "Swift UI"
-      ]
-    },
-    {
-      "category": "Additional Skills",
-      "skills": [
-        "Solidity",
-        "Rust",
-        "DuckDB",
-        "Blockchain",
-        "Kaldi",
-        "PostgreSQL",
-        "BERT",
-        "React Native",
-        "CI/CD",
-        "Computer Vision",
-        "NLP",
-        "LLMs (Mistral, LLAMA, GPT)",
-        "MLOps"
+        "Kubernetes"
       ]
     }
   ],
-  "certifications": [
-    {
-      "name": "Won 3 Hackathons and Finalists in Many, including having 4th position in BullnCode Hackathon at IIT Bombay Techfest",
-      "issuer": null,
-      "issue_date": null,
-      "expiry_date": null,
-      "credential_id": null
-    }
-  ],
+  "certifications": [],
   "achievements": [
-    "Won 3 Hackathons and Finalists in Many, including having 4th position in BullnCode Hackathon at IIT Bombay Techfest",
-    "3x Hackathon Winner",
-    "Finalist in multiple hackathons"
+    "Won 3 Hackathons and Finalists in Many, including having 4th position in BullnCode Hackathon at IIT Bombay Techfest and Code-Cubicle 2.0.",
+    "Taught Mobile Development to over 100 students in React Native Expo CLI, building a Splitwise app clone with AI integrations."
   ],
   "domains": [
-    "Blockchain",
-    "Data Science",
     "AI Engineering",
-    "DevOps Engineering",
-    "Mobile Development"
+    "Full Stack Development",
+    "MLOps"
   ],
   "raw_text_length": 3922,
-  "parsing_confidence": 0.3975,
+  "parsing_confidence": 0.6283333333333333,
   "sections_detected": [
-    "education",
+    "contact",
     "experience",
-    "projects",
+    "education",
     "skills",
-    "certifications"
+    "projects",
+    "achievements"
   ],
-  "extraction_timestamp": "2025-07-15T23:12:34.295371",
-  "text_extraction_method": "pypdf",
-  "llm_enhanced": false
+  "extraction_timestamp": "2025-07-16T12:10:07.741402",
+  "text_extraction_method": "llm",
+  "llm_enhanced": true
 }

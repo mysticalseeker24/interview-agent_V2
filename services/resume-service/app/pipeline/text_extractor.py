@@ -49,21 +49,34 @@ class TextExtractor:
             raise ValueError(f"Unsupported file format: {file_ext}")
     
     def _extract_pdf(self, file_path: Path) -> Tuple[str, str]:
-        """Extract text from PDF using pypdf with Tika fallback."""
+        """Extract text from PDF using multiple methods including LaTeX-generated PDFs."""
         try:
             # Try pypdf first (fastest)
             text = self._extract_with_pypdf(file_path)
             
             # Check if extraction was successful
             if len(text.strip()) < 200:
-                logger.warning(f"pypdf extracted only {len(text)} chars, trying Tika fallback")
+                logger.warning(f"pypdf extracted only {len(text)} chars, trying LaTeX extraction")
+                latex_text = self._extract_latex_pdf(file_path)
+                if self.validate_extraction(latex_text):
+                    return latex_text, "latex_enhanced"
+                
+                logger.warning("LaTeX extraction failed, trying Tika fallback")
                 return self._extract_with_tika(file_path)
             
             logger.info(f"Successfully extracted {len(text)} characters using pypdf")
             return text, "pypdf"
             
         except Exception as e:
-            logger.warning(f"pypdf extraction failed: {e}. Trying Tika fallback")
+            logger.warning(f"pypdf extraction failed: {e}. Trying LaTeX extraction")
+            try:
+                latex_text = self._extract_latex_pdf(file_path)
+                if self.validate_extraction(latex_text):
+                    return latex_text, "latex_enhanced"
+            except:
+                pass
+            
+            logger.warning("LaTeX extraction failed, trying Tika fallback")
             return self._extract_with_tika(file_path)
     
     def _extract_with_pypdf(self, file_path: Path) -> str:
@@ -74,6 +87,48 @@ class TextExtractor:
             for page in pdf_reader.pages:
                 text += page.extract_text() + "\n\n"
         return text.strip()
+    
+    def _extract_latex_pdf(self, file_path: Path) -> str:
+        """Extract text from LaTeX-generated PDFs with hidden links and annotations."""
+        try:
+            import fitz  # PyMuPDF
+            text = ""
+            links = []
+            
+            with fitz.open(str(file_path)) as doc:
+                for page_num in range(len(doc)):
+                    page = doc[page_num]
+                    
+                    # Extract text with better handling for LaTeX
+                    text += page.get_text("text") + "\n\n"
+                    
+                    # Extract links and annotations (common in LaTeX resumes)
+                    links_on_page = page.get_links()
+                    for link in links_on_page:
+                        if link.get("uri"):
+                            links.append(link["uri"])
+                    
+                    # Extract annotations (comments, notes)
+                    annotations = page.annots()
+                    for annot in annotations:
+                        if annot.type[0] == 1:  # Text annotation
+                            text += f"Note: {annot.info.get('content', '')}\n"
+            
+            # Add extracted links to text
+            if links:
+                text += "\n\nExtracted Links:\n"
+                for link in links:
+                    text += f"{link}\n"
+            
+            logger.info(f"Successfully extracted {len(text)} characters from LaTeX PDF with {len(links)} links")
+            return text.strip()
+            
+        except ImportError:
+            logger.warning("PyMuPDF not available for LaTeX extraction. Install with: pip install PyMuPDF")
+            return ""
+        except Exception as e:
+            logger.error(f"LaTeX PDF extraction failed: {e}")
+            return ""
     
     def _extract_with_tika(self, file_path: Path) -> Tuple[str, str]:
         """Extract text using Apache Tika (better layout handling)."""

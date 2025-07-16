@@ -1,0 +1,209 @@
+{
+  "contact": {
+    "name": "Saksham Mishra",
+    "email": "saksham.mishra2402@gmail.com",
+    "phone": "+91 85778 76517",
+    "linkedin": null,
+    "github": null,
+    "website": null,
+    "location": "Prayagraj, India"
+  },
+  "summary": "AI Engineer & Full Stack Developer specializing in machine learning, model deployment, and scalable AI systems, React Native, and Blockchain. 3x Hackathon Winner, Finalists in many. Led AI projects across various domains.",
+  "experience": [
+    {
+      "position": "AI Engineer Intern",
+      "company": "DonEros",
+      "start_date": "2024-11-01",
+      "end_date": "2025-03-01",
+      "location": "Remote",
+      "bullets": [
+        "Implemented Mistral and LLAMA models achieving 70% accuracy improvement",
+        "Optimized model inference reducing latency by 20% and memory usage by 15%",
+        "Deployed models with 10ms response time using DuckDB for data processing"
+      ],
+      "metrics": [
+        "70% accuracy improvement",
+        "20% latency reduction",
+        "15% memory usage reduction",
+        "10ms response time"
+      ],
+      "technologies": [],
+      "raw_text": "AI Engineer Intern | DonEros | Remote | Nov 2024 - Mar 2025\n• Implemented Mistral and LLAMA models achieving 70% accuracy improvement\n• Optimized model inference reducing latency by 20% and memory usage by 15%\n• Deployed models with 10ms response time using DuckDB for data processing"
+    },
+    {
+      "position": "AI Engineer Intern | Lead Developer",
+      "company": "Remote",
+      "start_date": "2024-08-01",
+      "end_date": "2025-01-01",
+      "location": "Remote",
+      "bullets": [
+        "Developed BERT-based NLP models improving text classification by 30%",
+        "Implemented Kaldi for speech recognition with 35% accuracy boost",
+        "Optimized PostgreSQL queries reducing response time by 25%",
+        "Enhanced data pipeline efficiency by 25% using advanced indexing"
+      ],
+      "metrics": [
+        "30% improvement in text classification",
+        "35% accuracy boost in speech recognition",
+        "25% reduction in response time",
+        "25% enhancement in data pipeline efficiency"
+      ],
+      "technologies": [],
+      "raw_text": "AI Engineer Intern | Lead Developer | Remote | Aug 2024 - Jan 2025\n• Developed BERT-based NLP models improving text classification by 30%\n• Implemented Kaldi for speech recognition with 35% accuracy boost\n• Optimized PostgreSQL queries reducing response time by 25%\n• Enhanced data pipeline efficiency by 25% using advanced indexing"
+    }
+  ],
+  "projects": [
+    {
+      "name": "StockIO",
+      "description": "Engineered a stock market prediction model using LSTM for forecasting and BERT for sentiment analysis, achieving a Sharpe ratio of 3.0 indicating improved risk-adjusted returns exceeding market benchmarks.",
+      "technologies": [
+        "Python",
+        "LSTM",
+        "BERT",
+        "financial APIs",
+        "React",
+        "TypeScript",
+        "Google Geemini Pro AI"
+      ],
+      "url": "GITHUB",
+      "start_date": null,
+      "end_date": null,
+      "bullets": [],
+      "metrics": [
+        "Sharpe ratio of 3.0"
+      ],
+      "raw_text": "StockIO | GITHUB\nEngineered a stock market prediction model using LSTM for forecasting and BERT for sentiment analysis, achieving a Sharpe ratio of 3.0 indicating improved risk-adjusted returns exceeding market benchmarks."
+    },
+    {
+      "name": "Smart Cataloging / ProductScan",
+      "description": "Created an AI-powered product recognition system using YOLOv11nano for product detection and Google Gemini for identification, automating cataloging from shelf images.",
+      "technologies": [
+        "React",
+        "Tailwind CSS",
+        "Flask",
+        "PyTorch",
+        "torchvision",
+        "OpenCV",
+        "Ultrallytics",
+        "YOLO",
+        "Google Gemini API"
+      ],
+      "url": "GITHUB",
+      "start_date": null,
+      "end_date": null,
+      "bullets": [],
+      "metrics": [],
+      "raw_text": "Smart Cataloging / ProductScan | GITHUB\nCreated an AI-powered product recognition system using YOLOv11nano for product detection and Google Gemini for identification, automating cataloging from shelf images."
+    }
+  ],
+  "education": [
+    {
+      "institution": "Madan Mohan Malviya University of Technology",
+      "degree": "Bachelor of Technology",
+      "field_of_study": "Data Science",
+      "start_date": "2023-01-01",
+      "end_date": "Present",
+      "gpa": null,
+      "honors": null,
+      "raw_text": "Bachelor of Technology in Data Science | Madan Mohan Malviya University of Technology | 2023 - Present"
+    }
+  ],
+  "skills": [
+    {
+      "category": "Programming",
+      "skills": [
+        "JavaScript (React.js 18.3, Node.js 18+)",
+        "TypeScript 5.0",
+        "Python 3.9",
+        "Solidity",
+        "Rust"
+      ]
+    },
+    {
+      "category": "AI & Machine Learning",
+      "skills": [
+        "MLOps",
+        "Neural Networks",
+        "OpenAI API SDK",
+        "LLMOps",
+        "NLP",
+        "Computer Vision"
+      ]
+    },
+    {
+      "category": "Web & Mobile Development",
+      "skills": [
+        "React Native (Expo SDK 49)",
+        "Next.js 14",
+        "WebRTC",
+        "Socket.io",
+        "REST/GraphQL APIs"
+      ]
+    },
+    {
+      "category": "Database & Infrastructure",
+      "skills": [
+        "MongoDB (Aggregation Pipeline)",
+        "PostgreSQL 15",
+        "Redis Stack",
+        "AWS (S3, Lambda, Sage Maker)",
+        "Prisma ORM"
+      ]
+    },
+    {
+      "category": "DevOps & Security",
+      "skills": [
+        "Docker",
+        "Kubernetes",
+        "CI/CD (Github Actions)",
+        "JWT/OAuth2",
+        "HIPAA Compliance"
+      ]
+    },
+    {
+      "category": "Development Tools",
+      "skills": [
+        "Git (Trunk-based)",
+        "Vercel",
+        "Firebase Admin SDK",
+        "Cloudinary",
+        "Monorepo (Turborepo)"
+      ]
+    },
+    {
+      "category": "UI/UX & Analytics",
+      "skills": [
+        "Tailwind CSS 3.0",
+        "Shadcn/UI",
+        "Recharts",
+        "WCAG 2.1 AA",
+        "Custom Design Systems"
+      ]
+    }
+  ],
+  "certifications": [],
+  "achievements": [
+    "Won 3 Hackathons and Finalists in Many, including having 4th position in BullnCode Hackathon at IIT Bombay Techfest and Code-Cubicle 2.0",
+    "Taught Mobile Development to over 100 students in React Native Expo CLI, building a Splitwise app clone with AI integrations."
+  ],
+  "domains": [
+    "AI Engineering",
+    "Full Stack Development",
+    "Machine Learning",
+    "Blockchain"
+  ],
+  "raw_text_length": 2704,
+  "parsing_confidence": 0.8249999999999998,
+  "sections_detected": [
+    "contact",
+    "summary",
+    "experience",
+    "education",
+    "skills",
+    "projects",
+    "achievements"
+  ],
+  "extraction_timestamp": "2025-07-16T11:54:35.013115",
+  "text_extraction_method": "llm",
+  "llm_enhanced": true
+}

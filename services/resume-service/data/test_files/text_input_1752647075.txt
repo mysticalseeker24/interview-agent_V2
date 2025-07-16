@@ -1,0 +1,43 @@
+
+SAKSHAM MISHRA
+saksham.mishra2402@gmail.com | +91 85778 76517 | Prayagraj, India
+LinkedIn | GitHub
+
+AI Engineer & Full Stack Developer specializing in machine learning, model deployment, and scalable AI systems, React Native, and Blockchain. 3x Hackathon Winner, Finalists in many. Led AI projects across various domains.
+
+EXPERIENCE
+AI Engineer Intern | DonEros | Remote | Nov 2024 - Mar 2025
+• Implemented Mistral and LLAMA models achieving 70% accuracy improvement
+• Optimized model inference reducing latency by 20% and memory usage by 15%
+• Deployed models with 10ms response time using DuckDB for data processing
+
+AI Engineer Intern | Lead Developer | Remote | Aug 2024 - Jan 2025
+• Developed BERT-based NLP models improving text classification by 30%
+• Implemented Kaldi for speech recognition with 35% accuracy boost
+• Optimized PostgreSQL queries reducing response time by 25%
+• Enhanced data pipeline efficiency by 25% using advanced indexing
+
+EDUCATION
+Bachelor of Technology in Data Science | Madan Mohan Malviya University of Technology | 2023 - Present
+
+SKILLS
+Programming: JavaScript (React.js 18.3, Node.js 18+), TypeScript 5.0, Python 3.9, Solidity, Rust
+AI & Machine Learning: MLOps, Neural Networks, OpenAI API SDK, LLMOps, NLP, Computer Vision
+Web & Mobile Development: React Native (Expo SDK 49), Next.js 14, WebRTC, Socket.io, REST/GraphQL APIs
+Database & Infrastructure: MongoDB (Aggregation Pipeline), PostgreSQL 15, Redis Stack, AWS (S3, Lambda, Sage Maker), Prisma ORM
+DevOps & Security: Docker, Kubernetes, CI/CD (Github Actions), JWT/OAuth2, HIPAA Compliance
+Development Tools: Git (Trunk-based), Vercel, Firebase Admin SDK, Cloudinary, Monorepo (Turborepo)
+UI/UX & Analytics: Tailwind CSS 3.0, Shadcn/UI, Recharts, WCAG 2.1 AA, Custom Design Systems
+
+PROJECTS
+StockIO | GITHUB
+Engineered a stock market prediction model using LSTM for forecasting and BERT for sentiment analysis, achieving a Sharpe ratio of 3.0 indicating improved risk-adjusted returns exceeding market benchmarks.
+Technologies: Python, LSTM, BERT, financial APIs, React, TypeScript, Google Geemini Pro AI
+
+Smart Cataloging / ProductScan | GITHUB
+Created an AI-powered product recognition system using YOLOv11nano for product detection and Google Gemini for identification, automating cataloging from shelf images.
+Technologies: React, Tailwind CSS, Flask, PyTorch, torchvision, OpenCV, Ultrallytics, YOLO, Google Gemini API
+
+ACHIEVEMENTS
+• Won 3 Hackathons and Finalists in Many, including having 4th position in BullnCode Hackathon at IIT Bombay Techfest and Code-Cubicle 2.0
+• Taught Mobile Development to over 100 students in React Native Expo CLI, building a Splitwise app clone with AI integrations.

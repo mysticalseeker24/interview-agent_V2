@@ -1,0 +1,216 @@
+{
+  "contact": {
+    "name": "SAKSHAM MISHRA",
+    "email": "saksham.mishra2402@gmail.com",
+    "phone": "+91 85778 76517",
+    "linkedin": null,
+    "github": null,
+    "website": null,
+    "location": "Prayagraj, India"
+  },
+  "summary": "AI Engineer & Full Stack Developer specializing in machine learning, model deployment, and scalable AI systems, React Native, and Blockchain. 3x Hackathon Winner, Finalists in many. Led AI projects across various domains.",
+  "experience": [
+    {
+      "position": "AI Engineer Intern",
+      "company": "DonEros",
+      "start_date": "2024-11",
+      "end_date": "2025-03",
+      "location": "Remote",
+      "bullets": [
+        "Implemented Mistral and LLAMA models achieving 70% accuracy improvement",
+        "Optimized model inference reducing latency by 20% and memory usage by 15%",
+        "Deployed models with 10ms response time using DuckDB for data processing"
+      ],
+      "metrics": [
+        "70% accuracy improvement",
+        "20% latency reduction",
+        "15% memory usage reduction",
+        "10ms response time"
+      ],
+      "technologies": [
+        "Mistral",
+        "LLAMA",
+        "DuckDB"
+      ],
+      "raw_text": null
+    },
+    {
+      "position": "AI Engineer Intern | Lead Developer",
+      "company": "Remote",
+      "start_date": "2024-08",
+      "end_date": "2025-01",
+      "location": "Remote",
+      "bullets": [
+        "Developed BERT-based NLP models improving text classification by 30%",
+        "Implemented Kaldi for speech recognition with 35% accuracy boost",
+        "Optimized PostgreSQL queries reducing response time by 25%",
+        "Enhanced data pipeline efficiency by 25% using advanced indexing"
+      ],
+      "metrics": [
+        "30% improvement in text classification",
+        "35% accuracy boost",
+        "25% response time reduction",
+        "25% efficiency improvement"
+      ],
+      "technologies": [
+        "BERT",
+        "Kaldi",
+        "PostgreSQL"
+      ],
+      "raw_text": null
+    }
+  ],
+  "projects": [
+    {
+      "name": "StockIO",
+      "description": "Engineered a stock market prediction model using LSTM for forecasting and BERT for sentiment analysis, achieving a Sharpe ratio of 3.0 indicating improved risk-adjusted returns exceeding market benchmarks.",
+      "technologies": [
+        "Python",
+        "LSTM",
+        "BERT",
+        "financial APIs",
+        "React",
+        "TypeScript",
+        "Google Geemini Pro AI"
+      ],
+      "url": "GITHUB",
+      "start_date": null,
+      "end_date": null,
+      "bullets": [],
+      "metrics": [
+        "Sharpe ratio of 3.0"
+      ],
+      "raw_text": null
+    },
+    {
+      "name": "Smart Cataloging / ProductScan",
+      "description": "Created an AI-powered product recognition system using YOLOv11nano for product detection and Google Gemini for identification, automating cataloging from shelf images.",
+      "technologies": [
+        "React",
+        "Tailwind CSS",
+        "Flask",
+        "PyTorch",
+        "torchvision",
+        "OpenCV",
+        "Ultrallytics",
+        "YOLO",
+        "Google Gemini API"
+      ],
+      "url": "GITHUB",
+      "start_date": null,
+      "end_date": null,
+      "bullets": [],
+      "metrics": [],
+      "raw_text": null
+    }
+  ],
+  "education": [
+    {
+      "institution": "Madan Mohan Malviya University of Technology",
+      "degree": "Bachelor of Technology",
+      "field_of_study": "Data Science",
+      "start_date": "2023",
+      "end_date": null,
+      "gpa": null,
+      "honors": null,
+      "raw_text": null
+    }
+  ],
+  "skills": [
+    {
+      "category": "Programming Languages",
+      "skills": [
+        "JavaScript",
+        "TypeScript",
+        "Python",
+        "Solidity",
+        "Rust"
+      ]
+    },
+    {
+      "category": "AI & Machine Learning",
+      "skills": [
+        "MLOps",
+        "Neural Networks",
+        "OpenAI API SDK",
+        "LLMOps",
+        "NLP",
+        "Computer Vision"
+      ]
+    },
+    {
+      "category": "Web & Mobile Development",
+      "skills": [
+        "React Native",
+        "Next.js",
+        "WebRTC",
+        "Socket.io",
+        "REST",
+        "GraphQL"
+      ]
+    },
+    {
+      "category": "Database & Infrastructure",
+      "skills": [
+        "MongoDB",
+        "PostgreSQL",
+        "Redis Stack",
+        "AWS",
+        "Prisma ORM"
+      ]
+    },
+    {
+      "category": "DevOps & Security",
+      "skills": [
+        "Docker",
+        "Kubernetes",
+        "CI/CD",
+        "JWT",
+        "OAuth2",
+        "HIPAA Compliance"
+      ]
+    },
+    {
+      "category": "Development Tools",
+      "skills": [
+        "Git",
+        "Vercel",
+        "Firebase Admin SDK",
+        "Cloudinary",
+        "Monorepo"
+      ]
+    },
+    {
+      "category": "UI/UX & Analytics",
+      "skills": [
+        "Tailwind CSS",
+        "Shadcn/UI",
+        "Recharts",
+        "WCAG 2.1 AA",
+        "Custom Design Systems"
+      ]
+    }
+  ],
+  "certifications": [],
+  "achievements": [
+    "Won 3 Hackathons and Finalists in Many, including having 4th position in BullnCode Hackathon at IIT Bombay Techfest and Code-Cubicle 2.0",
+    "Taught Mobile Development to over 100 students in React Native Expo CLI, building a Splitwise app clone with AI integrations."
+  ],
+  "domains": [
+    "AI Engineering",
+    "Full Stack Development"
+  ],
+  "raw_text_length": 2704,
+  "parsing_confidence": 0.7083333333333333,
+  "sections_detected": [
+    "contact",
+    "experience",
+    "education",
+    "skills",
+    "projects",
+    "achievements"
+  ],
+  "extraction_timestamp": "2025-07-16T12:09:47.616274",
+  "text_extraction_method": "llm",
+  "llm_enhanced": true
+}

@@ -1,0 +1,234 @@
+{
+  "contact": {
+    "name": "SAKSHAM MISHRA",
+    "email": "saksham.mishra2402@gmail.com",
+    "phone": "+91 85778 76517",
+    "linkedin": "LinkedIn",
+    "github": "GitHub",
+    "website": null,
+    "location": "Prayagraj, India"
+  },
+  "summary": "AI Engineer & Full Stack Developer specializing in machine learning, model deployment, and scalable AI systems, React Native, and Blockchain. 3x Hackathon Winner, Finalists in many. Led AI projects achieving 70% efficiency gains. Expert in NLP, Computer Vision, MLOps, and Solidity & Rust.",
+  "experience": [
+    {
+      "position": "AI Engineer Intern",
+      "company": "DonEros",
+      "start_date": "2024-11-01",
+      "end_date": "2025-03-01",
+      "location": "Remote",
+      "bullets": [
+        "Spearheaded the development of a generative AI-powered meeting insights application using advanced LLMs (Mistral, LLAMA, GPT) for topic modeling, NER, translation, and meeting minutes generation, boosting user meeting efficiency by 70%.",
+        "Led MLOps & LLMOps pipelines for continuous model retraining and optimization & Optimized LLMs for natural language queries with SQL integration using DuckDB, improving performance by 20%.",
+        "Enhanced Large Language Models including LLaMA, Falcon, and Mistral with Parameter Efficient Fine-Tuning and LoRA, improving model accuracy on educational datasets by 15% and reducing inference latency by 10ms."
+      ],
+      "metrics": [
+        "70%",
+        "20%",
+        "15%",
+        "10ms"
+      ],
+      "technologies": [
+        "Mistral",
+        "LLAMA",
+        "GPT",
+        "DuckDB"
+      ],
+      "raw_text": "AI Engineer Intern November 2024 – March 2025 DonEros Remote • Spearheaded the development of a generative AI-powered meeting insights application using advanced LLMs (Mistral, LLAMA, GPT) for topic modeling, NER, translation, and meeting minutes generation, boosting user meeting efficiency by 70%. • Led MLOps & LLMOps pipelines for continuous model retraining and optimization & Optimized LLMs for natural language queries with SQL integration using DuckDB, improving performance by 20%. • Enhanced Large Language Models including LLaMA, Falcon, and Mistral with Parameter Efficient Fine-Tuning and LoRA, improving model accuracy on educational datasets by 15% and reducing inference latency by 10ms."
+    },
+    {
+      "position": "AI Engineer Intern",
+      "company": "Lead Developer",
+      "start_date": "2024-08-01",
+      "end_date": "2025-01-01",
+      "location": "Remote",
+      "bullets": [
+        "Deployed a sentiment analysis model leveraging BERT for multilingual text data, increasing the accuracy of identifying negative customer feedback by 30% and flagging critical issues.",
+        "Orchestrated the design and automation of data pipelines and model training workflows for semi-supervised learning, reducing deployment time by 35% and boosting training efficiency by 25% through integrated CI/CD processes.",
+        "Spearheaded the migration of legacy SQL Server databases to PostgreSQL, resulting in a 25% improvement in data accessibility for the data science team, while also implementing Kaldi for advanced speech recognition tasks."
+      ],
+      "metrics": [
+        "30%",
+        "35%",
+        "25%",
+        "25%"
+      ],
+      "technologies": [
+        "BERT",
+        "Kaldi",
+        "PostgreSQL"
+      ],
+      "raw_text": "AI Engineer Intern August 2024 – January 2025 Lead Developer Remote • Deployed a sentiment analysis model leveraging BERT for multilingual text data, increasing the accuracy of identifying negative customer feedback by 30% and flagging critical issues. • Orchestrated the design and automation of data pipelines and model training workflows for semi-supervised learning, reducing deployment time by 35% and boosting training efficiency by 25% through integrated CI/CD processes. • Spearheaded the migration of legacy SQL Server databases to PostgreSQL, resulting in a 25% improvement in data accessibility for the data science team, while also implementing Kaldi for advanced speech recognition tasks."
+    }
+  ],
+  "education": [
+    {
+      "institution": "Madan Mohan Malviya University of Technology",
+      "degree": "Bachelor of Technology",
+      "field_of_study": "Data Science",
+      "start_date": "2023-09-01",
+      "end_date": "Present",
+      "gpa": null,
+      "honors": null,
+      "raw_text": "Madan Mohan Malviya University of Technology September 2023 – Current Bachelor of Technology with Specialization in Data Science Gorakhpur, India"
+    }
+  ],
+  "skills": [
+    {
+      "category": "Programming",
+      "skills": [
+        "JavaScript (React.js 18.3, Node.js 18+)",
+        "TypeScript 5.0",
+        "Python 3.9",
+        "Solidity",
+        "Rust"
+      ]
+    },
+    {
+      "category": "AI & Machine Learning",
+      "skills": [
+        "MLOps",
+        "Neural Networks",
+        "OpenAI API SDK",
+        "LLMOps",
+        "NLP",
+        "Computer Vision"
+      ]
+    },
+    {
+      "category": "Web & Mobile Development",
+      "skills": [
+        "React Native (Expo SDK 49)",
+        "Next.js 14",
+        "WebRTC",
+        "Socket.io",
+        "REST/GraphQL APIs"
+      ]
+    },
+    {
+      "category": "Database & Infrastructure",
+      "skills": [
+        "MongoDB (Aggregation Pipeline)",
+        "PostgreSQL 15",
+        "Redis Stack",
+        "AWS (S3, Lambda, Sage Maker)",
+        "Prisma ORM"
+      ]
+    },
+    {
+      "category": "DevOps & Security",
+      "skills": [
+        "Docker",
+        "Kubernetes",
+        "CI/CD (Github Actions)",
+        "JWT/OAuth2",
+        "HIPAA Compliance"
+      ]
+    },
+    {
+      "category": "Development Tools",
+      "skills": [
+        "Git (Trunk-based)",
+        "Vercel",
+        "Firebase Admin SDK",
+        "Cloudinary",
+        "Monorepo (Turborepo)"
+      ]
+    },
+    {
+      "category": "UI/UX & Analytics",
+      "skills": [
+        "Tailwind CSS 3.0",
+        "Shadcn/UI",
+        "Recharts",
+        "WCAG 2.1 AA",
+        "Custom Design Systems"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "StockIO",
+      "description": "Engineered a stock market prediction model using LSTM for forecasting and BERT for sentiment analysis, achieving a Sharpe ratio of 3.0 indicating improved risk-adjusted returns exceeding market benchmarks.",
+      "technologies": [
+        "Python",
+        "LSTM",
+        "BERT",
+        "financial APIs",
+        "React",
+        "TypeScript",
+        "Google Gemini Pro AI"
+      ],
+      "url": "GITHUB",
+      "start_date": null,
+      "end_date": null,
+      "bullets": [
+        "Achieved a Sharpe ratio of 3.0 indicating improved risk-adjusted returns exceeding market benchmarks.",
+        "Deployed BERT for sentiment analysis on financial news, enhancing the accuracy of stock predictions by 15% and leading to improved investment decisions in volatile market conditions."
+      ],
+      "metrics": [
+        "3.0",
+        "15%"
+      ],
+      "raw_text": "StockIO : Financial Application GITHUB Python, LSTM, BERT, financial APIs,React, TypeScript, Google Gemini Pro AI • Engineered a stock market prediction model using LSTM for forecasting and BERT for sentiment analysis, achieving a Sharpe ratio of 3.0 indicating improved risk-adjusted returns exceeding market benchmarks. • Deployed BERT for sentiment analysis on financial news, enhancing the accuracy of stock predictions by 15% and leading to improved investment decisions in volatile market conditions."
+    },
+    {
+      "name": "Smart Cataloging / ProductScan",
+      "description": "Created an AI-powered product recognition system using YOLOv11nano for product detection and Google Gemini for identification, automating cataloging from shelf images.",
+      "technologies": [
+        "React",
+        "Tailwind CSS",
+        "Flask",
+        "PyTorch",
+        "torchvision",
+        "OpenCV",
+        "Ultralytics",
+        "YOLO",
+        "Google Gemini API"
+      ],
+      "url": "GITHUB",
+      "start_date": null,
+      "end_date": null,
+      "bullets": [
+        "Reduced manual cataloging time by 50%, processing 1,000+ images daily."
+      ],
+      "metrics": [
+        "50%",
+        "1,000+ images daily"
+      ],
+      "raw_text": "Smart Cataloging / ProductScan GITHUB React, Tailwind CSS, Flask, PyTorch, torchvision, OpenCV, Ultralytics, YOLO, Google Gemini API • Created an AI-powered product recognition system using YOLOv11nano for product detection and Google Gemini for identification, automating cataloging from shelf images. • Reduced manual cataloging time by 50%, processing 1,000+ images daily."
+    }
+  ],
+  "certifications": [],
+  "achievements": [
+    "Won 3 Hackathons and Finalists in Many, including having 4th position in BullnCode Hackathon at IIT Bombay Techfest and Code-Cubicle 2.0",
+    "Taught Mobile Development to over 100 students in React Native Expo CLI, building a Splitwise app clone with AI integrations."
+  ],
+  "domains": [
+    "AI Engineering",
+    "Full Stack Development",
+    "Machine Learning",
+    "Web Development",
+    "Mobile Development",
+    "Data Science"
+  ],
+  "parsing_confidence": 0.95,
+  "sections_detected": [
+    "contact",
+    "summary",
+    "experience",
+    "education",
+    "skills",
+    "projects",
+    "certifications",
+    "achievements",
+    "domains"
+  ],
+  "extraction_quality": {
+    "contact_completeness": 1.0,
+    "experience_detail": 1.0,
+    "skills_coverage": 1.0,
+    "education_detail": 1.0,
+    "projects_detail": 1.0,
+    "overall_quality": 1.0
+  }
+}
