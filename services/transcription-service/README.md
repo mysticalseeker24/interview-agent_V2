@@ -7,6 +7,7 @@ A high-performance transcription service built for TalentSync platform, featurin
 - **Real-time Chunked Processing**: Process audio in 5-minute chunks with 2-second overlap for seamless interviews
 - **Groq Whisper Large v3**: State-of-the-art speech recognition with high accuracy
 - **Groq Play.ai TTS**: High-quality text-to-speech synthesis with voice caching
+- **Persona System**: 9 different interviewer personas with unique voices and personalities
 - **Unified Groq API**: Single API key for both STT and TTS operations
 - **Atomic File Operations**: Safe file handling with atomic writes
 - **Comprehensive Caching**: Intelligent TTS caching to reduce API costs
@@ -19,6 +20,7 @@ A high-performance transcription service built for TalentSync platform, featurin
 
 - **Groq STT Client**: Handles speech-to-text using Whisper Large v3
 - **Groq TTS Client**: Manages text-to-speech synthesis with Play.ai model
+- **Persona Service**: Manages interviewer personas with voice assignments
 - **Interview Pipeline**: Complete STT → JSON → TTS flow for interviews
 - **Chunked Processing**: Real-time audio chunk processing with overlap handling
 - **Database Models**: SQLAlchemy models for transcriptions and TTS cache
@@ -114,6 +116,8 @@ Process a complete interview round (STT → JSON → TTS).
 - `session_id`: Interview session ID
 - `round_number`: Current round number (default: 1)
 - `user_audio`: User's audio response file
+- `domain`: Optional domain for persona selection
+- `persona_name`: Optional specific persona name
 
 **Response:**
 ```json
@@ -192,6 +196,26 @@ Complete a session and get full transcript.
 }
 ```
 
+### Persona Endpoints
+
+#### `GET /api/v1/personas/`
+Get summary of all available personas.
+
+#### `GET /api/v1/personas/domains`
+Get list of available domains.
+
+#### `GET /api/v1/personas/domain/{domain}`
+Get all personas for a specific domain.
+
+#### `GET /api/v1/personas/{domain}/{persona_name}`
+Get specific persona details.
+
+#### `GET /api/v1/personas/voices`
+Get available voices and their assignments.
+
+#### `POST /api/v1/personas/select`
+Select appropriate persona based on criteria.
+
 ### TTS Endpoints
 
 #### `POST /api/v1/tts/generate`
@@ -257,6 +281,25 @@ The service supports all Groq Play.ai voices:
 - Indigo-PlayAI, Mamaw-PlayAI, Mason-PlayAI, Mikail-PlayAI
 - Mitch-PlayAI, Quinn-PlayAI, Thunder-PlayAI
 
+### Persona System
+
+The service includes a comprehensive persona system with 9 different interviewer personas:
+
+**Individual Personas:**
+- Emma (Enthusiastic Networker) - Uses Celeste-PlayAI voice
+- Liam (Methodical Analyst) - Uses Atlas-PlayAI voice
+
+**Job-Specific Personas:**
+- Maya (AI/ML Expert) - Uses Arista-PlayAI voice
+- Noah (Data-Driven Decider) - Uses Basil-PlayAI voice
+- Jordan (DevOps Specialist) - Uses Calum-PlayAI voice
+- Liam DSA (Methodical Analyst DSA) - Uses Cillian-PlayAI voice
+- Maya ML (AI/ML Expert ML) - Uses Deedee-PlayAI voice
+- Olivia (Empathetic Listener Resume) - Uses Fritz-PlayAI voice
+- Taylor (Full-Stack Developer) - Uses Gail-PlayAI voice
+
+Each persona has unique personality traits, expertise areas, and interview approaches. The system automatically assigns appropriate voices based on persona characteristics.
+
 ### Chunked Processing
 
 The service is designed for real-time interview processing:
@@ -267,6 +310,50 @@ The service is designed for real-time interview processing:
 - **Aggregation**: Automatic transcript assembly with deduplication
 
 ## 🧪 Testing
+
+### Automated Testing
+
+Run the comprehensive test suite:
+
+```bash
+# Install testing dependencies
+python setup_testing.py
+
+# Run comprehensive service tests
+python test_comprehensive_service.py
+
+# Run pytest tests
+pytest test_*.py -v
+
+# Run with coverage
+pytest test_*.py --cov=app --cov-report=html
+```
+
+### Live Mock Interview Testing
+
+Test the service through an interactive mock interview:
+
+```bash
+# Start the service
+uvicorn app.main:app --reload --port 8005
+
+# In another terminal, run the mock interview
+python test_live_mock_interview.py
+```
+
+The mock interview system allows you to:
+- Select from 9 different interviewer personas
+- Experience TTS-generated questions with persona-specific voices
+- Record audio responses (or use simulated responses)
+- Test the complete STT → JSON → TTS pipeline
+- Save interview summaries for analysis
+
+### Test Files Overview
+
+- **`test_comprehensive_service.py`**: Comprehensive automated testing of all service components
+- **`test_live_mock_interview.py`**: Interactive terminal-based mock interview system
+- **`setup_testing.py`**: Setup script for testing environment
+- **`test_requirements.txt`**: Testing dependencies
 
 ### Manual Testing
 
@@ -295,7 +382,19 @@ curl -X POST "http://localhost:8005/api/v1/tts/generate" \
   -d '{"text": "Hello world", "voice": "Briggs-PlayAI"}'
 ```
 
-4. Check health:
+4. Test Persona System:
+```bash
+# Get all personas
+curl "http://localhost:8005/api/v1/personas/"
+
+# Get personas by domain
+curl "http://localhost:8005/api/v1/personas/domain/software-engineering"
+
+# Get voice assignments
+curl "http://localhost:8005/api/v1/personas/voices"
+```
+
+5. Check health:
 ```bash
 curl "http://localhost:8005/health"
 ```
