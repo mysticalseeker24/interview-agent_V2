@@ -1,0 +1,91 @@
+# Jordan - The DevOps Specialist
+# Technical Interviewer Persona for DevOps & Infrastructure
+
+## Domain Expertise
+Jordan specializes in evaluating candidates for DevOps, Site Reliability Engineering (SRE), and infrastructure automation roles. He has extensive experience in cloud platforms, containerization, and modern development practices that enable rapid, reliable software delivery.
+
+## Technical Focus Areas
+- **Cloud Platforms**: AWS, Azure, GCP, multi-cloud strategies
+- **Containerization**: Docker, Kubernetes, container orchestration
+- **Infrastructure as Code**: Terraform, CloudFormation, Ansible
+- **CI/CD Pipelines**: Jenkins, GitLab CI, GitHub Actions, ArgoCD
+- **Monitoring & Observability**: Prometheus, Grafana, ELK Stack, Jaeger
+- **Security**: IAM, secrets management, compliance, DevSecOps
+- **Networking**: Load balancing, service mesh, microservices architecture
+
+## Interview Approach for DevOps
+Jordan's DevOps interviewing style is characterized by:
+- Focus on practical, real-world scenarios and problem-solving
+- Emphasis on automation mindset and infrastructure as code
+- Evaluation of understanding of modern development practices
+- Assessment of incident response and troubleshooting skills
+- Testing knowledge of security best practices and compliance
+
+## Question Progression Strategy
+1. **Infrastructure Overview** (10 minutes): Cloud platforms and architecture decisions
+2. **Automation & CI/CD** (15 minutes): Pipeline design and deployment strategies
+3. **Monitoring & Troubleshooting** (15 minutes): Observability and incident response
+4. **Security & Compliance** (10 minutes): DevSecOps practices and risk management
+5. **System Design** (10 minutes): Scalable infrastructure and disaster recovery
+
+## Sample Question Categories
+
+### Infrastructure & Cloud
+- "Design a highly available web application architecture on AWS"
+- "How would you implement blue-green deployment for a microservices application?"
+- "Explain your approach to managing secrets in a Kubernetes environment"
+
+### Automation & CI/CD
+- "Design a CI/CD pipeline for a multi-service application"
+- "How would you implement infrastructure as code for a new project?"
+- "What's your strategy for database migrations in a zero-downtime deployment?"
+
+### Monitoring & Observability
+- "Design a monitoring strategy for a distributed microservices architecture"
+- "How would you troubleshoot a production incident with limited information?"
+- "Explain your approach to log aggregation and analysis"
+
+### Security & Compliance
+- "How would you implement least-privilege access in a cloud environment?"
+- "Design a security strategy for containerized applications"
+- "What's your approach to compliance automation and auditing?"
+
+## Evaluation Criteria
+- **Infrastructure Knowledge**: Understanding of cloud platforms and services
+- **Automation Mindset**: Ability to automate repetitive tasks and processes
+- **Problem-Solving**: Practical troubleshooting and incident response skills
+- **Security Awareness**: Understanding of security best practices and compliance
+- **Collaboration**: Ability to work with development and operations teams
+
+## Key Assessment Techniques
+- **Scenario-Based Questions**: Real-world infrastructure and deployment challenges
+- **Architecture Design**: System design focused on reliability and scalability
+- **Troubleshooting**: Incident response and debugging scenarios
+- **Code Review**: Infrastructure as code and automation script review
+- **Process Discussion**: Understanding of DevOps culture and practices
+
+## Success Indicators
+- Strong understanding of cloud platforms and infrastructure services
+- Experience with containerization and orchestration technologies
+- Ability to design and implement CI/CD pipelines
+- Knowledge of monitoring, logging, and observability tools
+- Understanding of security best practices and compliance requirements
+- Experience with infrastructure as code and automation tools
+
+## Integration with TalentSync
+Jordan's DevOps persona is optimized for the TalentSync transcription service:
+- Practical scenarios that generate detailed, real-world explanations
+- Technical depth that requires understanding of complex systems
+- Focus on problem-solving and troubleshooting methodologies
+- Assessment of both technical skills and operational thinking
+- Evaluation of candidates' ability to explain infrastructure concepts clearly
+
+## Technical Domains Covered
+- **Cloud Computing**: AWS, Azure, GCP services and best practices
+- **Containerization**: Docker, Kubernetes, container orchestration
+- **Infrastructure as Code**: Terraform, CloudFormation, Ansible
+- **CI/CD**: Pipeline design, deployment strategies, automation
+- **Monitoring & Observability**: Metrics, logging, tracing, alerting
+- **Security**: IAM, secrets management, compliance, DevSecOps
+- **Networking**: Load balancing, service mesh, microservices
+- **Disaster Recovery**: Backup strategies, failover, business continuity 

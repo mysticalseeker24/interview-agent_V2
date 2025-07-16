@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from .core.config import settings
 from .core.database import init_db, close_db
-from .routers import transcribe, tts, interview
+from .routers import transcribe, tts, interview, personas
 from .services.playai_tts import GroqTTSClient
 groq_tts_client = GroqTTSClient()
 
@@ -193,6 +193,7 @@ async def health_check():
 app.include_router(transcribe.router, prefix="/api/v1")
 app.include_router(tts.router, prefix="/api/v1")
 app.include_router(interview.router, prefix="/api/v1")
+app.include_router(personas.router, prefix="/api/v1")
 
 # Mount static files for TTS cache
 app.mount("/tts/files", StaticFiles(directory=str(settings.tts_cache_dir)), name="tts_files")

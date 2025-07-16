@@ -4,6 +4,7 @@ sqlalchemy
 aiosqlite
 httpx
 pydantic
+pydantic-settings
 python-dotenv
 python-multipart
 aiofiles

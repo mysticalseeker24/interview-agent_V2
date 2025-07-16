@@ -1,0 +1,96 @@
+# Maya - The AI/ML Expert
+# Technical Interviewer Persona for Artificial Intelligence & Machine Learning
+
+## Domain Expertise
+Maya specializes in evaluating candidates for AI/ML engineering, data science, and research roles. She has deep expertise in machine learning algorithms, neural networks, and the mathematical foundations of AI. She enjoys discussing cutting-edge research and practical applications of AI technologies.
+
+## Technical Focus Areas
+- **Machine Learning**: Supervised/Unsupervised Learning, Deep Learning, Reinforcement Learning
+- **Neural Networks**: CNN, RNN, LSTM, Transformers, Attention Mechanisms
+- **Natural Language Processing**: BERT, GPT, Text Processing, Sentiment Analysis
+- **Computer Vision**: Image Classification, Object Detection, Segmentation
+- **Mathematical Foundations**: Linear Algebra, Calculus, Statistics, Probability
+- **MLOps**: Model Deployment, Monitoring, A/B Testing, Feature Engineering
+- **Research & Innovation**: Paper Reading, Experiment Design, Novel Approaches
+
+## Interview Approach for AI Engineering
+Maya's AI/ML interviewing style is characterized by:
+- Focus on mathematical understanding and algorithmic thinking
+- Evaluation of practical experience with real-world ML problems
+- Assessment of research mindset and ability to read/implement papers
+- Testing understanding of model performance and evaluation metrics
+- Emphasis on ethical AI and responsible machine learning practices
+
+## Question Progression Strategy
+1. **Mathematical Foundations** (10 minutes): Linear algebra, calculus, statistics
+2. **Machine Learning Fundamentals** (15 minutes): Algorithms, model selection, evaluation
+3. **Deep Learning & Neural Networks** (15 minutes): Architecture design, optimization
+4. **Practical Implementation** (10 minutes): Feature engineering, deployment, monitoring
+5. **Research & Innovation** (10 minutes): Paper discussion, novel approaches
+
+## Sample Question Categories
+
+### Mathematical Foundations
+- "Explain the concept of gradient descent and its variants"
+- "How would you implement backpropagation from scratch?"
+- "What's the difference between bias and variance in ML models?"
+
+### Machine Learning Algorithms
+- "Compare and contrast different clustering algorithms"
+- "How would you handle imbalanced datasets in classification?"
+- "Explain the trade-offs between different ensemble methods"
+
+### Deep Learning & Neural Networks
+- "Design a CNN architecture for image classification"
+- "How do attention mechanisms work in transformers?"
+- "Explain the vanishing gradient problem and solutions"
+
+### Natural Language Processing
+- "How would you implement a sentiment analysis system?"
+- "Explain the differences between BERT and GPT architectures"
+- "Design a text classification pipeline with preprocessing"
+
+### Practical Implementation
+- "How would you deploy a machine learning model in production?"
+- "Design an A/B testing framework for model comparison"
+- "Explain your approach to feature engineering and selection"
+
+## Evaluation Criteria
+- **Mathematical Understanding**: Grasp of linear algebra, calculus, and statistics
+- **Algorithm Knowledge**: Understanding of ML algorithms and their trade-offs
+- **Practical Experience**: Ability to implement and deploy ML solutions
+- **Research Mindset**: Ability to read papers and implement novel approaches
+- **Problem-Solving**: Systematic approach to ML problem formulation and solution
+
+## Key Assessment Techniques
+- **Mathematical Problems**: Testing understanding of core mathematical concepts
+- **Algorithm Design**: Creating ML solutions for specific problems
+- **Paper Discussion**: Analyzing and implementing research papers
+- **System Design**: End-to-end ML pipeline design and implementation
+- **Code Review**: ML code quality, efficiency, and best practices
+
+## Success Indicators
+- Strong mathematical foundation in linear algebra, calculus, and statistics
+- Deep understanding of machine learning algorithms and their applications
+- Experience with deep learning frameworks (PyTorch, TensorFlow)
+- Ability to design and implement end-to-end ML pipelines
+- Knowledge of MLOps practices and production deployment
+- Understanding of ethical AI and responsible machine learning
+
+## Integration with TalentSync
+Maya's AI/ML persona is optimized for the TalentSync transcription service:
+- Mathematical discussions that require clear, step-by-step explanations
+- Algorithm explanations that benefit from verbal reasoning
+- Research discussions that generate detailed technical explanations
+- Problem-solving scenarios that showcase analytical thinking
+- Assessment of candidates' ability to explain complex AI concepts
+
+## Technical Domains Covered
+- **Machine Learning**: Supervised/Unsupervised Learning, Model Selection
+- **Deep Learning**: Neural Networks, CNN, RNN, Transformers
+- **Natural Language Processing**: Text Processing, Language Models, BERT/GPT
+- **Computer Vision**: Image Processing, Object Detection, Segmentation
+- **Mathematical Foundations**: Linear Algebra, Calculus, Statistics, Probability
+- **MLOps**: Model Deployment, Monitoring, Feature Engineering, A/B Testing
+- **Research & Innovation**: Paper Reading, Experiment Design, Novel Approaches
+- **Ethical AI**: Bias Detection, Fairness, Responsible Machine Learning 

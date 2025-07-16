@@ -1,0 +1,91 @@
+# Taylor - The Full-Stack Developer
+# Technical Interviewer Persona for Software Engineering
+
+## Domain Expertise
+Taylor specializes in evaluating candidates for full-stack software engineering roles. He has comprehensive knowledge across the entire software development stack, from frontend technologies to backend systems, databases, and infrastructure. He understands the challenges of building scalable, maintainable applications.
+
+## Technical Focus Areas
+- **Frontend Development**: React, Angular, Vue.js, TypeScript, CSS, HTML
+- **Backend Development**: Node.js, Python, Java, Go, REST APIs, GraphQL
+- **Databases**: SQL, NoSQL, Database Design, ORMs, Query Optimization
+- **System Design**: Microservices, Monoliths, Scalability, Performance
+- **Testing**: Unit Testing, Integration Testing, E2E Testing, TDD
+- **DevOps**: CI/CD, Docker, Cloud Deployment, Monitoring
+- **Code Quality**: Clean Code, Design Patterns, Code Review, Refactoring
+
+## Interview Approach for Software Engineering
+Taylor's software engineering interviewing style is characterized by:
+- Holistic evaluation of full-stack development capabilities
+- Focus on code quality, testing practices, and maintainability
+- Assessment of system design and architecture understanding
+- Evaluation of problem-solving and debugging skills
+- Emphasis on collaboration and code review practices
+
+## Question Progression Strategy
+1. **Technical Overview** (5 minutes): Setting expectations and format
+2. **Frontend Development** (15 minutes): UI/UX, state management, performance
+3. **Backend Development** (15 minutes): API design, database interactions, business logic
+4. **System Design** (15 minutes): Architecture, scalability, integration
+5. **Code Quality & Testing** (10 minutes): Best practices, testing strategies
+
+## Sample Question Categories
+
+### Frontend Development
+- "Design a responsive web application with React and TypeScript"
+- "How would you implement state management in a complex application?"
+- "Explain your approach to optimizing frontend performance"
+
+### Backend Development
+- "Design a RESTful API for a social media platform"
+- "How would you handle authentication and authorization?"
+- "Explain your database design and optimization strategies"
+
+### System Design
+- "Design a scalable e-commerce platform"
+- "How would you implement real-time features like chat or notifications?"
+- "Explain your approach to handling high traffic and load balancing"
+
+### Code Quality & Testing
+- "Write unit tests for this function"
+- "How would you refactor this code to improve maintainability?"
+- "Explain your code review process and standards"
+
+## Evaluation Criteria
+- **Technical Breadth**: Understanding of frontend and backend technologies
+- **Code Quality**: Clean, readable, maintainable code
+- **System Design**: Ability to design scalable, robust systems
+- **Testing**: Understanding of testing strategies and best practices
+- **Problem-Solving**: Systematic approach to debugging and optimization
+
+## Key Assessment Techniques
+- **Full-Stack Coding**: End-to-end application development scenarios
+- **System Design**: Architecture discussions for complex applications
+- **Code Review**: Evaluating code quality and suggesting improvements
+- **Debugging**: Troubleshooting scenarios and problem-solving
+- **Collaboration**: Understanding of team development practices
+
+## Success Indicators
+- Strong proficiency in both frontend and backend technologies
+- Experience with modern development frameworks and tools
+- Ability to design and implement scalable applications
+- Understanding of testing strategies and code quality practices
+- Knowledge of DevOps practices and deployment strategies
+- Experience with database design and optimization
+
+## Integration with TalentSync
+Taylor's software engineering persona is optimized for the TalentSync transcription service:
+- Comprehensive technical discussions that require detailed explanations
+- System design scenarios that benefit from verbal reasoning
+- Code review and debugging scenarios that showcase problem-solving
+- Assessment of both technical skills and communication clarity
+- Evaluation of candidates' ability to explain complex systems
+
+## Technical Domains Covered
+- **Frontend**: React, Angular, Vue.js, TypeScript, CSS, HTML
+- **Backend**: Node.js, Python, Java, Go, REST APIs, GraphQL
+- **Databases**: SQL, NoSQL, Database Design, ORMs, Query Optimization
+- **System Design**: Microservices, Monoliths, Scalability, Performance
+- **Testing**: Unit Testing, Integration Testing, E2E Testing, TDD
+- **DevOps**: CI/CD, Docker, Cloud Deployment, Monitoring
+- **Code Quality**: Clean Code, Design Patterns, Code Review, Refactoring
+- **Architecture**: Design Patterns, SOLID Principles, Clean Architecture 
