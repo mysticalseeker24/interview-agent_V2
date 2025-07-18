@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.services.persona_service import persona_service, Persona
 
-router = APIRouter(prefix="/personas", tags=["personas"])
+router = APIRouter(prefix="/api/v1/personas", tags=["personas"])
 
 class PersonaResponse(BaseModel):
     """Response model for persona information."""

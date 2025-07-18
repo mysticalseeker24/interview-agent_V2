@@ -18,6 +18,10 @@ import subprocess
 import asyncio
 from pathlib import Path
 import httpx
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 def print_header(title: str):
     """Print a formatted header."""

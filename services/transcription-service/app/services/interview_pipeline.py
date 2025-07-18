@@ -82,6 +82,9 @@ class InterviewPipeline:
                 voice=reply_voice
             )
             
+            # Step 6: Clean up TTS cache after interview round
+            await self._cleanup_tts_cache()
+            
             return {
                 "session_id": session_id,
                 "round_number": round_number,
@@ -238,4 +241,19 @@ class InterviewPipeline:
             return {
                 "status": "unhealthy",
                 "error": str(e)
-            } 
+            }
+    
+    async def _cleanup_tts_cache(self) -> None:
+        """
+        Clean up TTS cache after interview round to free disk space.
+        
+        This method removes old TTS audio files to prevent disk space issues
+        during long interview sessions.
+        """
+        try:
+            # Get cache cleanup endpoint from TTS client
+            cleanup_result = await self.tts_client.cleanup_cache()
+            logger.info(f"TTS cache cleanup completed: {cleanup_result}")
+        except Exception as e:
+            logger.warning(f"TTS cache cleanup failed: {str(e)}")
+            # Don't raise the exception as cache cleanup failure shouldn't break the interview 

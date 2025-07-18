@@ -27,6 +27,10 @@ import sounddevice as sd
 import soundfile as sf
 import numpy as np
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Add the service directory to the path
 service_dir = Path(__file__).parent

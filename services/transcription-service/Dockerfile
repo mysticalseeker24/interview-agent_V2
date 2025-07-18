@@ -26,6 +26,15 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p uploads tts_cache
 
+# Create startup script
+RUN echo '#!/bin/bash\n\
+echo "Initializing database..."\n\
+python init_database.py\n\
+echo "Database initialized successfully!"\n\
+echo "Starting transcription service..."\n\
+exec uvicorn app.main:app --host 0.0.0.0 --port 8005\n\
+' > /app/start.sh && chmod +x /app/start.sh
+
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash app \
     && chown -R app:app /app
@@ -38,5 +47,5 @@ EXPOSE 8005
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8005/health || exit 1
 
-# Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8005"] 
+# Run the startup script
+CMD ["/app/start.sh"] 

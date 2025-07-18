@@ -16,8 +16,7 @@ class GroqSTTClient:
         self.base_url = settings.groq_base_url
         self.model = settings.groq_stt_model
         self.headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
+            "Authorization": f"Bearer {self.api_key}"
         }
     
     async def transcribe(

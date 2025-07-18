@@ -249,6 +249,40 @@ class GroqTTSClient:
             logger.error(f"Failed to cleanup old files: {str(e)}")
             return {"deleted_files": 0, "deleted_size_bytes": 0}
     
+    async def cleanup_cache(self) -> Dict[str, Any]:
+        """
+        Clean up TTS cache after interview sessions.
+        
+        This method removes old cached files to free up disk space
+        and prevent accumulation of unused audio files.
+        """
+        try:
+            # Clean up files older than 1 day (more aggressive for interview sessions)
+            cleanup_result = await self.cleanup_old_files(max_age_days=1)
+            
+            # Also clean up files if cache is getting too large (>100MB)
+            cache_info = await self.get_cache_info()
+            if cache_info.get("total_file_size", 0) > 100 * 1024 * 1024:  # 100MB
+                logger.info("Cache size exceeded 100MB, performing additional cleanup")
+                additional_cleanup = await self.cleanup_old_files(max_age_days=0.5)  # 12 hours
+                cleanup_result["deleted_files"] += additional_cleanup["deleted_files"]
+                cleanup_result["deleted_size_bytes"] += additional_cleanup["deleted_size_bytes"]
+            
+            logger.info(f"TTS cache cleanup completed: {cleanup_result}")
+            return {
+                "status": "success",
+                "message": "TTS cache cleaned successfully",
+                "cleanup_result": cleanup_result
+            }
+            
+        except Exception as e:
+            logger.error(f"TTS cache cleanup failed: {str(e)}")
+            return {
+                "status": "error",
+                "message": f"TTS cache cleanup failed: {str(e)}",
+                "cleanup_result": {"deleted_files": 0, "deleted_size_bytes": 0}
+            }
+    
     async def health_check(self) -> Dict[str, Any]:
         """Check if Groq TTS API is accessible."""
         try:

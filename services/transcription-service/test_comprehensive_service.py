@@ -28,6 +28,10 @@ from typing import Dict, Any, List, Optional
 import httpx
 import pytest
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Add the service directory to the path
 service_dir = Path(__file__).parent
@@ -285,13 +289,14 @@ class ComprehensiveTranscriptionServiceTest:
             
             # Test voice assignments
             voice_summary = self.persona_service.get_voice_summary()
-            if voice_summary and "total_personas" in voice_summary:
-                self.print_test_result("Voice Assignment", True, f"{voice_summary['total_personas']} personas assigned voices")
+            total_personas_with_voices = sum(data["count"] for data in voice_summary.values())
+            if total_personas_with_voices > 0:
+                self.print_test_result("Voice Assignment", True, f"{total_personas_with_voices} personas assigned voices")
             else:
                 self.print_test_result("Voice Assignment", False, "Voice assignment failed")
             
             # Test specific persona with voice
-            test_persona = self.persona_service.get_persona("software-engineering", "taylor-the-full-stack-developer")
+            test_persona = self.persona_service.get_persona("software-engineering", "Taylor")
             if test_persona and hasattr(test_persona, 'voice'):
                 self.print_test_result("Persona Voice Assignment", True, f"Voice: {test_persona.voice}")
             else:
@@ -317,7 +322,7 @@ class ComprehensiveTranscriptionServiceTest:
                 return False
             
             # Test with persona
-            test_persona = self.persona_service.get_persona("software-engineering", "taylor-the-full-stack-developer")
+            test_persona = self.persona_service.get_persona("software-engineering", "Taylor")
             if test_persona:
                 self.print_test_result("Pipeline Persona Integration", True, f"Persona: {test_persona.name}")
             else:
@@ -357,7 +362,8 @@ class ComprehensiveTranscriptionServiceTest:
                 # Test TTS endpoint
                 tts_data = {
                     "text": "API test",
-                    "voice": settings.groq_default_voice
+                    "voice": settings.groq_default_voice,
+                    "format": "wav"
                 }
                 response = await client.post(
                     f"{self.base_url}/api/v1/tts/generate",

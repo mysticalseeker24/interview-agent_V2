@@ -166,25 +166,26 @@ async def cleanup_cache(db: AsyncSession = Depends(get_db)):
     Clean up old cached files.
     
     Removes files older than the configured maximum age.
+    This endpoint is also automatically called after each interview session.
     """
     try:
-        # Clean up file system cache
-        cleanup_result = await groq_tts_client.cleanup_old_files(
-            max_age_days=settings.max_file_age_days
-        )
+        # Use the new cleanup_cache method for interview-aware cleanup
+        cleanup_result = await groq_tts_client.cleanup_cache()
         
-        # Clean up database records for deleted files
-        deleted_files = cleanup_result.get("deleted_files", 0)
-        
-        if deleted_files > 0:
-            # This is a simplified cleanup - in production you'd want more sophisticated logic
-            logger.info(f"Cleaned up {deleted_files} cached TTS files")
-        
-        return {
-            "message": "Cache cleanup completed",
-            "deleted_files": deleted_files,
-            "deleted_size_bytes": cleanup_result.get("deleted_size_bytes", 0)
-        }
+        if cleanup_result["status"] == "success":
+            logger.info(f"TTS cache cleanup completed: {cleanup_result['cleanup_result']}")
+            return {
+                "message": "Cache cleanup completed successfully",
+                "status": "success",
+                "cleanup_result": cleanup_result["cleanup_result"]
+            }
+        else:
+            logger.warning(f"TTS cache cleanup had issues: {cleanup_result['message']}")
+            return {
+                "message": cleanup_result["message"],
+                "status": "partial",
+                "cleanup_result": cleanup_result["cleanup_result"]
+            }
         
     except Exception as e:
         logger.error(f"Failed to cleanup cache: {str(e)}")

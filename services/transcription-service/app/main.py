@@ -190,10 +190,10 @@ async def health_check():
 
 
 # Include routers
-app.include_router(transcribe.router, prefix="/api/v1")
-app.include_router(tts.router, prefix="/api/v1")
-app.include_router(interview.router, prefix="/api/v1")
-app.include_router(personas.router, prefix="/api/v1")
+app.include_router(transcribe.router)
+app.include_router(tts.router)
+app.include_router(interview.router)
+app.include_router(personas.router)
 
 # Mount static files for TTS cache
 app.mount("/tts/files", StaticFiles(directory=str(settings.tts_cache_dir)), name="tts_files")

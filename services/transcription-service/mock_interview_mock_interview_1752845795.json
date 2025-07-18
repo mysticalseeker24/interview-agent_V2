@@ -1,0 +1,25 @@
+{
+  "session_id": "mock_interview_1752845795",
+  "persona": {
+    "name": "Olivia",
+    "domain": "resume-based",
+    "voice": "Arista-PlayAI"
+  },
+  "interview_history": [
+    {
+      "round": 1,
+      "question": "Tell me about your background and experience.",
+      "user_response": " I am a teacher I am a teacher",
+      "agent_reply": "Thank you for that response. Let me ask you a follow-up question about your technical skills.",
+      "timestamp": "2025-07-18T19:07:44.472887"
+    },
+    {
+      "round": 2,
+      "question": "What are your strengths and weaknesses?",
+      "user_response": " I am computer savvy. This is my strength.",
+      "agent_reply": "Thank you for that response. Let me ask you a follow-up question about your technical skills.",
+      "timestamp": "2025-07-18T19:08:03.707145"
+    }
+  ],
+  "timestamp": "2025-07-18T19:08:07.687298"
+}

@@ -11,6 +11,7 @@ A high-performance transcription service built for TalentSync platform, featurin
 - **Unified Groq API**: Single API key for both STT and TTS operations
 - **Atomic File Operations**: Safe file handling with atomic writes
 - **Comprehensive Caching**: Intelligent TTS caching to reduce API costs
+- **Automatic Cache Cleanup**: TTS cache automatically cleaned after each interview session
 - **Health Monitoring**: Built-in health checks for all components
 - **Production Ready**: Docker support, logging, error handling, and monitoring
 
@@ -25,6 +26,7 @@ A high-performance transcription service built for TalentSync platform, featurin
 - **Chunked Processing**: Real-time audio chunk processing with overlap handling
 - **Database Models**: SQLAlchemy models for transcriptions and TTS cache
 - **RESTful API**: FastAPI endpoints for transcription and TTS operations
+- **Cache Management**: Automatic TTS cache cleanup after interview sessions
 
 ### Database Schema
 
@@ -80,29 +82,50 @@ GROQ_API_KEY=your-groq-api-key-here
 
 ### Local Development
 
-1. Install dependencies:
+1. **Install Dependencies**:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Run the service:
+2. **Initialize Database** (Required for TTS cache):
+```bash
+python init_database.py
+```
+
+3. **Start the Service**:
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8005
 ```
 
+4. **Verify Service Health**:
+```bash
+curl http://localhost:8005/health
+```
+
+5. **Run Tests** (Optional):
+```bash
+# Comprehensive automated tests
+python test_comprehensive_service.py
+
+# Interactive mock interview
+python test_live_mock_interview.py
+```
+
 ### Docker Deployment
 
-1. Build the image:
+1. **Build the Image**:
 ```bash
 docker build -t talentsync-transcription-service .
 ```
 
-2. Run the container:
+2. **Run the Container**:
 ```bash
 docker run -p 8005:8005 \
   -e GROQ_API_KEY=your-key \
   talentsync-transcription-service
 ```
+
+**Note**: The Docker container automatically initializes the database on startup, so no manual database setup is required.
 
 ## 📡 API Endpoints
 
@@ -138,6 +161,8 @@ Process a complete interview round (STT → JSON → TTS).
   "timestamp": "2024-01-01T00:00:00Z"
 }
 ```
+
+**Note**: After each interview round, the TTS cache is automatically cleaned to free up disk space.
 
 #### `GET /api/v1/interview/status`
 Get pipeline component health status.
@@ -247,261 +272,232 @@ Get TTS cache statistics.
 #### `POST /api/v1/tts/cache/cleanup`
 Clean up old cached files.
 
+**Note**: This endpoint is automatically called after each interview session to maintain optimal disk usage.
+
 ### Health & Monitoring
 
 #### `GET /health`
 Service health check.
 
-#### `GET /metrics`
-Service metrics.
+#### `GET /api/v1/health`
+Detailed health status with component checks.
+
+## 🧪 Testing
+
+### Automated Testing
+```bash
+# Run comprehensive test suite
+python test_comprehensive_service.py
+
+# Test specific components
+python setup_testing.py
+```
+
+### Interactive Testing
+```bash
+# Run live mock interview simulation
+python test_live_mock_interview.py
+```
+
+### Manual API Testing
+```bash
+# Test TTS generation
+curl -X POST "http://localhost:8005/api/v1/tts/generate" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Hello, this is a test.", "voice": "Briggs-PlayAI", "format": "wav"}'
+
+# Test transcription
+curl -X POST "http://localhost:8005/api/v1/transcribe/" \
+  -F "file=@test_audio.wav" \
+  -F "chunk_id=test-chunk" \
+  -F "session_id=test-session"
+```
 
 ## 🔧 Configuration
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `GROQ_API_KEY` | Groq API key (required) | - |
-| `GROQ_BASE_URL` | Groq API base URL | https://api.groq.com/openai/v1 |
-| `GROQ_STT_MODEL` | STT model name | whisper-large-v3 |
-| `GROQ_TTS_MODEL` | TTS model name | playai-tts |
-| `GROQ_DEFAULT_VOICE` | Default TTS voice | Briggs-PlayAI |
-| `PORT` | Service port | 8005 |
-| `DATABASE_URL` | Database connection string | SQLite |
-| `MAX_FILE_SIZE` | Maximum file size in bytes | 100MB |
-| `DEFAULT_OVERLAP_SECONDS` | Chunk overlap duration | 2.0 |
-| `MAX_CHUNK_DURATION` | Maximum chunk duration | 300s |
-
-### Available Voices
-
-The service supports all Groq Play.ai voices:
-- Arista-PlayAI, Atlas-PlayAI, Basil-PlayAI, Briggs-PlayAI
-- Calum-PlayAI, Celeste-PlayAI, Cheyenne-PlayAI, Chip-PlayAI
-- Cillian-PlayAI, Deedee-PlayAI, Fritz-PlayAI, Gail-PlayAI
-- Indigo-PlayAI, Mamaw-PlayAI, Mason-PlayAI, Mikail-PlayAI
-- Mitch-PlayAI, Quinn-PlayAI, Thunder-PlayAI
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `GROQ_API_KEY` | Groq API key for STT and TTS | Yes | - |
+| `DATABASE_URL` | SQLite database URL | No | `sqlite:///./transcription_service.db` |
+| `UPLOAD_DIR` | Audio upload directory | No | `./uploads` |
+| `TTS_CACHE_DIR` | TTS cache directory | No | `./tts_cache` |
+| `LOG_LEVEL` | Logging level | No | `INFO` |
 
 ### Persona System
 
-The service includes a comprehensive persona system with 9 different interviewer personas:
+The service includes 9 different interviewer personas:
 
-**Individual Personas:**
-- Emma (Enthusiastic Networker) - Uses Celeste-PlayAI voice
-- Liam (Methodical Analyst) - Uses Atlas-PlayAI voice
+#### Individual Personas
+- **Emma** (Arista-PlayAI): Enthusiastic networker
+- **Liam** (Briggs-PlayAI): Methodical analyst
 
-**Job-Specific Personas:**
-- Maya (AI/ML Expert) - Uses Arista-PlayAI voice
-- Noah (Data-Driven Decider) - Uses Basil-PlayAI voice
-- Jordan (DevOps Specialist) - Uses Calum-PlayAI voice
-- Liam DSA (Methodical Analyst DSA) - Uses Cillian-PlayAI voice
-- Maya ML (AI/ML Expert ML) - Uses Deedee-PlayAI voice
-- Olivia (Empathetic Listener Resume) - Uses Fritz-PlayAI voice
-- Taylor (Full-Stack Developer) - Uses Gail-PlayAI voice
+#### Job-Specific Personas
+- **AI Engineering**: Maya (Arista-PlayAI)
+- **Data Analyst**: Noah (Briggs-PlayAI)
+- **DevOps**: Jordan (Arista-PlayAI)
+- **DSA**: Liam (Briggs-PlayAI)
+- **Machine Learning**: Maya (Arista-PlayAI)
+- **Resume-based**: Olivia (Arista-PlayAI)
+- **Software Engineering**: Taylor (Briggs-PlayAI)
 
-Each persona has unique personality traits, expertise areas, and interview approaches. The system automatically assigns appropriate voices based on persona characteristics.
+## 🗄️ Database Management
 
-### Chunked Processing
+### Automatic Initialization
+The database is automatically initialized when:
+- Running `python init_database.py` manually
+- Starting the Docker container (automatic)
+- First service startup (if database doesn't exist)
 
-The service is designed for real-time interview processing:
-
-- **Chunk Size**: 5 minutes maximum
-- **Overlap**: 2 seconds between chunks
-- **Processing**: Background processing with status tracking
-- **Aggregation**: Automatic transcript assembly with deduplication
-
-## 🧪 Testing
-
-### Automated Testing
-
-Run the comprehensive test suite:
-
+### Manual Database Operations
 ```bash
-# Install testing dependencies
-python setup_testing.py
+# Initialize database manually
+python init_database.py
 
-# Run comprehensive service tests
-python test_comprehensive_service.py
-
-# Run pytest tests
-pytest test_*.py -v
-
-# Run with coverage
-pytest test_*.py --cov=app --cov-report=html
+# Reset database (WARNING: Deletes all data)
+rm transcription_service.db
+python init_database.py
 ```
 
-### Live Mock Interview Testing
+## 🧹 Cache Management
 
-Test the service through an interactive mock interview:
+### Automatic TTS Cache Cleanup
+- **When**: After each interview round completion
+- **What**: Removes old TTS audio files to free disk space
+- **Why**: Prevents disk space issues during long interview sessions
+- **How**: Automatic cleanup triggered by interview pipeline
 
+### Manual Cache Management
 ```bash
-# Start the service
-uvicorn app.main:app --reload --port 8005
+# Get cache statistics
+curl http://localhost:8005/api/v1/tts/cache-info
 
-# In another terminal, run the mock interview
-python test_live_mock_interview.py
+# Manual cache cleanup
+curl -X POST http://localhost:8005/api/v1/tts/cache/cleanup
 ```
 
-The mock interview system allows you to:
-- Select from 9 different interviewer personas
-- Experience TTS-generated questions with persona-specific voices
-- Record audio responses (or use simulated responses)
-- Test the complete STT → JSON → TTS pipeline
-- Save interview summaries for analysis
-
-### Test Files Overview
-
-- **`test_comprehensive_service.py`**: Comprehensive automated testing of all service components
-- **`test_live_mock_interview.py`**: Interactive terminal-based mock interview system
-- **`setup_testing.py`**: Setup script for testing environment
-- **`test_requirements.txt`**: Testing dependencies
-
-### Manual Testing
-
-1. Test interview round:
-```bash
-curl -X POST "http://localhost:8005/api/v1/interview/round" \
-  -F "agent_question=Tell me about your experience" \
-  -F "session_id=session-1" \
-  -F "round_number=1" \
-  -F "user_audio=@test-audio.mp3"
-```
-
-2. Test transcription:
-```bash
-curl -X POST "http://localhost:8005/api/v1/transcribe/" \
-  -F "chunk_id=test-1" \
-  -F "session_id=session-1" \
-  -F "sequence_index=0" \
-  -F "file=@test-audio.mp3"
-```
-
-3. Test TTS:
-```bash
-curl -X POST "http://localhost:8005/api/v1/tts/generate" \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Hello world", "voice": "Briggs-PlayAI"}'
-```
-
-4. Test Persona System:
-```bash
-# Get all personas
-curl "http://localhost:8005/api/v1/personas/"
-
-# Get personas by domain
-curl "http://localhost:8005/api/v1/personas/domain/software-engineering"
-
-# Get voice assignments
-curl "http://localhost:8005/api/v1/personas/voices"
-```
-
-5. Check health:
-```bash
-curl "http://localhost:8005/health"
-```
-
-### Integration Testing
-
-The service integrates with:
-- **Media Service**: Receives chunk uploads
-- **Interview Service**: Provides real-time transcripts
-- **Feedback Service**: Sends completed transcripts
-
-## 📊 Monitoring
+## 📊 Monitoring & Logs
 
 ### Health Checks
-
+- Service health: `GET /health`
+- Component status: `GET /api/v1/health`
 - Database connectivity
-- Groq API availability
+- Groq API connectivity
 - File system access
-- Model availability
-
-### Metrics
-
-- Transcription requests per minute
-- TTS cache hit/miss rates
-- Average processing times
-- Error rates by endpoint
 
 ### Logging
-
-Structured logging with:
 - Request/response logging
 - Error tracking
 - Performance metrics
-- API call monitoring
-
-## 🔒 Security
-
-- Input validation and sanitization
-- File type restrictions
-- Size limits enforcement
-- CORS configuration
-- Error message sanitization
+- Cache hit/miss statistics
 
 ## 🚀 Production Deployment
 
 ### Docker Compose
-
 ```yaml
-version: '3.8'
+version: '3.9'
 services:
   transcription-service:
-    build: .
+    build: ./services/transcription-service
     ports:
       - "8005:8005"
     environment:
       - GROQ_API_KEY=${GROQ_API_KEY}
     volumes:
-      - ./uploads:/app/uploads
-      - ./tts_cache:/app/tts_cache
-    restart: unless-stopped
+      - transcription_data:/app/uploads
+      - tts_cache:/app/tts_cache
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  transcription_data:
+  tts_cache:
 ```
 
-### Kubernetes
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: transcription-service
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: transcription-service
-  template:
-    metadata:
-      labels:
-        app: transcription-service
-    spec:
-      containers:
-      - name: transcription-service
-        image: talentsync-transcription-service:latest
-        ports:
-        - containerPort: 8005
-        env:
-        - name: GROQ_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: api-secrets
-              key: groq-api-key
+### Environment Variables for Production
+```env
+GROQ_API_KEY=your-production-groq-key
+LOG_LEVEL=WARNING
+DATABASE_URL=sqlite:///./transcription_service.db
+UPLOAD_DIR=/app/uploads
+TTS_CACHE_DIR=/app/tts_cache
 ```
+
+## 🔒 Security Considerations
+
+- API key management via environment variables
+- Input validation for all endpoints
+- File type validation for audio uploads
+- Automatic cleanup of temporary files
+- Database connection security
+- Rate limiting for API endpoints
+
+## 📈 Performance Optimization
+
+- TTS caching to reduce API calls
+- Chunked audio processing
+- Database connection pooling
+- Automatic cache cleanup
+- Optimized file handling
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **Database not initialized**
+   ```bash
+   python init_database.py
+   ```
+
+2. **TTS cache directory missing**
+   ```bash
+   mkdir -p tts_cache
+   ```
+
+3. **Groq API errors**
+   - Verify API key is correct
+   - Check API quota limits
+   - Ensure network connectivity
+
+4. **Audio file issues**
+   - Supported formats: webm, mp3, wav, m4a, ogg
+   - Maximum file size: 100MB
+   - Check file permissions
+
+### Debug Mode
+```bash
+# Enable debug logging
+export LOG_LEVEL=DEBUG
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8005
+```
+
+## 📝 Changelog
+
+### v2.0.0
+- Added automatic TTS cache cleanup after interviews
+- Enhanced database initialization in Docker
+- Improved error handling and logging
+- Added comprehensive testing suite
+- Updated documentation with proper initialization steps
+
+### v1.0.0
+- Initial release with Groq Whisper Large v3 and PlayAI TTS
+- Persona system with 9 different voices
+- Interview pipeline with STT → JSON → TTS flow
+- Real-time chunked audio processing
 
 ## 🤝 Contributing
 
-1. Follow the TalentSync coding conventions
-2. Add tests for new features
-3. Update documentation
-4. Ensure all health checks pass
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Submit a pull request
 
-## 📝 License
+## 📄 License
 
-MIT License - see LICENSE file for details.
-
-## 🆘 Support
-
-For issues and questions:
-- Check the health endpoint: `/health`
-- Review logs for error details
-- Test API endpoints with the provided examples
-- Consult the TalentSync documentation 
+This project is licensed under the MIT License - see the LICENSE file for details. 
