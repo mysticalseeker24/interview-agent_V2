@@ -22,7 +22,7 @@ TalentSync is a modern microservices-based platform designed to revolutionize th
 ### Technology Stack
 
 - **Backend**: FastAPI, Python 3.11
-- **AI/ML**: OpenAI GPT-4o-mini, spaCy, TensorFlow
+- **AI/ML**: OpenAI GPT-4o-mini, Groq Whisper Large v3, Groq PlayAI TTS, spaCy, TensorFlow
 - **Database**: PostgreSQL with Supabase, SQLite (service-specific)
 - **File Storage**: Local + Cloud storage
 - **Containerization**: Docker & Docker Compose
@@ -51,8 +51,11 @@ TalentSync is a modern microservices-based platform designed to revolutionize th
 - Health checks and Prometheus metrics
 
 ### Transcription & Feedback
-- High-accuracy audio/video transcription (Groq Whisper)
+- High-accuracy audio/video transcription (Groq Whisper Large v3)
+- High-quality text-to-speech synthesis (Groq PlayAI TTS)
+- 9 different interviewer personas with unique voices and personalities
 - Automated feedback and scoring (Blackbox AI)
+- Real-time chunked processing with 2-second overlap
 
 ## 🚀 Quick Start
 
@@ -60,6 +63,7 @@ TalentSync is a modern microservices-based platform designed to revolutionize th
 ```bash
 # Required environment variables
 export OPENAI_API_KEY="your-openai-api-key"
+export GROQ_API_KEY="your-groq-api-key"  # For STT and TTS
 export SUPABASE_URL="your-supabase-url"
 export SUPABASE_KEY="your-supabase-key"
 ```

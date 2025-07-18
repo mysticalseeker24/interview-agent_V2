@@ -26,7 +26,7 @@ This architecture ensures clear separation of concerns. The API Gateway (Nginx) 
 | **auth-gateway** | 8001 | Supabase Auth + PostgreSQL | Manages user authentication, profiles, and authorization. Acts as adapter between services and Supabase. |
 | **resume-service** | 8004 | File-based (no DB) | Processes uploaded resumes. Uses OpenAI o4-mini to parse candidate data (skills, experience) and generate tailored questions. No persistent DB; uses local file storage. |
 | **interview-service** | 8006 | Pinecone (Vector DB only) | Orchestrates interview Q&A sessions. Retrieves and sequences questions via semantic search. Uses Pinecone for embedding-based lookup; no relational DB. |
-| **transcription-service** | 8005 | SQLite | Handles audio transcription and TTS. Uses Groq Whisper-Large-V3 for STT and PlayAI-TTS for TTS. High-performance, ultra-fast transcription with caching. |
+| **transcription-service** | 8005 | SQLite | Handles audio transcription and TTS. Uses Groq Whisper-Large-V3 for STT and PlayAI-TTS for TTS. Features 9 interviewer personas with voice assignments, real-time chunked processing, and comprehensive testing suite. |
 | **media-service** | 8002 | SQLite | Manages media files (recordings, documents). Stores metadata/URLs for audio/video in object storage (e.g. S3) and tracks references. |
 | **feedback-service** | 8010 | SQLite | Collects interview responses and scores. Generates feedback reports using Blackbox AI's `blackboxai/openai/o4-mini` model. Stores scores and feedback in SQLite. |
 
@@ -313,7 +313,55 @@ TalentSync implements a **Retrieval-Augmented Generation (RAG)** style interview
 | **Feedback LLM** | Blackbox AI o4-mini | Specialized feedback generation using `blackboxai/openai/o4-mini` |
 | **Embeddings** | OpenAI text-embedding-ada-002 | Vector generation for semantic search |
 
-### 5.4 Security & Authentication
+### 5.4 Persona System & Voice Management
+
+**Implementation:**
+- **9 Interviewer Personas**: Different personalities and expertise areas
+- **Voice Assignment**: Automatic voice mapping based on persona characteristics
+- **Domain-Specific Questions**: Tailored questions for different job roles
+- **Personality Traits**: Each persona has unique interview approach and evaluation criteria
+
+**Persona Categories:**
+- **Individual Personas**: Emma (Enthusiastic Networker), Liam (Methodical Analyst)
+- **Job-Specific Personas**: Maya (AI/ML Expert), Noah (Data-Driven Decider), Jordan (DevOps Specialist)
+- **Specialized Personas**: Liam DSA (Methodical Analyst DSA), Maya ML (AI/ML Expert ML), Olivia (Empathetic Listener Resume), Taylor (Full-Stack Developer)
+
+**Voice Mapping:**
+- Celeste-PlayAI: Emma (Enthusiastic Networker)
+- Atlas-PlayAI: Liam (Methodical Analyst)
+- Arista-PlayAI: Maya (AI/ML Expert)
+- Basil-PlayAI: Noah (Data-Driven Decider)
+- Calum-PlayAI: Jordan (DevOps Specialist)
+- Cillian-PlayAI: Liam DSA (Methodical Analyst DSA)
+- Deedee-PlayAI: Maya ML (AI/ML Expert ML)
+- Fritz-PlayAI: Olivia (Empathetic Listener Resume)
+- Gail-PlayAI: Taylor (Full-Stack Developer)
+
+### 5.5 Testing & Quality Assurance
+
+**Comprehensive Testing Suite:**
+- **Automated Testing**: `test_comprehensive_service.py` - Tests all service components
+- **Live Mock Interview**: `test_live_mock_interview.py` - Interactive terminal-based testing
+- **Setup Script**: `setup_testing.py` - Automated environment setup and validation
+- **Test Dependencies**: `test_requirements.txt` - All testing dependencies
+
+**Testing Coverage:**
+- Environment setup and configuration validation
+- Groq STT/TTS functionality and API connectivity
+- Persona system and voice assignments
+- Interview pipeline integration
+- API endpoints and error handling
+- Database operations and file caching
+- Performance metrics and response times
+
+**Quality Assurance:**
+- Production readiness validation
+- Comprehensive error handling
+- Performance benchmarking
+- Security testing
+- Integration testing with other services
+
+### 5.6 Security & Authentication
 
 | Layer | Technology / Library | Purpose |
 |-------|---------------------|---------|

@@ -66,6 +66,7 @@ The typical TalentSync workflow follows these steps:
 
 **Components:**
 - **Automated Transcription:** The audio recording is sent to Groq's Whisper-Large-V3 transcription service to produce a high-quality, punctuated transcript with speaker labels. Groq's optimized Whisper model achieves near-human accuracy on interview speech and even inserts correct punctuation and paragraph breaks with superior performance.
+- **Persona-Driven Interviews:** The system features 9 different interviewer personas with unique personalities, expertise areas, and voice assignments. Each persona provides a distinct interview experience tailored to specific job domains and candidate types.
 - **Scoring Metrics:** Each answer is scored on multiple dimensions: Correctness (semantic similarity to model answers or expert key points), Completeness (did the answer cover major points of the question?), Fluency (speech rate, word-per-minute, use of filler words like "um/uh"), and Depth (variety of concepts, examples, or follow-up discussion). These metrics use a mix of AI analysis (embedding similarity, named-entity matching) and audio analysis (pause detection, filler counting).
 - **Percentile Ranking:** Candidate performance is contextualized by comparing metrics against the database of all past interviewees (anonymized). For example, if a candidate's fluency score is higher than 85% of others, the report shows a 85th percentile ranking. This motivates improvement by giving users a benchmark of how they stack up.
 - **AI-Generated Feedback:** Blackbox AI's `blackboxai/openai/o4-mini` model crafts a natural-language summary of strengths and weaknesses. It might highlight, for instance, "Your answer on X was well-structured and covered key points (90% fluency, top 20%). However, you could improve on providing examples for your claims," etc. This narrative feedback turns raw scores into actionable advice.
@@ -138,6 +139,8 @@ TalentSync employs a clean microservices architecture optimized for scalability 
 - **Chunked Audio Processing**: Intelligent segmentation with 20% overlap deduplication
 - **High-Performance STT**: Groq Whisper-Large-V3 for ultra-fast, accurate transcription
 - **Advanced TTS**: Groq PlayAI-TTS with voice caching and multiple voice options
+- **Persona System**: 9 interviewer personas with unique voices and personalities
+- **Comprehensive Testing**: Automated test suite and live mock interview system
 - **Real-time Conversations**: Interactive interview system with sub-second latency
 - **Audio Device Management**: Comprehensive microphone/speaker configuration
 - **Production-Grade Performance**: Optimized for 1000+ RPS with Uvicorn workers
@@ -238,7 +241,53 @@ DATABASE_URL=sqlite:///./talentsync.db
 - **Mobile Support**: Native mobile applications
 - **VR/AR Support**: Immersive interview experiences
 
-## 8. References
+## 8. Testing & Quality Assurance
+
+### 8.1 Comprehensive Testing Strategy
+
+**Automated Testing Suite:**
+- **`test_comprehensive_service.py`**: End-to-end testing of all transcription service components
+- **`test_live_mock_interview.py`**: Interactive terminal-based interview simulation
+- **`setup_testing.py`**: Automated environment setup and validation
+- **`test_requirements.txt`**: All testing dependencies and tools
+
+**Testing Coverage:**
+- **Environment Validation**: API keys, service connectivity, configuration
+- **STT/TTS Functionality**: Groq Whisper Large v3 and PlayAI TTS integration
+- **Persona System**: Voice assignments, personality traits, domain expertise
+- **Interview Pipeline**: Complete STT → JSON → TTS workflow
+- **API Endpoints**: All REST endpoints with error handling
+- **Database Operations**: SQLite operations, caching, file management
+- **Performance Metrics**: Response times, throughput, resource usage
+
+**Quality Assurance Features:**
+- **Production Readiness**: Comprehensive validation before deployment
+- **Error Handling**: Graceful failure modes and recovery
+- **Performance Benchmarking**: Response time and throughput testing
+- **Security Testing**: API key validation, input sanitization
+- **Integration Testing**: Cross-service communication validation
+
+### 8.2 Testing Workflow
+
+**Development Testing:**
+```bash
+# Setup testing environment
+python setup_testing.py
+
+# Run comprehensive tests
+python test_comprehensive_service.py
+
+# Interactive mock interview
+python test_live_mock_interview.py
+```
+
+**Continuous Integration:**
+- Automated testing on every commit
+- Performance regression detection
+- Security vulnerability scanning
+- Code coverage reporting
+
+## 9. References
 
 Note on References: TalentSync's design choices align with industry trends – for example, embedding AI for automated transcription and analysis is standard practice. Research also supports using LLMs as adaptive interviewers to create realistic questioning environments. These references inform our feature design and help ensure TalentSync's capabilities are state-of-the-art.
 

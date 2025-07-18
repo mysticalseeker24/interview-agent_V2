@@ -41,7 +41,7 @@ Consistent, readable code is critical for maintainability and team collaboration
   - Offload CPU-intensive/long-running tasks to background workers (e.g. Celery).
   - Implement rate limiting at the gateway or via middleware (e.g. Redis token bucket).
   - Use connection pooling for database operations.
-  - Implement circuit breakers for external API calls (Groq, OpenAI o4-mini, Supabase, Blackbox AI).
+  - Implement circuit breakers for external API calls (Groq Whisper Large v3, Groq PlayAI TTS, OpenAI o4-mini, Supabase, Blackbox AI).
 
 ## 3. Frontend (React + Vite)
 - **Formatting & Linting:**
@@ -86,7 +86,14 @@ Consistent, readable code is critical for maintainability and team collaboration
   - Write unit and integration tests; aim for ≥80% coverage.
   - Use `@pytest.mark.asyncio` for async FastAPI routes.
   - Test rate limiting and circuit breaker patterns.
-- Mock external API calls (Groq, OpenAI o4-mini, Supabase, Blackbox AI) in tests.
+- Mock external API calls (Groq Whisper Large v3, Groq PlayAI TTS, OpenAI o4-mini, Supabase, Blackbox AI) in tests.
+- **Transcription Service Testing:**
+  - Use `test_comprehensive_service.py` for automated testing of all components
+  - Use `test_live_mock_interview.py` for interactive interview simulation
+  - Use `setup_testing.py` for environment validation and setup
+  - Test Groq STT/TTS integration with proper mocking
+  - Validate persona system and voice assignments
+  - Test interview pipeline end-to-end workflows
 - **Frontend (React):**
   - Use Jest and React Testing Library.
   - Mock API calls using MSW or jest mocks.
@@ -143,7 +150,7 @@ Consistent, readable code is critical for maintainability and team collaboration
 - Monitor rate limit violations for abuse detection
 
 **Circuit Breakers:**
-- Implement circuit breakers for external API calls (Groq, OpenAI o4-mini, Supabase, Blackbox AI)
+- Implement circuit breakers for external API calls (Groq Whisper Large v3, Groq PlayAI TTS, OpenAI o4-mini, Supabase, Blackbox AI)
 - Configure timeout and retry policies
 - Monitor external service health
 
@@ -152,12 +159,12 @@ Consistent, readable code is critical for maintainability and team collaboration
 **Application Metrics:**
 - Track request rates, latencies, and error rates
 - Monitor database connection pool usage
-- Measure external API response times (Supabase, Groq, OpenAI, Blackbox AI)
+- Measure external API response times (Supabase, Groq Whisper Large v3, Groq PlayAI TTS, OpenAI, Blackbox AI)
 
 **Health Checks:**
 - Comprehensive health checks for all dependencies
 - Database connectivity verification
-- External service availability checks (Supabase, Groq, OpenAI, Blackbox AI)
+- External service availability checks (Supabase, Groq Whisper Large v3, Groq PlayAI TTS, OpenAI, Blackbox AI)
 
 ### 9.3 Security Hardening
 
@@ -169,7 +176,7 @@ Consistent, readable code is critical for maintainability and team collaboration
 **Authentication & Authorization:**
 - Supabase Auth handles JWT token generation and validation
 - Role-based access control (RBAC) via Supabase RLS policies
-- API key management for external services (Groq, OpenAI, Pinecone, Blackbox AI)
+- API key management for external services (Groq Whisper Large v3, Groq PlayAI TTS, OpenAI, Pinecone, Blackbox AI)
 
 **Supabase Integration:**
 - Use Supabase client for authentication operations

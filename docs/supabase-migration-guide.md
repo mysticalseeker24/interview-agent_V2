@@ -234,8 +234,8 @@ SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 ```env
 # API Keys
 OPENAI_API_KEY=your-openai-api-key-here
+GROQ_API_KEY=your-groq-api-key-here  # For STT and TTS
 PINECONE_API_KEY=your-pinecone-api-key-here
-GROQ_API_KEY=your-groq-api-key-here
 
 # Supabase Configuration
 SUPABASE_URL=https://your-project.supabase.co
