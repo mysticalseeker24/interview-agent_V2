@@ -1,7 +1,4 @@
-# Multi-stage build for TalentSync Auth Gateway Service
-# Optimized for high-performance production deployment
-
-# Build stage
+# Multi-stage build for production-grade TalentSync Interview Service
 FROM python:3.11-slim as builder
 
 # Set environment variables
@@ -12,8 +9,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
+    build-essential \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Create virtual environment
@@ -26,7 +23,7 @@ RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
 # Production stage
-FROM python:3.11-slim
+FROM python:3.11-slim as production
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -36,35 +33,43 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y \
     curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy virtual environment from builder stage
-COPY --from=builder /opt/venv /opt/venv
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
 # Create non-root user for security
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
-# Create application directory
+# Copy virtual environment from builder stage
+COPY --from=builder /opt/venv /opt/venv
+
+# Set working directory
 WORKDIR /app
 
 # Copy application code
 COPY app/ ./app/
-COPY pyproject.toml .
+COPY .env.example .env
 
-# Change ownership to non-root user
-RUN chown -R appuser:appuser /app
+# Create necessary directories
+RUN mkdir -p /app/logs /app/data && \
+    chown -R appuser:appuser /app
 
 # Switch to non-root user
 USER appuser
 
 # Expose port
-EXPOSE 8001
+EXPOSE 8006
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8001/health || exit 1
+    CMD curl -f http://localhost:8006/health || exit 1
 
-# Run the application with high-performance settings
-# Note: For local development, use --reload flag
-# For production, use multiple workers
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "4", "--reload"] 
+# Run the application with performance optimizations
+CMD ["uvicorn", "app.main:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8006", \
+     "--workers", "4", \
+     "--worker-class", "uvicorn.workers.UvicornWorker", \
+     "--access-log", \
+     "--log-level", "info", \
+     "--timeout-keep-alive", "30", \
+     "--timeout-graceful-shutdown", "30"] 

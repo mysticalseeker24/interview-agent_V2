@@ -1,0 +1,61 @@
+# Core FastAPI and ASGI dependencies
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+
+# HTTP client for external API calls
+httpx
+
+# Redis for session storage and caching
+redis
+
+# Pinecone vector database
+pinecone-client
+
+# OpenAI for embeddings and LLM
+openai
+
+# Environment variable management
+python-dotenv
+
+# Async utilities
+asyncio-throttle
+
+# Performance monitoring
+prometheus-client
+
+# Logging and monitoring
+structlog
+
+# Data validation and serialization
+marshmallow
+
+# Date and time utilities
+python-dateutil
+
+# UUID utilities
+uuid
+
+# JSON utilities
+orjson
+
+# Compression utilities
+gzip
+
+# Testing dependencies
+pytest
+pytest-asyncio
+pytest-cov
+
+# Development dependencies
+black
+isort
+flake8
+mypy
+
+# Security
+cryptography
+
+# Performance optimization
+uvloop; sys_platform != "win32" 
