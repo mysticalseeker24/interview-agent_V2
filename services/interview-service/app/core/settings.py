@@ -4,7 +4,8 @@ from functools import lru_cache
 from typing import List, Optional
 from urllib.parse import urlparse
 
-from pydantic import BaseSettings, HttpUrl, validator
+from pydantic import HttpUrl, field_validator
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -85,7 +86,8 @@ class Settings(BaseSettings):
         "data-science", "software-engineering", "resume-based"
     ]
     
-    @validator("REDIS_URL")
+    @field_validator("REDIS_URL")
+    @classmethod
     def validate_redis_url(cls, v):
         """Validate Redis URL format."""
         try:
@@ -94,24 +96,27 @@ class Settings(BaseSettings):
         except Exception as e:
             raise ValueError(f"Invalid Redis URL: {e}")
     
-    @validator("PINECONE_API_KEY")
+    @field_validator("PINECONE_API_KEY")
+    @classmethod
     def validate_pinecone_key(cls, v):
         """Validate Pinecone API key is provided."""
         if not v or v == "your-pinecone-api-key-here":
             raise ValueError("PINECONE_API_KEY must be provided")
         return v
     
-    @validator("OPENAI_API_KEY")
+    @field_validator("OPENAI_API_KEY")
+    @classmethod
     def validate_openai_key(cls, v):
         """Validate OpenAI API key is provided."""
         if not v or v == "your-openai-api-key-here":
             raise ValueError("OPENAI_API_KEY must be provided")
         return v
     
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = True
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": True
+    }
 
 
 @lru_cache()

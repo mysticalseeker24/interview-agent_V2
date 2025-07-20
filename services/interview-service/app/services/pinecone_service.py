@@ -148,7 +148,7 @@ class PineconeService:
                     input=text,
                     model=settings.OPENAI_EMBEDDING_MODEL
                 ),
-                timeout=settings.REQUEST_TIMEOUT
+                timeout=5.0  # Increase timeout to 5 seconds for embeddings
             )
             
             embedding = response.data[0].embedding
@@ -225,10 +225,8 @@ class PineconeService:
             batch_size = 100
             for i in range(0, len(vectors), batch_size):
                 batch = vectors[i:i + batch_size]
-                await asyncio.wait_for(
-                    self.index.upsert(vectors=batch),
-                    timeout=settings.REQUEST_TIMEOUT
-                )
+                # Pinecone upsert is synchronous, no need to await
+                self.index.upsert(vectors=batch)
             
             processing_time = (time.time() - start_time) * 1000
             logger.info(f"Upserted {len(questions)} questions in {processing_time:.2f}ms")

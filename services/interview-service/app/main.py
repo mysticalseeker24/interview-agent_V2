@@ -50,8 +50,13 @@ async def lifespan(app: FastAPI):
         followup_service = DynamicFollowUpService()
         session_service = SessionService()
         
-        # Connect to Redis
-        await session_service.connect()
+        # Try to connect to Redis (optional for development)
+        try:
+            await session_service.connect()
+            logger.info("Redis connection established successfully")
+        except Exception as redis_error:
+            logger.warning(f"Redis connection failed: {str(redis_error)}")
+            logger.warning("Session management will be limited. Service will continue without Redis.")
         
         logger.info("All services initialized successfully")
         
@@ -65,8 +70,8 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down TalentSync Interview Service...")
     
     try:
-        # Disconnect from Redis
-        if session_service:
+        # Disconnect from Redis if connected
+        if session_service and session_service.redis_client:
             await session_service.disconnect()
         
         logger.info("All services shut down successfully")

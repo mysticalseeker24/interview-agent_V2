@@ -72,15 +72,29 @@ export SUPABASE_KEY="your-supabase-key"
 ```bash
 git clone <repository-url>
 cd talentsync
-docker-compose up -d
+
+# Set up environment variables
+cp services/interview-service/env.example services/interview-service/.env
+# Edit .env with your API keys
+
+# Upload datasets and start interview service
+cd services/interview-service
+python start_service.py
+
 # Or start individual services
-cd services/media-service
+cd ../media-service
 uvicorn app.main:app --reload --port 8003
 ```
 
 ### Production Deployment
 ```bash
+# Upload datasets first (if not already done)
+cd services/interview-service
+python upload_datasets_to_pinecone.py
+
+# Start services
 docker-compose -f docker-compose.prod.yml up -d
+
 # Or deploy individual services
 cd services/media-service
 docker build -t media-service .
@@ -105,6 +119,43 @@ talentsync/
 ## 🔧 Configuration
 
 Set environment variables in `.env` or as needed for each service. See each service's `env.example` for details.
+
+## 📊 Dataset Management
+
+The Interview Service uses Pinecone as a vector database for storing question embeddings. Before running the service, you need to upload datasets:
+
+### Dataset Upload Process
+```bash
+# Upload all datasets to Pinecone
+cd services/interview-service
+python upload_datasets_to_pinecone.py
+
+# Upload specific dataset only
+python upload_datasets_to_pinecone.py --dataset DSA_dataset.json
+
+# Verify existing upload
+python upload_datasets_to_pinecone.py --verify-only
+
+# Test RAG pipeline
+python upload_datasets_to_pinecone.py --test-rag
+```
+
+### Supported Datasets
+- **DSA_dataset.json**: Data Structures & Algorithms (243 questions)
+- **DevOps_dataset.json**: DevOps & Infrastructure (243 questions)
+- **Kubernetes_dataset.json**: Kubernetes-specific questions (243 questions)
+- **AI_Engineering_dataset.json**: AI Engineering (243 questions)
+- **ML_dataset.json**: Machine Learning (243 questions)
+- **LLM_NLP_dataset.json**: LLM/NLP topics (243 questions)
+- **SWE_dataset.json**: Software Engineering (243 questions)
+- **Resume_dataset.json**: Resume-based questions (243 questions)
+- **Resumes_dataset.json**: Resume data for personalization (888 entries)
+
+### Performance Features
+- **Batch Processing**: Uploads questions in configurable batches (default: 50)
+- **Caching**: Multi-level caching for embeddings and generated questions
+- **Circuit Breakers**: Prevents cascading failures from external services
+- **Progress Tracking**: Real-time upload progress and statistics
 
 ## 📈 API Endpoints
 

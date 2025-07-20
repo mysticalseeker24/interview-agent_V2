@@ -150,9 +150,49 @@ pip install -r requirements.txt
 # Set up environment variables
 cp env.example .env
 # Edit .env with your API keys
+```
 
-# Run the service
-uvicorn app.main:app --host 0.0.0.0 --port 8006 --reload
+### Dataset Upload and Service Startup
+
+Before running the service, you need to upload datasets to Pinecone for optimal RAG performance:
+
+#### Option 1: Upload Datasets and Start Service (Recommended)
+```bash
+# Upload all datasets and start service in one command
+python start_service.py
+
+# Skip dataset upload if already uploaded
+python start_service.py --skip-upload
+
+# Test RAG pipeline after upload
+python start_service.py --test-rag
+
+# Verify existing setup only
+python start_service.py --verify-only
+```
+
+#### Option 2: Upload Datasets Separately
+```bash
+# Upload all datasets to Pinecone
+python upload_datasets_to_pinecone.py
+
+# Upload specific dataset only
+python upload_datasets_to_pinecone.py --dataset DSA_dataset.json
+
+# Verify existing upload
+python upload_datasets_to_pinecone.py --verify-only
+
+# Test RAG pipeline
+python upload_datasets_to_pinecone.py --test-rag
+
+# Custom batch size for better performance
+python upload_datasets_to_pinecone.py --batch-size 100
+```
+
+#### Option 3: Manual Service Start (After Dataset Upload)
+```bash
+# Start service manually after datasets are uploaded
+uvicorn app.main:app --host 0.0.0.0 --port 8006 --workers 4 --reload
 ```
 
 ### Docker Deployment
@@ -256,6 +296,44 @@ curl -X POST "http://localhost:8006/api/v1/search/test" \
 - **Connection Pooling**: Optimized database connections
 - **Caching Strategy**: Multi-level caching for performance
 - **Circuit Breakers**: Resilience against external failures
+
+## 📊 Dataset Management and Caching
+
+### Dataset Upload Process
+The service uses a sophisticated dataset upload system that ensures optimal performance:
+
+#### Supported Datasets
+- **DSA_dataset.json**: Data Structures & Algorithms (243 questions)
+- **DevOps_dataset.json**: DevOps & Infrastructure (243 questions)
+- **Kubernetes_dataset.json**: Kubernetes-specific questions (243 questions)
+- **AI_Engineering_dataset.json**: AI Engineering (243 questions)
+- **ML_dataset.json**: Machine Learning (243 questions)
+- **LLM_NLP_dataset.json**: LLM/NLP topics (243 questions)
+- **SWE_dataset.json**: Software Engineering (243 questions)
+- **Resume_dataset.json**: Resume-based questions (243 questions)
+- **Resumes_dataset.json**: Resume data for personalization (888 entries)
+
+#### Upload Features
+- **Automatic Domain Mapping**: Questions are automatically categorized by domain
+- **Batch Processing**: Uploads questions in configurable batches (default: 50)
+- **Duplicate Prevention**: Prevents duplicate question uploads
+- **Progress Tracking**: Real-time upload progress and statistics
+- **Error Handling**: Comprehensive error handling and retry logic
+- **Verification**: Post-upload verification and RAG pipeline testing
+
+#### Performance Optimizations
+- **Embedding Cache**: OpenAI embeddings are cached to avoid redundant API calls
+- **Question Cache**: Processed questions are cached to prevent duplicates
+- **Follow-up Cache**: Generated follow-up questions are cached for performance
+- **Session Cache**: Interview sessions are cached in Redis for fast access
+- **Circuit Breakers**: Prevents cascading failures from external services
+
+### Caching Strategy
+```
+User Request → Cache Check → Pinecone Search → LLM Generation → Cache Result
+     ↓              ↓              ↓              ↓              ↓
+  Session Cache  Embedding Cache  Vector DB    OpenAI o4-mini  Follow-up Cache
+```
 
 ## 🔄 Integration
 

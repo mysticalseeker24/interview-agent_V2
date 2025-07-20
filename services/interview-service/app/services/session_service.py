@@ -102,25 +102,28 @@ class SessionService:
                 asked_questions=[]
             )
             
-            # Store in Redis with TTL
-            session_key = self._get_session_key(session_id)
-            user_sessions_key = self._get_user_sessions_key(user_id)
-            
-            # Use pipeline for atomic operations
-            async with self.redis_client.pipeline() as pipe:
-                # Store session data
-                await pipe.setex(
-                    session_key,
-                    self.session_ttl,
-                    session.model_dump_json()
-                )
+            # Store in Redis with TTL if available
+            if self.redis_client:
+                session_key = self._get_session_key(session_id)
+                user_sessions_key = self._get_user_sessions_key(user_id)
                 
-                # Add to user's session list
-                await pipe.sadd(user_sessions_key, str(session_id))
-                await pipe.expire(user_sessions_key, self.session_ttl)
-                
-                # Execute pipeline
-                await pipe.execute()
+                # Use pipeline for atomic operations
+                async with self.redis_client.pipeline() as pipe:
+                    # Store session data
+                    await pipe.setex(
+                        session_key,
+                        self.session_ttl,
+                        session.model_dump_json()
+                    )
+                    
+                    # Add to user's session list
+                    await pipe.sadd(user_sessions_key, str(session_id))
+                    await pipe.expire(user_sessions_key, self.session_ttl)
+                    
+                    # Execute pipeline
+                    await pipe.execute()
+            else:
+                logger.warning("Redis not available, session will not be persisted")
             
             # Track performance
             operation_time = (time.time() - start_time) * 1000
@@ -146,6 +149,10 @@ class SessionService:
         start_time = time.time()
         
         try:
+            if not self.redis_client:
+                logger.warning("Redis not available, cannot retrieve session")
+                return None
+            
             session_key = self._get_session_key(session_id)
             
             # Get session data from Redis
@@ -461,6 +468,16 @@ class SessionService:
         try:
             start_time = time.time()
             
+            # Check if Redis is connected
+            if not self.redis_client:
+                return {
+                    "status": "degraded",
+                    "response_time_ms": 0,
+                    "redis_connected": False,
+                    "performance_metrics": self.get_performance_metrics(),
+                    "message": "Redis not connected"
+                }
+            
             # Test Redis connection
             await asyncio.wait_for(
                 self.redis_client.ping(),
@@ -478,8 +495,9 @@ class SessionService:
             
         except Exception as e:
             return {
-                "status": "unhealthy",
+                "status": "degraded",
                 "error": str(e),
                 "redis_connected": False,
-                "performance_metrics": self.get_performance_metrics()
+                "performance_metrics": self.get_performance_metrics(),
+                "message": "Redis connection failed"
             } 

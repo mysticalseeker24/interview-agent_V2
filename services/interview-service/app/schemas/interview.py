@@ -13,7 +13,7 @@ class Module(BaseModel):
     title: str
     description: str
     category: str
-    difficulty: str = Field(..., regex="^(easy|medium|hard)$")
+    difficulty: str = Field(..., pattern="^(easy|medium|hard)$")
     duration_minutes: int = Field(..., ge=5, le=120)
     is_active: bool = True
     created_at: Optional[datetime] = None
@@ -25,7 +25,7 @@ class ModuleCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
     description: str = Field(..., min_length=10, max_length=1000)
     category: str = Field(..., min_length=1, max_length=100)
-    difficulty: str = Field(..., regex="^(easy|medium|hard)$")
+    difficulty: str = Field(..., pattern="^(easy|medium|hard)$")
     duration_minutes: int = Field(..., ge=5, le=120)
 
 
@@ -34,8 +34,8 @@ class Question(BaseModel):
     """Question schema."""
     id: str
     text: str
-    difficulty: str = Field(..., regex="^(easy|medium|hard)$")
-    question_type: str = Field(..., regex="^(conceptual|behavioral|technical|coding|follow-up)$")
+    difficulty: str = Field(..., pattern="^(easy|medium|hard)$")
+    question_type: str = Field(..., pattern="^(conceptual|behavioral|technical|coding|follow-up)$")
     expected_duration_seconds: int = Field(..., ge=30, le=300)
     tags: List[str] = []
     domain: str
@@ -48,8 +48,8 @@ class Question(BaseModel):
 class QuestionCreate(BaseModel):
     """Question creation schema."""
     text: str = Field(..., min_length=10, max_length=1000)
-    difficulty: str = Field(..., regex="^(easy|medium|hard)$")
-    question_type: str = Field(..., regex="^(conceptual|behavioral|technical|coding|follow-up)$")
+    difficulty: str = Field(..., pattern="^(easy|medium|hard)$")
+    question_type: str = Field(..., pattern="^(conceptual|behavioral|technical|coding|follow-up)$")
     expected_duration_seconds: int = Field(..., ge=30, le=300)
     tags: List[str] = []
     domain: str = Field(..., min_length=1, max_length=100)
@@ -61,7 +61,7 @@ class QuestionCreate(BaseModel):
 class SessionCreate(BaseModel):
     """Session creation schema."""
     module_id: str = Field(..., description="Module ID to start session for")
-    mode: str = Field(default="practice", regex="^(practice|formal|invite-only)$")
+    mode: str = Field(default="practice", pattern="^(practice|formal|invite-only)$")
     parsed_resume_data: Optional[Dict[str, Any]] = None
 
 
@@ -71,7 +71,7 @@ class Session(BaseModel):
     user_id: UUID
     module_id: str
     mode: str
-    status: str = Field(..., regex="^(pending|active|completed|cancelled)$")
+    status: str = Field(..., pattern="^(pending|active|completed|cancelled)$")
     current_question_index: int = Field(default=0, ge=0)
     estimated_duration_minutes: int = Field(..., ge=5, le=120)
     created_at: datetime
@@ -83,7 +83,7 @@ class Session(BaseModel):
 
 class SessionUpdate(BaseModel):
     """Session update schema."""
-    status: Optional[str] = Field(None, regex="^(pending|active|completed|cancelled)$")
+    status: Optional[str] = Field(None, pattern="^(pending|active|completed|cancelled)$")
     current_question_index: Optional[int] = Field(None, ge=0)
 
 
@@ -116,7 +116,7 @@ class FollowUpOut(BaseModel):
     difficulty: str
     question_type: str
     domain: str
-    generation_method: str = Field(..., regex="^(rag|llm|hybrid)$")
+    generation_method: str = Field(..., pattern="^(rag|llm|hybrid)$")
     confidence_score: Optional[float] = Field(None, ge=0, le=1)
     remaining_questions: int = Field(..., ge=0)
     is_complete: bool = False
@@ -126,7 +126,7 @@ class FollowUpRequest(BaseModel):
     """Follow-up generation request schema."""
     answer_text: str = Field(..., min_length=1, max_length=10000)
     domain: str = Field(..., min_length=1, max_length=100)
-    difficulty: str = Field(default="medium", regex="^(easy|medium|hard)$")
+    difficulty: str = Field(default="medium", pattern="^(easy|medium|hard)$")
     use_llm: bool = True
     max_candidates: int = Field(default=5, ge=1, le=10)
 
@@ -156,7 +156,7 @@ class ResumeQuestionRequest(BaseModel):
     """Resume question generation request."""
     resume_data: ResumeData
     domain: str
-    difficulty: str = Field(default="medium", regex="^(easy|medium|hard)$")
+    difficulty: str = Field(default="medium", pattern="^(easy|medium|hard)$")
     max_questions: int = Field(default=5, ge=1, le=10)
 
 
@@ -166,7 +166,7 @@ class VectorSearchRequest(BaseModel):
     query_text: str = Field(..., min_length=1, max_length=1000)
     domain: Optional[str] = None
     question_type: Optional[str] = None
-    difficulty: Optional[str] = Field(None, regex="^(easy|medium|hard)$")
+    difficulty: Optional[str] = Field(None, pattern="^(easy|medium|hard)$")
     top_k: int = Field(default=5, ge=1, le=20)
     exclude_ids: Optional[List[str]] = None
 
@@ -248,7 +248,7 @@ class DatasetImportResponse(BaseModel):
     error_count: int
     errors: List[str] = []
     processing_time_ms: float
-    status: str = Field(..., regex="^(success|partial|failed)$")
+    status: str = Field(..., pattern="^(success|partial|failed)$")
 
 
 # Event Schemas
@@ -273,5 +273,5 @@ class SessionCompleteEvent(BaseModel):
     total_questions: int
     completed_questions: int
     total_duration_seconds: float
-    completion_reason: str = Field(..., regex="^(completed|cancelled|timeout)$")
+    completion_reason: str = Field(..., pattern="^(completed|cancelled|timeout)$")
     metadata: Optional[Dict[str, Any]] = None 
