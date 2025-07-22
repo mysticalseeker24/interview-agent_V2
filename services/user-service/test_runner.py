@@ -45,11 +45,11 @@ def check_environment():
     
     # Set default test values if not provided
     if not os.getenv("TEST_EMAIL"):
-        os.environ["TEST_EMAIL"] = "integration_test@example.com"
+        os.environ["TEST_EMAIL"] = "saksham.mishra2402@gmail.com"
     if not os.getenv("TEST_PASSWORD"):
         os.environ["TEST_PASSWORD"] = "TestPass123"
     if not os.getenv("TEST_FULL_NAME"):
-        os.environ["TEST_FULL_NAME"] = "Integration Test"
+        os.environ["TEST_FULL_NAME"] = "Saksham Mishra"
     
     print("✅ Environment variables configured")
     return True

@@ -14,8 +14,7 @@ router = APIRouter()
 
 @router.post("/vector", response_model=VectorSearchResponse)
 async def vector_search(
-    request: VectorSearchRequest,
-    current_user: User = Depends(get_current_user)
+    request: VectorSearchRequest
 ) -> VectorSearchResponse:
     """
     Perform semantic vector search for similar questions.
@@ -74,8 +73,7 @@ async def vector_search(
 async def find_similar_questions(
     question_id: str,
     top_k: int = Query(5, ge=1, le=20, description="Number of similar questions to return"),
-    domain: Optional[str] = Query(None, description="Filter by domain"),
-    current_user: User = Depends(get_current_user)
+    domain: Optional[str] = Query(None, description="Filter by domain")
 ) -> List[VectorSearchResult]:
     """
     Find questions similar to a specific question.
@@ -126,8 +124,7 @@ async def find_similar_questions(
 
 @router.post("/embedding")
 async def get_embedding(
-    text: str,
-    current_user: User = Depends(get_current_user)
+    text: str
 ) -> dict:
     """
     Get embedding for a text (admin only).
@@ -165,9 +162,7 @@ async def get_embedding(
 
 
 @router.get("/stats")
-async def get_search_stats(
-    current_user: User = Depends(get_current_user)
-) -> dict:
+async def get_search_stats() -> dict:
     """
     Get vector search statistics (admin only).
     
@@ -204,9 +199,7 @@ async def get_search_stats(
 
 
 @router.post("/test")
-async def test_vector_search(
-    current_user: User = Depends(get_current_user)
-) -> dict:
+async def test_vector_search() -> dict:
     """
     Test vector search functionality with sample queries.
     
@@ -311,8 +304,7 @@ async def test_vector_search(
 async def batch_vector_search(
     queries: List[str],
     domain: Optional[str] = None,
-    top_k: int = Query(5, ge=1, le=10, description="Number of results per query"),
-    current_user: User = Depends(get_current_user)
+    top_k: int = Query(5, ge=1, le=10, description="Number of results per query")
 ) -> dict:
     """
     Perform batch vector search for multiple queries.

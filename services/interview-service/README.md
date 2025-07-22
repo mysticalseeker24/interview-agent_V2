@@ -8,7 +8,7 @@ A high-performance AI-powered interview simulation service that provides dynamic
 - **Dynamic Follow-up Generation**: AI-powered contextual questions based on candidate responses
 - **Confidence-Based Question Selection**: Multi-tier strategy for optimal question quality
 - **Vector Search**: Pinecone-powered semantic question matching
-- **Session Management**: Redis-backed interview session orchestration
+- **Session Management**: Supabase-backed interview session orchestration
 - **Domain-Specific Interviews**: Support for 7 specialized domains
 - **Performance Optimization**: Caching, circuit breakers, and async processing
 
@@ -39,8 +39,8 @@ The service implements a sophisticated **confidence-based question selection str
 ### Service Components
 - **Follow-up Service**: Confidence-based question generation with multiple strategies
 - **Pinecone Service**: Vector database integration with circuit breaker pattern
-- **Session Service**: Redis-backed session management with TTL
-- **Auth Integration**: Supabase authentication with JWT validation
+- **Session Service**: Supabase-backed session management with persistence
+- **Mock Authentication**: Development-mode authentication (no JWT required)
 
 ### Data Flow
 ```
@@ -113,10 +113,10 @@ SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-supabase-anon-key-here
 SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key-here
 
-# Redis Configuration for Session Storage
-REDIS_URL=redis://localhost:6379/0
-REDIS_MAX_CONNECTIONS=20
-REDIS_CONNECT_TIMEOUT=0.1
+# Supabase Configuration for Session Storage
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key-here
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key-here
 
 # External Service URLs
 RESUME_SERVICE_URL=http://localhost:8004
@@ -133,10 +133,9 @@ SUPPORTED_DOMAINS=["dsa", "devops", "ai-engineering", "machine-learning", "data-
 
 ### Prerequisites
 - Python 3.11+
-- Redis server
 - Pinecone account and API key
 - OpenAI API key
-- Supabase project
+- Supabase project (for session management)
 
 ### Installation
 ```bash
@@ -199,6 +198,13 @@ uvicorn app.main:app --host 0.0.0.0 --port 8006 --workers 4 --reload
 ```bash
 # Build and run with Docker Compose
 docker-compose up -d interview-service
+
+# The Docker container will automatically:
+# 1. Upload datasets to Pinecone (if not already uploaded)
+# 2. Run Supabase migration (if needed)
+# 3. Start the FastAPI service
+
+# Note: First startup may take 5-10 minutes due to dataset upload
 ```
 
 ## 📡 API Endpoints
@@ -250,7 +256,7 @@ GET /api/v1/health/detailed
 
 ### Health Checks
 - **Service Health**: Overall service status
-- **Dependency Health**: Pinecone, Redis, OpenAI connectivity
+- **Dependency Health**: Pinecone, Supabase, OpenAI connectivity
 - **Performance Health**: Response time monitoring
 - **Circuit Breaker Status**: External service health
 
@@ -287,7 +293,7 @@ curl -X POST "http://localhost:8006/api/v1/search/test" \
 ### Target Metrics
 - **API Response Time**: < 200ms for follow-up generation
 - **Vector Search**: < 100ms for semantic queries
-- **Session Operations**: < 50ms for Redis operations
+- **Session Operations**: < 100ms for Supabase operations
 - **Concurrent Users**: 1000+ simultaneous interviews
 - **Throughput**: 1000+ RPS with Uvicorn workers
 
@@ -325,7 +331,7 @@ The service uses a sophisticated dataset upload system that ensures optimal perf
 - **Embedding Cache**: OpenAI embeddings are cached to avoid redundant API calls
 - **Question Cache**: Processed questions are cached to prevent duplicates
 - **Follow-up Cache**: Generated follow-up questions are cached for performance
-- **Session Cache**: Interview sessions are cached in Redis for fast access
+- **Session Storage**: Interview sessions are stored in Supabase for persistence
 - **Circuit Breakers**: Prevents cascading failures from external services
 
 ### Caching Strategy
@@ -359,7 +365,7 @@ The service integrates seamlessly with the TalentSync frontend:
 
 ### Performance Improvements
 - **Global Vector Index**: Sharded Pinecone indices
-- **Advanced Caching**: Redis cluster for high availability
+- **Advanced Storage**: Supabase for scalable session management
 - **Auto-scaling**: Kubernetes-based scaling
 - **Real-time Monitoring**: Advanced observability
 

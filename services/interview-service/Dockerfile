@@ -45,9 +45,16 @@ COPY --from=builder /opt/venv /opt/venv
 # Set working directory
 WORKDIR /app
 
-# Copy application code
+# Copy application code and scripts
 COPY app/ ./app/
+COPY start_service.py ./
+COPY upload_datasets_to_pinecone.py ./
+COPY supabase_migration.sql ./
+COPY run_supabase_migration.py ./
 COPY .env.example .env
+
+# Copy datasets directory
+COPY ../../data/ ./data/
 
 # Create necessary directories
 RUN mkdir -p /app/logs /app/data && \
@@ -59,17 +66,13 @@ USER appuser
 # Expose port
 EXPOSE 8006
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+# Health check with extended start period for dataset upload
+HEALTHCHECK --interval=30s --timeout=10s --start-period=300s --retries=5 \
     CMD curl -f http://localhost:8006/health || exit 1
 
-# Run the application with performance optimizations
-CMD ["uvicorn", "app.main:app", \
-     "--host", "0.0.0.0", \
-     "--port", "8006", \
-     "--workers", "4", \
-     "--worker-class", "uvicorn.workers.UvicornWorker", \
-     "--access-log", \
-     "--log-level", "info", \
-     "--timeout-keep-alive", "30", \
-     "--timeout-graceful-shutdown", "30"] 
+# Run the application with dataset upload and service startup
+# This will:
+# 1. Upload datasets to Pinecone if not already uploaded
+# 2. Run Supabase migration if needed
+# 3. Start the FastAPI service with uvicorn
+CMD ["python", "start_service.py"] 

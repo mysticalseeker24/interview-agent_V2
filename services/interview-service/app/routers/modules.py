@@ -137,8 +137,7 @@ MOCK_MODULES = [
 @router.get("/", response_model=List[Module])
 async def get_modules(
     category: Optional[str] = Query(None, description="Filter by category"),
-    difficulty: Optional[str] = Query(None, description="Filter by difficulty (easy, medium, hard)"),
-    current_user: User = Depends(get_current_user)
+    difficulty: Optional[str] = Query(None, description="Filter by difficulty (easy, medium, hard)")
 ) -> List[Module]:
     """
     Get available interview modules with optional filtering.
@@ -172,8 +171,7 @@ async def get_modules(
 
 @router.get("/{module_id}", response_model=Module)
 async def get_module(
-    module_id: str,
-    current_user: User = Depends(get_current_user)
+    module_id: str
 ) -> Module:
     """
     Get specific module by ID.
@@ -202,9 +200,7 @@ async def get_module(
 
 
 @router.get("/categories/list")
-async def get_categories(
-    current_user: User = Depends(get_current_user)
-) -> List[str]:
+async def get_categories() -> List[str]:
     """
     Get list of available module categories.
     
@@ -223,9 +219,7 @@ async def get_categories(
 
 
 @router.get("/difficulties/list")
-async def get_difficulties(
-    current_user: User = Depends(get_current_user)
-) -> List[str]:
+async def get_difficulties() -> List[str]:
     """
     Get list of available difficulty levels.
     
@@ -245,8 +239,7 @@ async def get_difficulties(
 
 @router.post("/", response_model=Module)
 async def create_module(
-    module_data: ModuleCreate,
-    current_user: User = Depends(get_current_user)
+    module_data: ModuleCreate
 ) -> Module:
     """
     Create a new interview module (admin only).
@@ -284,8 +277,7 @@ async def create_module(
 @router.put("/{module_id}", response_model=Module)
 async def update_module(
     module_id: str,
-    module_data: ModuleCreate,
-    current_user: User = Depends(get_current_user)
+    module_data: ModuleCreate
 ) -> Module:
     """
     Update an existing module (admin only).
@@ -326,8 +318,7 @@ async def update_module(
 
 @router.delete("/{module_id}")
 async def delete_module(
-    module_id: str,
-    current_user: User = Depends(get_current_user)
+    module_id: str
 ) -> JSONResponse:
     """
     Delete a module (admin only).

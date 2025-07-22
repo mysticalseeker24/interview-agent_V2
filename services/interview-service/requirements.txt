@@ -7,8 +7,8 @@ pydantic-settings
 # HTTP client for external API calls
 httpx
 
-# Redis for session storage and caching
-redis
+# Supabase for session storage and authentication
+supabase
 
 # Pinecone vector database
 pinecone-client

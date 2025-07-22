@@ -14,8 +14,7 @@ router = APIRouter()
 
 @router.post("/generate", response_model=FollowUpOut)
 async def generate_followup(
-    request: FollowUpRequest,
-    current_user: User = Depends(get_current_user)
+    request: FollowUpRequest
 ) -> FollowUpOut:
     """
     Generate a dynamic follow-up question based on candidate's answer.
@@ -68,8 +67,7 @@ async def generate_followup(
 
 @router.post("/generate/batch")
 async def generate_followup_batch(
-    requests: list[FollowUpRequest],
-    current_user: User = Depends(get_current_user)
+    requests: list[FollowUpRequest]
 ) -> Dict[str, Any]:
     """
     Generate multiple follow-up questions in batch.
@@ -134,9 +132,7 @@ async def generate_followup_batch(
 
 
 @router.get("/performance")
-async def get_followup_performance(
-    current_user: User = Depends(get_current_user)
-) -> Dict[str, Any]:
+async def get_followup_performance() -> Dict[str, Any]:
     """
     Get follow-up generation performance metrics.
     
@@ -170,9 +166,7 @@ async def get_followup_performance(
 
 
 @router.post("/test")
-async def test_followup_generation(
-    current_user: User = Depends(get_current_user)
-) -> Dict[str, Any]:
+async def test_followup_generation() -> Dict[str, Any]:
     """
     Test follow-up generation with sample data covering all confidence levels.
     
@@ -381,8 +375,7 @@ def _calculate_confidence_accuracy(results: List[Dict]) -> float:
 async def validate_followup_question(
     question_text: str,
     answer_text: str,
-    domain: str,
-    current_user: User = Depends(get_current_user)
+    domain: str
 ) -> Dict[str, Any]:
     """
     Validate a follow-up question for relevance and quality.

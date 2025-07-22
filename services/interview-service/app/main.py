@@ -50,13 +50,14 @@ async def lifespan(app: FastAPI):
         followup_service = DynamicFollowUpService()
         session_service = SessionService()
         
-        # Try to connect to Redis (optional for development)
+        # Try to connect to Supabase (required for session management)
         try:
             await session_service.connect()
-            logger.info("Redis connection established successfully")
-        except Exception as redis_error:
-            logger.warning(f"Redis connection failed: {str(redis_error)}")
-            logger.warning("Session management will be limited. Service will continue without Redis.")
+            logger.info("Supabase connection established successfully")
+        except Exception as supabase_error:
+            logger.error(f"Supabase connection failed: {str(supabase_error)}")
+            logger.error("Session management is required. Service cannot start without Supabase.")
+            raise
         
         logger.info("All services initialized successfully")
         
@@ -70,8 +71,8 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down TalentSync Interview Service...")
     
     try:
-        # Disconnect from Redis if connected
-        if session_service and session_service.redis_client:
+        # Disconnect from Supabase if connected
+        if session_service:
             await session_service.disconnect()
         
         logger.info("All services shut down successfully")
@@ -361,7 +362,6 @@ if __name__ == "__main__":
         port=settings.PORT,
         reload=settings.DEBUG,
         workers=4,  # Multiple workers for high throughput
-        worker_class="uvicorn.workers.UvicornWorker",
         access_log=True,
         log_level=settings.LOG_LEVEL.lower(),
         timeout_keep_alive=30,

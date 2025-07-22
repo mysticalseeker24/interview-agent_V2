@@ -43,15 +43,10 @@ class Settings(BaseSettings):
     OPENAI_TEMPERATURE: float = 0.1
     OPENAI_EMBEDDING_MODEL: str = "text-embedding-ada-002"
     
-    # Supabase Configuration
+    # Supabase Configuration (Cloud)
     SUPABASE_URL: HttpUrl
     SUPABASE_SERVICE_ROLE_KEY: str
     SUPABASE_ANON_KEY: str
-    
-    # Redis Configuration for Session Storage
-    REDIS_URL: str = "redis://localhost:6379/0"
-    REDIS_MAX_CONNECTIONS: int = 20
-    REDIS_CONNECT_TIMEOUT: float = 0.1  # 100ms connection timeout
     
     # External Service URLs
     RESUME_SERVICE_URL: str = "http://localhost:8004"
@@ -86,16 +81,6 @@ class Settings(BaseSettings):
         "data-science", "software-engineering", "resume-based"
     ]
     
-    @field_validator("REDIS_URL")
-    @classmethod
-    def validate_redis_url(cls, v):
-        """Validate Redis URL format."""
-        try:
-            urlparse(v)
-            return v
-        except Exception as e:
-            raise ValueError(f"Invalid Redis URL: {e}")
-    
     @field_validator("PINECONE_API_KEY")
     @classmethod
     def validate_pinecone_key(cls, v):
@@ -110,6 +95,30 @@ class Settings(BaseSettings):
         """Validate OpenAI API key is provided."""
         if not v or v == "your-openai-api-key-here":
             raise ValueError("OPENAI_API_KEY must be provided")
+        return v
+    
+    @field_validator("SUPABASE_URL")
+    @classmethod
+    def validate_supabase_url(cls, v):
+        """Validate Supabase URL format."""
+        if not v or str(v) == "your-supabase-url-here":
+            raise ValueError("SUPABASE_URL must be provided")
+        return v
+    
+    @field_validator("SUPABASE_ANON_KEY")
+    @classmethod
+    def validate_supabase_anon_key(cls, v):
+        """Validate Supabase anonymous key is provided."""
+        if not v or v == "your-supabase-anon-key-here":
+            raise ValueError("SUPABASE_ANON_KEY must be provided")
+        return v
+    
+    @field_validator("SUPABASE_SERVICE_ROLE_KEY")
+    @classmethod
+    def validate_supabase_service_role_key(cls, v):
+        """Validate Supabase service role key is provided."""
+        if not v or v == "your-supabase-service-role-key-here":
+            raise ValueError("SUPABASE_SERVICE_ROLE_KEY must be provided")
         return v
     
     model_config = {
