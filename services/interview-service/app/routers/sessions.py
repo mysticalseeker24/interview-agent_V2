@@ -22,7 +22,6 @@ async def create_session(
     
     Args:
         session_data: Session creation data
-        current_user: Authenticated user
         
     Returns:
         Created session
@@ -50,7 +49,6 @@ async def get_session(
     
     Args:
         session_id: Session identifier
-        current_user: Authenticated user
         
     Returns:
         Session details
@@ -92,7 +90,6 @@ async def update_session(
     Args:
         session_id: Session identifier
         session_updates: Session update data
-        current_user: Authenticated user
         
     Returns:
         Updated session
@@ -138,7 +135,6 @@ async def get_user_sessions(
     
     Args:
         limit: Maximum number of sessions to return
-        current_user: Authenticated user
         
     Returns:
         List of user's sessions
@@ -166,7 +162,6 @@ async def start_session(
     
     Args:
         session_id: Session identifier
-        current_user: Authenticated user
         
     Returns:
         Success response
@@ -215,7 +210,6 @@ async def complete_session(
     
     Args:
         session_id: Session identifier
-        current_user: Authenticated user
         
     Returns:
         Success response
@@ -264,7 +258,6 @@ async def cancel_session(
     
     Args:
         session_id: Session identifier
-        current_user: Authenticated user
         
     Returns:
         Success response
@@ -313,7 +306,6 @@ async def delete_session(
     
     Args:
         session_id: Session identifier
-        current_user: Authenticated user
         
     Returns:
         Success response
@@ -360,7 +352,6 @@ async def get_next_question(
     
     Args:
         session_id: Session identifier
-        current_user: Authenticated user
         
     Returns:
         Next question and session status

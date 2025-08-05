@@ -72,21 +72,37 @@ class DynamicFollowUpService:
             
             self._cache_misses += 1
             
-            # Generate embedding for the answer
-            answer_embedding = await asyncio.wait_for(
-                self.pinecone_service.get_embedding(answer_text),
-                timeout=settings.FOLLOWUP_GENERATION_TIMEOUT
-            )
+            # Generate embedding for the answer (with timeout)
+            try:
+                answer_embedding = await asyncio.wait_for(
+                    self.pinecone_service.get_embedding(answer_text),
+                    timeout=settings.FOLLOWUP_GENERATION_TIMEOUT * 0.3  # 30% of total time for embedding
+                )
 
-            # Query Pinecone for similar follow-up templates
-            similar_questions = await asyncio.wait_for(
-                self.pinecone_service.query(
-                    vector=answer_embedding,
-                    top_k=max_candidates * 2,
-                    filter={"domain": domain, "type": "follow-up"}
-                ),
-                timeout=settings.FOLLOWUP_GENERATION_TIMEOUT
-            )
+                # Query Pinecone for similar follow-up templates (with timeout)
+                similar_questions = await asyncio.wait_for(
+                    self.pinecone_service.query(
+                        vector=answer_embedding,
+                        top_k=max_candidates * 2,
+                        filter={"domain": domain, "type": "follow-up"}
+                    ),
+                    timeout=settings.FOLLOWUP_GENERATION_TIMEOUT * 0.4  # 40% of total time for query
+                )
+            except asyncio.TimeoutError:
+                logger.warning("Pinecone operations timed out, using fallback strategy")
+                similar_questions = []
+                # Use fallback strategy for low latency
+                followup_question = await self._generate_domain_fallback(domain, difficulty)
+                generation_method = "timeout_fallback"
+                
+                # Cache the result
+                self._followup_cache[cache_key] = {
+                    'question': followup_question,
+                    'timestamp': time.time(),
+                    'method': generation_method
+                }
+                
+                return followup_question
 
             # Filter and get candidates with confidence assessment
             candidates = self._filter_candidates_with_confidence(similar_questions, max_candidates)

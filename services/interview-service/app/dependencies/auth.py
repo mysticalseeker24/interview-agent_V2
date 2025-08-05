@@ -22,7 +22,7 @@ MOCK_USER_ID = UUID('00000000-0000-0000-0000-000000000001')
 async def get_current_user() -> User:
     """
     Get mock user for development/testing (no authentication required).
-    
+        
     Returns:
         Mock user object with default development ID
     """
@@ -31,7 +31,7 @@ async def get_current_user() -> User:
         email="dev@talentsync.local",
         role="user",
         is_active=True
-    )
+        )
 
 
 async def get_current_active_user(

@@ -82,12 +82,17 @@ class SupabaseService:
                 asked_questions=[]
             )
             
-            # Prepare data for Supabase
+            # Prepare data for Supabase with proper datetime serialization
             session_dict = session.model_dump()
             session_dict['id'] = str(session_id)
             session_dict['user_id'] = str(user_id)
             session_dict['asked_questions'] = json.dumps(session.asked_questions)
             session_dict['parsed_resume_data'] = json.dumps(session_data.parsed_resume_data) if session_data.parsed_resume_data else None
+            
+            # Convert datetime objects to ISO format strings for JSON serialization
+            for field in ['created_at', 'started_at', 'completed_at', 'updated_at']:
+                if session_dict.get(field) and isinstance(session_dict[field], datetime):
+                    session_dict[field] = session_dict[field].isoformat()
             
             # Store in Supabase
             response = self.client.table("interview_sessions").insert(session_dict).execute()

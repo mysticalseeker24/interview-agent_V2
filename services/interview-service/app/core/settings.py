@@ -18,9 +18,9 @@ class Settings(BaseSettings):
     PORT: int = 8006
     
     # Performance & Latency Configuration
-    REQUEST_TIMEOUT: float = 1.0  # 1 second timeout for external API calls
-    FOLLOWUP_GENERATION_TIMEOUT: float = 0.2  # 200ms for follow-up generation
-    MAX_FOLLOWUP_GENERATION_TIME: float = 0.5  # 500ms max
+    REQUEST_TIMEOUT: float = 2.0  # 2 seconds timeout for external API calls
+    FOLLOWUP_GENERATION_TIMEOUT: float = 1.5  # 1.5 seconds for follow-up generation
+    MAX_FOLLOWUP_GENERATION_TIME: float = 2.0  # 2 seconds max
     CACHE_TTL: int = 600  # 10 minutes cache TTL
     SESSION_TTL: int = 3600  # 1 hour session TTL
     
@@ -72,7 +72,7 @@ class Settings(BaseSettings):
     RATE_LIMIT_WINDOW: int = 60  # seconds
     
     # Health Check Configuration
-    HEALTH_CHECK_TIMEOUT: float = 0.5  # 500ms health check timeout
+    HEALTH_CHECK_TIMEOUT: float = 1.0  # 1 second health check timeout
     
     # Dataset Configuration
     DATASET_PATH: str = "../../data"

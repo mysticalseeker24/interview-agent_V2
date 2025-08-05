@@ -124,10 +124,23 @@ async def performance_middleware(request: Request, call_next):
         response.headers["X-Process-Time"] = str(process_time)
         response.headers["X-Request-ID"] = request_id
         
-        # Log slow requests
-        if process_time > 1000:  # Log requests taking more than 1 second
+        # Add caching headers for static endpoints
+        if request.url.path in ["/health", "/metrics"]:
+            response.headers["Cache-Control"] = "public, max-age=30"  # 30 seconds cache
+        elif request.url.path.startswith("/api/v1/modules"):
+            response.headers["Cache-Control"] = "public, max-age=300"  # 5 minutes cache
+        
+        # Log slow requests (adjusted for production latency requirements)
+        if process_time > 500:  # Log requests taking more than 500ms
             logger.warning(
                 f"Slow request: {request.method} {request.url.path} "
+                f"took {process_time:.2f}ms"
+            )
+        
+        # Log very fast requests for optimization tracking
+        if process_time < 50:  # Log requests under 50ms
+            logger.debug(
+                f"Fast request: {request.method} {request.url.path} "
                 f"took {process_time:.2f}ms"
             )
         
@@ -355,15 +368,22 @@ app.state.session_service = get_session_service
 
 
 if __name__ == "__main__":
-    # Run with performance optimizations
+    # Run with performance optimizations for low latency
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",
         port=settings.PORT,
         reload=settings.DEBUG,
-        workers=4,  # Multiple workers for high throughput
+        workers=1 if settings.DEBUG else 4,  # Single worker for debug, multiple for production
         access_log=True,
         log_level=settings.LOG_LEVEL.lower(),
         timeout_keep_alive=30,
-        timeout_graceful_shutdown=30
+        timeout_graceful_shutdown=30,
+        # Low latency optimizations
+        loop="asyncio",
+        http="httptools",  # Faster HTTP parser
+        ws="websockets",   # WebSocket support
+        limit_concurrency=1000,  # High concurrency limit
+        limit_max_requests=10000,  # Restart workers after 10k requests
+        backlog=2048  # Large backlog for high load
     ) 

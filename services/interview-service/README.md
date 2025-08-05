@@ -108,12 +108,7 @@ OPENAI_MAX_TOKENS=300
 OPENAI_TEMPERATURE=0.1
 OPENAI_EMBEDDING_MODEL=text-embedding-ada-002
 
-# Supabase Configuration
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-supabase-anon-key-here
-SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key-here
-
-# Supabase Configuration for Session Storage
+# Supabase Configuration (Session Storage Only)
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-supabase-anon-key-here
 SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key-here
@@ -135,7 +130,7 @@ SUPPORTED_DOMAINS=["dsa", "devops", "ai-engineering", "machine-learning", "data-
 - Python 3.11+
 - Pinecone account and API key
 - OpenAI API key
-- Supabase project (for session management)
+- Supabase project (for session management only - no authentication required)
 
 ### Installation
 ```bash
@@ -264,23 +259,21 @@ GET /api/v1/health/detailed
 
 ### Test Follow-up Generation
 ```bash
-# Test the confidence-based system
-curl -X POST "http://localhost:8006/api/v1/followup/test" \
-  -H "Authorization: Bearer your-token"
+# Test the confidence-based system (no authentication required)
+curl -X POST "http://localhost:8006/api/v1/followup/test"
 ```
 
 ### Test Vector Search
 ```bash
-# Test semantic search capabilities
-curl -X POST "http://localhost:8006/api/v1/search/test" \
-  -H "Authorization: Bearer your-token"
+# Test semantic search capabilities (no authentication required)
+curl -X POST "http://localhost:8006/api/v1/search/test"
 ```
 
 ## 🔒 Security
 
-### Authentication
-- **Supabase Auth**: JWT token validation
-- **Role-based Access**: User and admin roles
+### Authentication (Development Mode)
+- **Mock Authentication**: No JWT tokens required for development
+- **Session Management**: Uses Supabase for session storage only
 - **API Key Management**: Secure external service integration
 
 ### Data Protection

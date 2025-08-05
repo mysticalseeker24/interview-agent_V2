@@ -10,6 +10,10 @@ from typing import Optional
 import httpx
 from supabase import create_client, Client
 from supabase.lib.client_options import ClientOptions
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -49,12 +53,18 @@ class SupabaseMigration:
         logger.info("Supabase migration client initialized")
     
     async def check_connection(self) -> bool:
-        """Check if Supabase connection is working."""
+        """Check if Supabase connection is working (without requiring tables to exist)."""
         try:
-            # Test connection by querying a simple table
-            response = self.client.table("interview_sessions").select("id").limit(1).execute()
-            logger.info("✅ Supabase connection successful")
+            # Just try a simple request to the REST endpoint
+            url = f"{self.supabase_url}/rest/v1/"
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                response = await client.get(url)
+                if response.status_code in [200, 401, 404]:
+                    logger.info("✅ Supabase REST endpoint is reachable")
             return True
+                else:
+                    logger.error(f"❌ Supabase REST endpoint returned status: {response.status_code}")
+                    return False
         except Exception as e:
             logger.error(f"❌ Supabase connection failed: {e}")
             return False

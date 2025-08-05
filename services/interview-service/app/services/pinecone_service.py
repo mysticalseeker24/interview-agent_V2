@@ -271,9 +271,10 @@ class PineconeService:
             if filter:
                 query_filter.update(filter)
             
-            # Query Pinecone
-            results = await asyncio.wait_for(
-                self.index.query(
+            # Query Pinecone (Pinecone SDK v2+ returns QueryResponse directly)
+            results = asyncio.wait_for(
+                asyncio.to_thread(
+                    self.index.query,
                     vector=vector,
                     top_k=top_k,
                     include_metadata=True,
@@ -281,6 +282,7 @@ class PineconeService:
                 ),
                 timeout=settings.REQUEST_TIMEOUT
             )
+            results = await results
             
             # Format results
             similar_questions = []
@@ -367,12 +369,16 @@ class PineconeService:
             
             # Simple query to test connectivity
             test_vector = [0.0] * 1536  # Zero vector for testing
-            await asyncio.wait_for(
-                self.index.query(vector=test_vector, top_k=1),
+            results = asyncio.wait_for(
+                asyncio.to_thread(self.index.query, vector=test_vector, top_k=1),
                 timeout=settings.HEALTH_CHECK_TIMEOUT
             )
+            await results
             
             response_time = (time.time() - start_time) * 1000
+            
+            # Reset circuit breaker on successful health check
+            self.pinecone_circuit_breaker.on_success()
             
             return {
                 "status": "healthy",
@@ -382,6 +388,7 @@ class PineconeService:
             }
             
         except Exception as e:
+            # Don't trigger circuit breaker on health check failures
             return {
                 "status": "unhealthy",
                 "error": str(e),

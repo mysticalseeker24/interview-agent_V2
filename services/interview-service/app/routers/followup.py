@@ -21,7 +21,6 @@ async def generate_followup(
     
     Args:
         request: Follow-up generation request
-        current_user: Authenticated user
         
     Returns:
         Generated follow-up question
@@ -74,7 +73,6 @@ async def generate_followup_batch(
     
     Args:
         requests: List of follow-up generation requests
-        current_user: Authenticated user
         
     Returns:
         Batch generation results
@@ -137,15 +135,15 @@ async def get_followup_performance() -> Dict[str, Any]:
     Get follow-up generation performance metrics.
     
     Args:
-        current_user: Authenticated user (admin only)
         
     Returns:
         Performance metrics
     """
     try:
-        # Check if user is admin
-        if current_user.role != "admin":
-            raise HTTPException(status_code=403, detail="Admin access required")
+        # In development mode, all users have access to performance metrics
+        # In production, you would check if user is admin
+        # if current_user.role != "admin":
+        #     raise HTTPException(status_code=403, detail="Admin access required")
         
         followup_service = DynamicFollowUpService()
         metrics = followup_service.get_performance_metrics()
@@ -171,7 +169,6 @@ async def test_followup_generation() -> Dict[str, Any]:
     Test follow-up generation with sample data covering all confidence levels.
     
     Args:
-        current_user: Authenticated user
         
     Returns:
         Test results with confidence analysis

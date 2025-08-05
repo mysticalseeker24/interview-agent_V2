@@ -53,61 +53,19 @@ CREATE INDEX IF NOT EXISTS idx_interview_sessions_created_at ON interview_sessio
 CREATE INDEX IF NOT EXISTS idx_session_queues_session_id ON session_queues(session_id);
 CREATE INDEX IF NOT EXISTS idx_session_answers_session_id ON session_answers(session_id);
 
--- Enable Row Level Security (RLS)
-ALTER TABLE interview_sessions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE session_queues ENABLE ROW LEVEL SECURITY;
-ALTER TABLE session_answers ENABLE ROW LEVEL SECURITY;
+-- Row Level Security (RLS) - Disabled for Development Mode
+-- Note: RLS is disabled since we're using mock authentication
+-- In production, you would enable RLS and create proper policies
 
--- RLS Policies for interview_sessions
-CREATE POLICY "Users can view own sessions" ON interview_sessions
-    FOR SELECT USING (auth.uid() = user_id);
+-- ALTER TABLE interview_sessions ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE session_queues ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE session_answers ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can create own sessions" ON interview_sessions
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
+-- RLS Policies would be created here in production mode
+-- For development, all users can access all sessions (mock user system)
 
-CREATE POLICY "Users can update own sessions" ON interview_sessions
-    FOR UPDATE USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can delete own sessions" ON interview_sessions
-    FOR DELETE USING (auth.uid() = user_id);
-
--- RLS Policies for session_queues
-CREATE POLICY "Users can view own session queues" ON session_queues
-    FOR SELECT USING (
-        EXISTS (
-            SELECT 1 FROM interview_sessions 
-            WHERE interview_sessions.id = session_queues.session_id 
-            AND interview_sessions.user_id = auth.uid()
-        )
-    );
-
-CREATE POLICY "Users can manage own session queues" ON session_queues
-    FOR ALL USING (
-        EXISTS (
-            SELECT 1 FROM interview_sessions 
-            WHERE interview_sessions.id = session_queues.session_id 
-            AND interview_sessions.user_id = auth.uid()
-        )
-    );
-
--- RLS Policies for session_answers
-CREATE POLICY "Users can view own session answers" ON session_answers
-    FOR SELECT USING (
-        EXISTS (
-            SELECT 1 FROM interview_sessions 
-            WHERE interview_sessions.id = session_answers.session_id 
-            AND interview_sessions.user_id = auth.uid()
-        )
-    );
-
-CREATE POLICY "Users can manage own session answers" ON session_answers
-    FOR ALL USING (
-        EXISTS (
-            SELECT 1 FROM interview_sessions 
-            WHERE interview_sessions.id = session_answers.session_id 
-            AND interview_sessions.user_id = auth.uid()
-        )
-    );
+-- RLS Policies would be created here in production mode
+-- For development, all users can access all sessions (mock user system)
 
 -- Create function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
