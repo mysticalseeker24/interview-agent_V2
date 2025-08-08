@@ -718,22 +718,45 @@ Generate a follow-up question:"""
     async def health_check(self) -> Dict[str, Any]:
         """Check service health."""
         try:
-            # Test basic functionality
-            test_answer = "I have experience with Python and machine learning."
-            test_followup = await asyncio.wait_for(
-                self.generate(test_answer, "software-engineering", "medium", use_llm=False),
-                timeout=settings.HEALTH_CHECK_TIMEOUT
-            )
+            # Check if service components are available
+            if not hasattr(self, 'pinecone_service') or not self.pinecone_service:
+                return {
+                    "status": "unhealthy",
+                    "error": "Pinecone service not available",
+                    "performance_metrics": self.get_performance_metrics()
+                }
             
-            return {
-                "status": "healthy",
-                "test_followup_generated": bool(test_followup),
-                "performance_metrics": self.get_performance_metrics()
-            }
+            # Simple connectivity test without full generation
+            try:
+                # Test Pinecone connectivity with a simple query
+                test_vector = [0.0] * 1536
+                await asyncio.wait_for(
+                    self.pinecone_service.query(test_vector, top_k=1),
+                    timeout=2.0  # Shorter timeout for health check
+                )
+                
+                return {
+                    "status": "healthy",
+                    "pinecone_connected": True,
+                    "performance_metrics": self.get_performance_metrics()
+                }
+                
+            except asyncio.TimeoutError:
+                return {
+                    "status": "degraded",
+                    "error": "Pinecone query timeout during health check",
+                    "performance_metrics": self.get_performance_metrics()
+                }
+            except Exception as e:
+                return {
+                    "status": "unhealthy",
+                    "error": f"Pinecone connectivity issue: {str(e)}",
+                    "performance_metrics": self.get_performance_metrics()
+                }
             
         except Exception as e:
             return {
                 "status": "unhealthy",
-                "error": str(e),
+                "error": str(e) if str(e) else "Unknown health check error",
                 "performance_metrics": self.get_performance_metrics()
             } 

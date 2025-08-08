@@ -18,9 +18,9 @@ class Settings(BaseSettings):
     PORT: int = 8006
     
     # Performance & Latency Configuration
-    REQUEST_TIMEOUT: float = 2.0  # 2 seconds timeout for external API calls
-    FOLLOWUP_GENERATION_TIMEOUT: float = 1.5  # 1.5 seconds for follow-up generation
-    MAX_FOLLOWUP_GENERATION_TIME: float = 2.0  # 2 seconds max
+    REQUEST_TIMEOUT: float = 5.0  # 5 seconds timeout for external API calls
+    FOLLOWUP_GENERATION_TIMEOUT: float = 3.0  # 3 seconds for follow-up generation
+    MAX_FOLLOWUP_GENERATION_TIME: float = 5.0  # 5 seconds max
     CACHE_TTL: int = 600  # 10 minutes cache TTL
     SESSION_TTL: int = 3600  # 1 hour session TTL
     

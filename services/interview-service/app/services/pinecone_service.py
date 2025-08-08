@@ -272,7 +272,7 @@ class PineconeService:
                 query_filter.update(filter)
             
             # Query Pinecone (Pinecone SDK v2+ returns QueryResponse directly)
-            results = asyncio.wait_for(
+            results = await asyncio.wait_for(
                 asyncio.to_thread(
                     self.index.query,
                     vector=vector,
@@ -282,7 +282,6 @@ class PineconeService:
                 ),
                 timeout=settings.REQUEST_TIMEOUT
             )
-            results = await results
             
             # Format results
             similar_questions = []
@@ -369,11 +368,10 @@ class PineconeService:
             
             # Simple query to test connectivity
             test_vector = [0.0] * 1536  # Zero vector for testing
-            results = asyncio.wait_for(
+            results = await asyncio.wait_for(
                 asyncio.to_thread(self.index.query, vector=test_vector, top_k=1),
                 timeout=settings.HEALTH_CHECK_TIMEOUT
             )
-            await results
             
             response_time = (time.time() - start_time) * 1000
             
@@ -387,11 +385,19 @@ class PineconeService:
                 "circuit_breaker_state": self.pinecone_circuit_breaker.state
             }
             
+        except asyncio.TimeoutError as e:
+            logger.warning(f"Pinecone health check timeout: {str(e)}")
+            return {
+                "status": "unhealthy",
+                "error": f"Health check timeout after {settings.HEALTH_CHECK_TIMEOUT}s",
+                "circuit_breaker_state": self.pinecone_circuit_breaker.state
+            }
         except Exception as e:
+            logger.error(f"Pinecone health check failed: {str(e)}")
             # Don't trigger circuit breaker on health check failures
             return {
                 "status": "unhealthy",
-                "error": str(e),
+                "error": str(e) if str(e) else "Unknown error during health check",
                 "circuit_breaker_state": self.pinecone_circuit_breaker.state
             }
     

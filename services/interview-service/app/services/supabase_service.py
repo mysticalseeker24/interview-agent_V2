@@ -91,8 +91,11 @@ class SupabaseService:
             
             # Convert datetime objects to ISO format strings for JSON serialization
             for field in ['created_at', 'started_at', 'completed_at', 'updated_at']:
-                if session_dict.get(field) and isinstance(session_dict[field], datetime):
-                    session_dict[field] = session_dict[field].isoformat()
+                if session_dict.get(field):
+                    if isinstance(session_dict[field], datetime):
+                        session_dict[field] = session_dict[field].isoformat()
+                    elif session_dict[field] is None:
+                        session_dict[field] = None
             
             # Store in Supabase
             response = self.client.table("interview_sessions").insert(session_dict).execute()
