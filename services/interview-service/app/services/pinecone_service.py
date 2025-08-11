@@ -362,44 +362,42 @@ class PineconeService:
             return []
     
     async def health_check(self) -> Dict[str, Any]:
-        """Check Pinecone service health."""
-        try:
-            start_time = time.time()
-            
-            # Simple query to test connectivity
-            test_vector = [0.0] * 1536  # Zero vector for testing
-            results = await asyncio.wait_for(
-                asyncio.to_thread(self.index.query, vector=test_vector, top_k=1),
-                timeout=settings.HEALTH_CHECK_TIMEOUT
-            )
-            
-            response_time = (time.time() - start_time) * 1000
-            
-            # Reset circuit breaker on successful health check
-            self.pinecone_circuit_breaker.on_success()
-            
-            return {
-                "status": "healthy",
-                "response_time_ms": response_time,
-                "index_name": self.index_name,
-                "circuit_breaker_state": self.pinecone_circuit_breaker.state
-            }
-            
-        except asyncio.TimeoutError as e:
-            logger.warning(f"Pinecone health check timeout: {str(e)}")
-            return {
-                "status": "unhealthy",
-                "error": f"Health check timeout after {settings.HEALTH_CHECK_TIMEOUT}s",
-                "circuit_breaker_state": self.pinecone_circuit_breaker.state
-            }
-        except Exception as e:
-            logger.error(f"Pinecone health check failed: {str(e)}")
-            # Don't trigger circuit breaker on health check failures
-            return {
-                "status": "unhealthy",
-                "error": str(e) if str(e) else "Unknown error during health check",
-                "circuit_breaker_state": self.pinecone_circuit_breaker.state
-            }
+        """Check Pinecone service health with lightweight retry to avoid transient failures."""
+        attempts = 3
+        last_error: Optional[str] = None
+        start_time_overall = time.time()
+        for attempt in range(1, attempts + 1):
+            try:
+                start_time = time.time()
+                test_vector = [0.0] * 1536  # Zero vector for testing
+                await asyncio.wait_for(
+                    asyncio.to_thread(self.index.query, vector=test_vector, top_k=1),
+                    timeout=settings.HEALTH_CHECK_TIMEOUT
+                )
+                response_time = (time.time() - start_time) * 1000
+                self.pinecone_circuit_breaker.on_success()
+                return {
+                    "status": "healthy",
+                    "response_time_ms": response_time,
+                    "index_name": self.index_name,
+                    "circuit_breaker_state": self.pinecone_circuit_breaker.state
+                }
+            except asyncio.TimeoutError:
+                last_error = f"timeout after {settings.HEALTH_CHECK_TIMEOUT}s"
+                logger.warning(f"Pinecone health check attempt {attempt}/{attempts} timed out")
+            except Exception as e:
+                last_error = str(e) if str(e) else "Unknown error"
+                logger.warning(f"Pinecone health check attempt {attempt}/{attempts} failed: {last_error}")
+            # brief backoff before retrying
+            await asyncio.sleep(0.3)
+        # All attempts failed
+        total_time_ms = (time.time() - start_time_overall) * 1000
+        return {
+            "status": "unhealthy",
+            "error": last_error or "Unknown error during health check",
+            "response_time_ms": total_time_ms,
+            "circuit_breaker_state": self.pinecone_circuit_breaker.state
+        }
     
     async def get_index_stats(self) -> Dict[str, Any]:
         """Get Pinecone index statistics."""
