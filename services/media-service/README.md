@@ -39,8 +39,8 @@ MAX_FILE_SIZE=104857600
 ALLOWED_EXTENSIONS_STR=webm,mp3,wav,m4a,ogg
 REDIS_URL=redis://localhost:6379/0
 CELERY_BROKER_URL=redis://localhost:6379/0
-TRANSCRIPTION_SERVICE_URL=http://transcription-service:8002
-INTERVIEW_SERVICE_URL=http://interview-service:8001
+TRANSCRIPTION_SERVICE_URL=http://transcription-service:8005
+INTERVIEW_SERVICE_URL=http://interview-service:8006
 ```
 
 ## API Endpoints

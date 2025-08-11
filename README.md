@@ -14,10 +14,10 @@ TalentSync is a modern microservices-based platform designed to revolutionize th
 |------------------------|-------|---------------------------------------------|---------------------|
 | **Resume Service**     | 8004  | LLM-powered resume parsing with 95% accuracy| ✅ Production Ready  |
 | **User Service**       | 8001  | Authentication and user management          | ✅ Production Ready  |
-| **Interview Service**  | 8002  | AI interview preparation and question gen   | ✅ Production Ready  |
+| **Interview Service**  | 8006  | AI interview preparation and question gen   | ✅ Production Ready  |
 | **Media Service**      | 8003  | Chunked audio/video uploads & device mgmt   | ✅ Production Ready  |
 | **Transcription Service** | 8005 | Audio/video transcription and analysis      | ✅ Production Ready  |
-| **Feedback Service**   | 8006  | AI-powered interview feedback and scoring   | ✅ Production Ready  |
+| **Feedback Service**   | 8010  | AI-powered interview feedback and scoring   | ✅ Production Ready  |
 
 ### Technology Stack
 

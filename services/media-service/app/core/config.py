@@ -90,11 +90,11 @@ class Settings(BaseSettings):
     
     # Integration URLs
     transcription_service_url: str = Field(
-        default="http://localhost:8003",
+        default="http://localhost:8005",
         description="Transcription service URL"
     )
     interview_service_url: str = Field(
-        default="http://localhost:8001",
+        default="http://localhost:8006",
         description="Interview service URL"
     )
     resume_service_url: str = Field(

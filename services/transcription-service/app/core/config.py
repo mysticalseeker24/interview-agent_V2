@@ -90,7 +90,7 @@ class Settings(BaseSettings):
         description="Media service URL"
     )
     interview_service_url: str = Field(
-        default="http://localhost:8002",
+        default="http://localhost:8006",
         description="Interview service URL"
     )
     feedback_service_url: str = Field(
